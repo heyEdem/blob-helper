@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-04 — Add PR message style guide
+
+- Added `docs/pr-message-style.md` based on Edem's existing PR writeups.
+- Updated `docs/README.md` to link the PR message style guide.
+
 ## 2026-07-04 — Initial index
 
 - First codebase-indexer scan of Blob Helper.

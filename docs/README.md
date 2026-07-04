@@ -2,6 +2,11 @@
 
 ## Documents
 
+- [Architecture Index](architecture.md): current codebase map and module overview.
+- [Implementation Index](implementation.md): entry points, module breakdown, and configuration.
+- [Patterns Index](patterns.md): observed naming, folder, and testing conventions.
+- [Decision Index](decisions.md): summarized architectural decisions.
+- [Changelog](changelog.md): index maintenance log.
 - [Specification](SPECIFICATION.md): project requirements, architecture, data model, storage adapter design, flows, and implementation phases.
 - [Task Index](taskindex.md): epic/task breakdown generated from ADRs and implementation plans.
 - [ADRs](adrs/): architecture decisions.

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-04 — Add GitHub Actions CI
+
+- Added `.github/workflows/ci.yml` for Java 21 Maven verification.
+- Updated architecture and implementation indexes with the CI entry point.
+
 ## 2026-07-04 — Add PR message style guide
 
 - Added `docs/pr-message-style.md` based on Edem's existing PR writeups.

@@ -1,6 +1,6 @@
 # Task 1.2: Add Streaming Content Hashing
 
-**Status:** Pending  
+**Status:** Done
 **Source:** [PLAN-001](../../../implementation-plans/PLAN-001-core-library.md)  
 **ADR:** [ADR-001](../../../adrs/ADR-001-content-identity-and-core-boundaries.md)
 
@@ -17,13 +17,13 @@ Add SHA-256 hashing that reads the exact uploaded bytes from a stream.
 
 ## Steps
 
-- [ ] Write `Sha256ContentHasherTest.hashesExactBytes` with a known SHA-256 digest.
-- [ ] Add `ContentHash` with `algorithm`, `hash`, and `sizeBytes`.
-- [ ] Implement `Sha256ContentHasher` using `MessageDigest` and streaming reads.
-- [ ] Run `./mvnw -pl blob-helper-core -Dtest=Sha256ContentHasherTest test`.
+- [x] Write `Sha256ContentHasherTest.hashesExactBytes` with a known SHA-256 digest.
+- [x] Add `ContentHash` with `algorithm`, `hash`, and `sizeBytes`.
+- [x] Implement `Sha256ContentHasher` using `MessageDigest` and streaming reads.
+- [x] Run `./mvnw -pl blob-helper-core -Dtest=Sha256ContentHasherTest test`.
 
 ## Acceptance
 
-- [ ] Hash output is lowercase hex.
-- [ ] Size is counted from bytes read.
-- [ ] Hashing does not depend on filenames, content type, Spring, JPA, AWS, or Azure.
+- [x] Hash output is lowercase hex.
+- [x] Size is counted from bytes read.
+- [x] Hashing does not depend on filenames, content type, Spring, JPA, AWS, or Azure.

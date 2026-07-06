@@ -1,6 +1,6 @@
 # Task 1.1: Create Maven Multi-Module Foundation
 
-**Status:** Done  
+**Status:** Done
 **Source:** [PLAN-001](../../../implementation-plans/PLAN-001-core-library.md)  
 **ADRs:** [ADR-001](../../../adrs/ADR-001-content-identity-and-core-boundaries.md), [ADR-004](../../../adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md)
 

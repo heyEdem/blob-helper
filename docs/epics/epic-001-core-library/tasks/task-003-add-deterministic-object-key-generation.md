@@ -1,6 +1,6 @@
 # Task 1.3: Add Deterministic Object Key Generation
 
-**Status:** Pending  
+**Status:** Done  
 **Source:** [PLAN-001](../../../implementation-plans/PLAN-001-core-library.md)  
 **ADR:** [ADR-001](../../../adrs/ADR-001-content-identity-and-core-boundaries.md)
 
@@ -16,13 +16,13 @@ Generate stable storage keys from content identity instead of user filenames.
 
 ## Steps
 
-- [ ] Write `HashObjectKeyStrategyTest.generatesDeterministicKey`.
-- [ ] Implement key format `{prefix}/{algorithm}/{first_two_hash_chars}/{content_hash}`.
-- [ ] Normalize algorithm names to lowercase path segments.
-- [ ] Run `./mvnw -pl blob-helper-core -Dtest=HashObjectKeyStrategyTest test`.
+- [x] Write `HashObjectKeyStrategyTest.generatesDeterministicKey`.
+- [x] Implement key format `{prefix}/{algorithm}/{first_two_hash_chars}/{content_hash}`.
+- [x] Normalize algorithm names to lowercase path segments.
+- [x] Run `./mvnw -pl blob-helper-core -Dtest=HashObjectKeyStrategyTest test`.
 
 ## Acceptance
 
-- [ ] The same content identity always generates the same key.
-- [ ] User filenames are not part of the storage key.
-- [ ] Empty prefix still generates a valid relative key.
+- [x] The same content identity always generates the same key.
+- [x] User filenames are not part of the storage key.
+- [x] Empty prefix still generates a valid relative key.

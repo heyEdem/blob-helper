@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-07-04
-**Completed:** 2/30 (7%)
+**Last Updated:** 2026-07-06
+**Completed:** 3/30 (10%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -10,13 +10,13 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Epic | Title | Progress | Status |
 |---|---|---:|---|
-| 1 | Core library | 1/5 | In Progress |
+| 1 | Core library | 3/5 | In Progress |
 | 2 | JPA metadata and reference counting | 0/6 | Not Started |
 | 3 | Spring Boot starter and service API | 0/5 | Not Started |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **1/30** | **In Progress** |
+| **Total** | | **3/30** | **In Progress** |
 
 ## Source Map
 
@@ -45,7 +45,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 - [x] 1.1 [Create Maven multi-module foundation](epics/epic-001-core-library/tasks/task-001-create-maven-multimodule-foundation.md)
 - [x] 1.2 [Add streaming content hashing](epics/epic-001-core-library/tasks/task-002-add-streaming-content-hashing.md)
-- [ ] 1.3 [Add deterministic object key generation](epics/epic-001-core-library/tasks/task-003-add-deterministic-object-key-generation.md)
+- [x] 1.3 [Add deterministic object key generation](epics/epic-001-core-library/tasks/task-003-add-deterministic-object-key-generation.md)
 - [ ] 1.4 [Add storage-neutral SPI and models](epics/epic-001-core-library/tasks/task-004-add-storage-neutral-spi-and-models.md)
 - [ ] 1.5 [Add core dependency boundary tests](epics/epic-001-core-library/tasks/task-005-add-core-dependency-boundary-tests.md)
 

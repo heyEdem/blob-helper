@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-07-06 — Add deterministic object key generation
+
+- Added `ObjectKeyStrategy` and `HashObjectKeyStrategy` in `blob-helper-core`.
+- Added tests for deterministic hash-derived key generation, lowercase algorithm segments, and empty-prefix relative keys.
+- Updated Epic 1 task status and implementation docs for the new `core/key` package.
+
 ## 2026-07-04 — Add GitHub Actions CI
 
 - Added `.github/workflows/ci.yml` for Java 21 Maven verification.

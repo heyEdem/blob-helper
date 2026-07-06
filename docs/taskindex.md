@@ -43,8 +43,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 ## Epic 1 — Core Library
 
-- [ ] 1.1 [Create Maven multi-module foundation](epics/epic-001-core-library/tasks/task-001-create-maven-multimodule-foundation.md)
-- [ ] 1.2 [Add streaming content hashing](epics/epic-001-core-library/tasks/task-002-add-streaming-content-hashing.md)
+- [x] 1.1 [Create Maven multi-module foundation](epics/epic-001-core-library/tasks/task-001-create-maven-multimodule-foundation.md)
+- [x] 1.2 [Add streaming content hashing](epics/epic-001-core-library/tasks/task-002-add-streaming-content-hashing.md)
 - [ ] 1.3 [Add deterministic object key generation](epics/epic-001-core-library/tasks/task-003-add-deterministic-object-key-generation.md)
 - [ ] 1.4 [Add storage-neutral SPI and models](epics/epic-001-core-library/tasks/task-004-add-storage-neutral-spi-and-models.md)
 - [ ] 1.5 [Add core dependency boundary tests](epics/epic-001-core-library/tasks/task-005-add-core-dependency-boundary-tests.md)

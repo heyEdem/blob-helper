@@ -1,8 +1,8 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-07-04  
-**Completed:** 0/30 (0%)  
-**Status:** Not Started
+**Last Updated:** 2026-07-04
+**Completed:** 2/30 (7%)
+**Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
 
@@ -10,13 +10,13 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Epic | Title | Progress | Status |
 |---|---|---:|---|
-| 1 | Core library | 0/5 | Not Started |
+| 1 | Core library | 1/5 | In Progress |
 | 2 | JPA metadata and reference counting | 0/6 | Not Started |
 | 3 | Spring Boot starter and service API | 0/5 | Not Started |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **0/30** | **Not Started** |
+| **Total** | | **1/30** | **In Progress** |
 
 ## Source Map
 

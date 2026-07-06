@@ -1,13 +1,13 @@
 package com.edem.blobhelper.core;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import org.junit.jupiter.api.Test;
 
 class CoreModuleSmokeTest {
 
     @Test
-    void corePackageIsAvailable() {
+    void coreModuleTestsRunInExpectedPackage() {
         assertEquals("com.edem.blobhelper.core", CoreModuleSmokeTest.class.getPackageName());
     }
 }

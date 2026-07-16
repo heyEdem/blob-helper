@@ -32,7 +32,7 @@ Current implementation state: root Maven reactor plus `blob-helper-core` module.
 
 | Module/Package | Purpose |
 |---|---|
-| `blob-helper-core` | Provider-neutral core module. Currently owns streaming content hashing and deterministic hash-derived object key generation. Planned to add storage SPI, command/result models, and domain exceptions. |
+| `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit BOM, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -71,6 +71,7 @@ Application deletes logical asset
 | Java 21 | Project language/runtime target. |
 | Maven | Build and module orchestration. |
 | JUnit Jupiter | Unit testing. |
+| Maven Enforcer Plugin | Rejects Spring, JPA, AWS SDK, and Azure SDK dependencies from `blob-helper-core`, including transitive dependencies. |
 | Spring Boot | Present in legacy root shell source; planned starter integration, but not currently configured as a reactor module dependency. |
 | AWS SDK | Planned only for `blob-helper-storage-s3`; not currently present. |
 | Azure Blob SDK | Planned only for `blob-helper-storage-azure`; not currently present. |

@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-16 — Add core dependency boundary enforcement
+
+- Added a classpath-scanning JUnit boundary test and Maven Enforcer rules for Spring, JPA, AWS SDK, and Azure SDK dependencies.
+- Completed Epic 1 and updated `blob-helper-core` plus its planning/status documentation.
+
 ## 2026-07-15 — Add storage-neutral SPI and models
 
 - Added provider-neutral storage contracts, immutable command/result models, resource stream lifecycle handling, and domain exceptions.

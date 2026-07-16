@@ -25,6 +25,7 @@
 - Dependency injection: Spring Boot annotation exists in legacy root shell, but no active service wiring exists yet.
 - Validation: not present in current implementation.
 - Testing: current tests are JUnit Jupiter tests with package-private test classes.
+- Dependency boundaries: reusable modules pair classpath-level package scanning with Maven Enforcer rules so both loaded classes and direct/transitive artifact coordinates are guarded.
 
 ## Testing Conventions
 
@@ -33,6 +34,7 @@
 - Test helpers: none observed.
 - Run all current tests with `./mvnw test`.
 - Run core tests with `./mvnw -pl blob-helper-core test`.
+- Name dependency boundary tests `*BoundaryTest` so they can be run together with `./mvnw test -Dtest='*BoundaryTest'`.
 
 ## Anti-Patterns Observed
 

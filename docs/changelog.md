@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-07-15 — Add storage-neutral SPI and models
+
+- Added provider-neutral storage contracts, immutable command/result models, resource stream lifecycle handling, and domain exceptions.
+- Affected `blob-helper-core` and the Epic 1 planning/status documentation.
+
 ## 2026-07-06 — Add deterministic object key generation
 
 - Added `ObjectKeyStrategy` and `HashObjectKeyStrategy` in `blob-helper-core`.

@@ -5,6 +5,18 @@
 - `pom.xml`: parent Maven reactor. Declares `blob-helper-core` as the only current module.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/package-info.java`: package marker for provider-neutral core APIs.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHasher.java`: stream-based content hashing contract.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHash.java`: content identity value carrying algorithm, hash, and byte size.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/Sha256ContentHasher.java`: streaming SHA-256 implementation that returns lowercase hex.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/key/ObjectKeyStrategy.java`: contract for generating storage object keys from content identity.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/key/HashObjectKeyStrategy.java`: deterministic key strategy using `{prefix}/{algorithm}/{first_two_hash_chars}/{content_hash}`.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/storage/BlobStorage.java`: provider-neutral storage SPI for put, get, idempotent delete, and existence checks.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/storage/PutBlobRequest.java`: validated streaming upload request with immutable metadata.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/storage/StoredBlob.java`: provider-neutral persisted object metadata, including provider and bucket/container location.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/storage/BlobResource.java`: validated read resource that owns and closes its content stream.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/model/StoreBlobCommand.java`: application-facing streaming store command without a caller-controlled object key.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/model/BlobReference.java`: stored-content reference carrying the asset-content ID, content identity, provider, object key, and duplicate decision.
+- `blob-helper-core/src/main/java/com/edem/blobhelper/core/exception`: unchecked, provider-neutral exception hierarchy for validation, hashing, storage, missing content, and reference-count underflow.
 - `blob-helper-core/src/test/java/com/edem/blobhelper/core/CoreModuleSmokeTest.java`: verifies the core test package is wired.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
@@ -21,16 +33,16 @@
 ### blob-helper-core
 
 - **Entry point:** `blob-helper-core/pom.xml`
-- **Key classes/functions:** `CoreModuleSmokeTest.coreModuleTestsRunInExpectedPackage()` confirms current package wiring.
+- **Key classes/functions:** `Sha256ContentHasher.hash(InputStream)` computes lowercase SHA-256 while reading a stream; `HashObjectKeyStrategy.generateKey(ContentHash)` generates deterministic hash-derived relative keys; `BlobStorage` defines provider-neutral storage operations; `PutBlobRequest`, `StoredBlob`, `BlobResource`, `StoreBlobCommand`, and `BlobReference` define the immutable streaming API boundary.
 - **Initialization:** Built as Maven child of root `blob-helper`.
-- **Non-obvious logic:** Planned core APIs are not implemented yet. ADR-001 and PLAN-001 define the target package areas: `core/hash`, `core/key`, `core/storage`, `core/model`, and `core/exception`.
+- **Non-obvious logic:** Object keys are derived from content identity, not user filenames. Empty key prefixes omit the leading prefix segment and still produce relative keys. Core request/result records reject invalid required fields and defensively copy metadata. `BlobResource` implements `AutoCloseable` and delegates closure to its stream. Storage adapters translate provider failures into unchecked `BlobHelperException` subtypes.
 
 ### Documentation and Planning
 
 - **Entry point:** `docs/taskindex.md`
 - **Key files:** `docs/SPECIFICATION.md`, `docs/adrs/*.md`, `docs/implementation-plans/*.md`, `docs/epics/**/tasks/*.md`.
 - **Initialization:** Manual planning docs drive future implementation tasks.
-- **Non-obvious logic:** `docs/taskindex.md` is the status board. It currently marks Epic 1 Task 1.1 complete and remaining tasks pending.
+- **Non-obvious logic:** `docs/taskindex.md` is the status board. It currently marks Epic 1 tasks 1.1 through 1.4 complete and later tasks pending.
 
 ### CI
 

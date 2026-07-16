@@ -32,7 +32,7 @@ Current implementation state: root Maven reactor plus `blob-helper-core` module.
 
 | Module/Package | Purpose |
 |---|---|
-| `blob-helper-core` | Provider-neutral core module. Currently contains package marker and smoke test. Planned to own hashing, storage SPI, key generation, command/result models, and domain exceptions. |
+| `blob-helper-core` | Provider-neutral core module. Currently owns streaming content hashing and deterministic hash-derived object key generation. Planned to add storage SPI, command/result models, and domain exceptions. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit BOM, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |

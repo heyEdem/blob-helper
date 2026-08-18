@@ -34,3 +34,14 @@ Subagents spawned via the Agent tool (Explore, Plan, general-purpose) do NOT inh
 - What changed
 - Which modules were affected
 ```
+
+### After Every Milestone Task
+
+Once a task from `docs/taskindex.md` is complete and verified:
+
+1. Gather all task-related implementation, tests, planning, and documentation changes into logical commits on the milestone branch.
+2. Push the milestone branch to the remote repository.
+3. Create a pull request targeting `main`.
+4. Report the pull request URL to Edem.
+
+Do not leave a completed milestone task only in the local working tree unless Edem explicitly asks not to push or create a pull request.

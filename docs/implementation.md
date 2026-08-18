@@ -2,8 +2,11 @@
 
 ## Entry Points
 
-- `pom.xml`: parent Maven reactor. Declares `blob-helper-core` as the only current module.
+- `pom.xml`: parent Maven reactor. Declares `blob-helper-core` and `blob-helper-jpa` as current modules.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
+- `blob-helper-jpa/pom.xml`: persistence module build file. Exposes Jakarta Persistence and uses Hibernate/H2 in test scope.
+- `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
+- `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentMappingTest.java`: boots Hibernate against H2 and verifies persistence state, validation, table naming, identity uniqueness, and indexes.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/package-info.java`: package marker for provider-neutral core APIs.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHasher.java`: stream-based content hashing contract.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHash.java`: content identity value carrying algorithm, hash, and byte size.
@@ -38,12 +41,19 @@
 - **Initialization:** Built as Maven child of root `blob-helper`.
 - **Non-obvious logic:** Object keys are derived from content identity, not user filenames. Empty key prefixes omit the leading prefix segment and still produce relative keys. Core request/result records reject invalid required fields and defensively copy metadata. `BlobResource` implements `AutoCloseable` and delegates closure to its stream. Storage adapters translate provider failures into unchecked `BlobHelperException` subtypes. Maven Enforcer also rejects forbidden direct and transitive dependency coordinates before tests run.
 
+### blob-helper-jpa
+
+- **Entry point:** `blob-helper-jpa/pom.xml`
+- **Key classes/functions:** `AssetContent` maps `blob_asset_content`; its public constructor validates required physical metadata, initializes new content with `refCount = 1`, and JPA lifecycle callbacks maintain creation/update timestamps.
+- **Initialization:** Built as a Maven child of root `blob-helper`; consuming persistence environments discover the annotated entity, while tests bootstrap the `blob-helper-jpa-test` persistence unit directly.
+- **Non-obvious logic:** Content identity is enforced by the database tuple `hash_algorithm + content_hash + size_bytes`. UUID generation and optimistic locking use standard Jakarta Persistence annotations. Production code has no Hibernate or Spring imports; Hibernate and H2 are test-only dependencies.
+
 ### Documentation and Planning
 
 - **Entry point:** `docs/taskindex.md`
 - **Key files:** `docs/SPECIFICATION.md`, `docs/adrs/*.md`, `docs/implementation-plans/*.md`, `docs/epics/**/tasks/*.md`.
 - **Initialization:** Manual planning docs drive future implementation tasks.
-- **Non-obvious logic:** `docs/taskindex.md` is the status board. It currently marks all five Epic 1 tasks complete and later tasks pending.
+- **Non-obvious logic:** `docs/taskindex.md` is the status board. Epic 1 is complete and Task 2.1 is the first completed Epic 2 task.
 
 ### CI
 

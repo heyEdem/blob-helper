@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-18 — Add JPA metadata module and AssetContent entity
+
+- Added the Jakarta Persistence module and mapped physical blob metadata with identity uniqueness, indexes, timestamps, and optimistic locking.
+- Added Hibernate/H2 mapping tests and updated the Maven reactor, planning status, and living project index.
+- Modules affected: root reactor, `blob-helper-jpa`, and `docs`.
+
 ## 2026-07-16 — Add core dependency boundary enforcement
 
 - Added a classpath-scanning JUnit boundary test and Maven Enforcer rules for Spring, JPA, AWS SDK, and Azure SDK dependencies.

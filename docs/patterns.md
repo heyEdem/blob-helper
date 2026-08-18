@@ -23,9 +23,10 @@
 - Error handling: not enough implemented code to determine project-specific error handling.
 - Async: not present in current implementation.
 - Dependency injection: Spring Boot annotation exists in legacy root shell, but no active service wiring exists yet.
-- Validation: not present in current implementation.
+- Validation: constructors reject null or blank required text and invalid negative sizes before state crosses a module boundary.
 - Testing: current tests are JUnit Jupiter tests with package-private test classes.
 - Dependency boundaries: reusable modules pair classpath-level package scanning with Maven Enforcer rules so both loaded classes and direct/transitive artifact coordinates are guarded.
+- JPA entities: use field access, a protected no-argument constructor, explicit snake_case column names, constructor validation for required metadata, portable lifecycle callbacks for timestamps, and standard `@Version` optimistic locking.
 
 ## Testing Conventions
 
@@ -34,6 +35,7 @@
 - Test helpers: none observed.
 - Run all current tests with `./mvnw test`.
 - Run core tests with `./mvnw -pl blob-helper-core test`.
+- Run JPA mapping tests with `./mvnw -pl blob-helper-jpa test`; they use a real Hibernate persistence unit backed by in-memory H2.
 - Name dependency boundary tests `*BoundaryTest` so they can be run together with `./mvnw test -Dtest='*BoundaryTest'`.
 
 ## Anti-Patterns Observed

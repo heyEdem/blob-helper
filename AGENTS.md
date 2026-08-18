@@ -9,7 +9,7 @@ This project has a living `docs/` folder with architecture, implementation, patt
 
 ### Subagents
 
-Subagents spawned via the Agent tool (Explore, Plan, general-purpose) do NOT inherit CLAUDE.md. When writing any subagent prompt, include this line at the top:
+Subagents spawned via the Agent tool (Explore, Plan, general-purpose) do NOT inherit AGENTS.md. When writing any subagent prompt, include this line at the top:
 
 > "This project has indexed docs. Read `docs/architecture.md` and `docs/implementation.md` first. They are the project map. Do not explore source files for information already covered there."
 

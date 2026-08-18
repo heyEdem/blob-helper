@@ -4,13 +4,16 @@
 
 Maven multi-module Java 21 library project for a Spring Boot-compatible blob deduplication helper.
 
-Current implementation state: root Maven reactor plus `blob-helper-core` module. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and only `blob-helper-core` is listed as a module.
+Current implementation state: root Maven reactor with `blob-helper-core` and `blob-helper-jpa` modules. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
 
 ## Directory Map
 
 ```text
 .
 ├── blob-helper-core/
+│   ├── pom.xml
+│   └── src/
+├── blob-helper-jpa/
 │   ├── pom.xml
 │   └── src/
 ├── docs/
@@ -32,7 +35,8 @@ Current implementation state: root Maven reactor plus `blob-helper-core` module.
 
 | Module/Package | Purpose |
 |---|---|
-| `blob-helper-core` | Provider-neutral core module. Currently owns streaming content hashing and deterministic hash-derived object key generation. Planned to add storage SPI, command/result models, and domain exceptions. |
+| `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
+| `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, reference counts, timestamps, and optimistic-lock state. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit BOM, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -71,6 +75,10 @@ Application deletes logical asset
 | Java 21 | Project language/runtime target. |
 | Maven | Build and module orchestration. |
 | JUnit Jupiter | Unit testing. |
+| Maven Enforcer Plugin | Rejects Spring, JPA, AWS SDK, and Azure SDK dependencies from `blob-helper-core`, including transitive dependencies. |
+| Jakarta Persistence 3.2 | Portable entity mapping API used by `blob-helper-jpa`. |
+| Hibernate ORM 7.4 | Test-scope JPA provider used to verify entity mappings. |
+| H2 2.4 | Test-scope in-memory database for JPA mapping tests. |
 | Spring Boot | Present in legacy root shell source; planned starter integration, but not currently configured as a reactor module dependency. |
 | AWS SDK | Planned only for `blob-helper-storage-s3`; not currently present. |
 | Azure Blob SDK | Planned only for `blob-helper-storage-azure`; not currently present. |

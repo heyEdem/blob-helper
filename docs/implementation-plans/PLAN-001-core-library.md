@@ -1,7 +1,7 @@
 # PLAN-001: Core Library
 
 **Date:** 2026-07-04  
-**Status:** Todo  
+**Status:** Complete  
 **Implements:** ADR-001, ADR-004  
 **Estimated complexity:** Medium
 
@@ -33,9 +33,9 @@ The repo currently has a Spring Boot shell and specification. The core module is
 
 ## Acceptance Criteria (from Q4)
 
-- [ ] **Sha256ContentHasherTest.hashesExactBytes:** Given known bytes, when hashed through the streaming hasher, then the lowercase SHA-256 hex digest matches the known value.
-- [ ] **HashObjectKeyStrategyTest.generatesDeterministicKey:** Given a prefix, algorithm, and hash, when generating a key, then the key is `{prefix}/{algorithm}/{first_two_hash_chars}/{content_hash}`.
-- [ ] **CoreModuleBoundaryTest.coreHasNoSpringJpaOrProviderDependencies:** Given `blob-helper-core`, then dependency analysis finds no Spring, JPA, AWS, or Azure dependencies.
+- [x] **Sha256ContentHasherTest.hashesExactBytes:** Given known bytes, when hashed through the streaming hasher, then the lowercase SHA-256 hex digest matches the known value.
+- [x] **HashObjectKeyStrategyTest.generatesDeterministicKey:** Given a prefix, algorithm, and hash, when generating a key, then the key is `{prefix}/{algorithm}/{first_two_hash_chars}/{content_hash}`.
+- [x] **CoreModuleBoundaryTest.coreHasNoSpringJpaOrProviderDependencies:** Given `blob-helper-core`, then dependency analysis finds no Spring, JPA, AWS, or Azure dependencies.
 
 ## Out of Scope (from Q5)
 
@@ -51,7 +51,7 @@ The repo currently has a Spring Boot shell and specification. The core module is
 
 ## Definition of Done
 
-- [ ] All acceptance criteria tests pass
-- [ ] No out-of-scope files were modified
-- [ ] ADR invariants are enforced in code
+- [x] All acceptance criteria tests pass
+- [x] No out-of-scope implementation files were modified
+- [x] ADR invariants are enforced in code
 - [ ] PR reviewed and merged

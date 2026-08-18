@@ -1,5 +1,22 @@
 # Changelog
 
+## 2026-08-18 — Add global PR writer workflow
+
+- Added the reusable `pr-writer` skill for Claude and Codex based on the KADO-65 pull request style.
+- Required both agents to use the skill for pull request titles and bodies and recorded baseline and forward validation evidence.
+- Areas affected: repository agent instructions, workflow documentation, and global agent skill installations.
+
+## 2026-08-18 — Add JPA metadata module and AssetContent entity
+
+- Added the Jakarta Persistence module and mapped physical blob metadata with identity uniqueness, indexes, timestamps, and optimistic locking.
+- Added Hibernate/H2 mapping tests and updated the Maven reactor, planning status, and living project index.
+- Modules affected: root reactor, `blob-helper-jpa`, and `docs`.
+
+## 2026-07-16 — Add core dependency boundary enforcement
+
+- Added a classpath-scanning JUnit boundary test and Maven Enforcer rules for Spring, JPA, AWS SDK, and Azure SDK dependencies.
+- Completed Epic 1 and updated `blob-helper-core` plus its planning/status documentation.
+
 ## 2026-07-15 — Add storage-neutral SPI and models
 
 - Added provider-neutral storage contracts, immutable command/result models, resource stream lifecycle handling, and domain exceptions.

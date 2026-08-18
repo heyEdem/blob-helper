@@ -30,6 +30,7 @@
 
     <modules>
         <module>blob-helper-core</module>
+        <module>blob-helper-jpa</module>
     </modules>
 
     <dependencyManagement>

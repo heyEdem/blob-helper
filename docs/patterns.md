@@ -38,6 +38,12 @@
 - Run JPA mapping tests with `./mvnw -pl blob-helper-jpa test`; they use a real Hibernate persistence unit backed by in-memory H2.
 - Name dependency boundary tests `*BoundaryTest` so they can be run together with `./mvnw test -Dtest='*BoundaryTest'`.
 
+## Pull Request Conventions
+
+- Use the global `$pr-writer` skill for every pull request title and body, including reviews and updates to existing pull requests.
+- Derive claims from the actual branch/base, commit range, diff, test results, and issue context.
+- Use a conventional-commit title and the reviewer-oriented sections defined by the skill; verify the remote pull request after creation or editing.
+
 ## Anti-Patterns Observed
 
 - Root `src/` still contains a Spring Boot shell class while the root project is `pom` packaging. This is likely transitional during conversion to a multi-module library.

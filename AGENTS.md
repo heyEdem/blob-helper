@@ -45,3 +45,9 @@ Once a task from `docs/taskindex.md` is complete and verified:
 4. Report the pull request URL to Edem.
 
 Do not leave a completed milestone task only in the local working tree unless Edem explicitly asks not to push or create a pull request.
+
+### Pull Request Messages
+
+- Always use the global `$pr-writer` skill before drafting, reviewing, updating, or creating a pull request title or body.
+- Gather the actual branch/base, commit range, diff, test results, and issue context before writing.
+- Do not create or edit the remote pull request until the skill's quality gate passes.

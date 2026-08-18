@@ -73,13 +73,13 @@
 - [x] Run five fresh-context prompts with the skill.
 - [x] Compare every result against the structural contract and baseline failure modes.
 - [x] Record pass/fail evidence without copying full generated PR bodies into the repository.
-- [ ] Use the skill contract to update GitHub PR #6.
+- [x] Use the skill contract to update GitHub PR #6.
 
 ### Task 6: Verification and delivery
 
-- [ ] Run both skill validators.
-- [ ] Re-run installation parity checks.
-- [ ] Run `git diff --check` and the repository's full Maven verification.
-- [ ] Commit repository instruction and evaluation artifacts.
-- [ ] Push the milestone branch so PR #6 contains the new policy and skill design artifacts.
-- [ ] Verify PR #6 title/body and report installed skill paths.
+- [x] Run both skill validators.
+- [x] Re-run installation parity checks.
+- [x] Run `git diff --check` and the repository's full Maven verification.
+- [x] Commit repository instruction and evaluation artifacts.
+- [x] Push the milestone branch so PR #6 contains the new policy and skill design artifacts.
+- [x] Verify PR #6 title/body and report installed skill paths.

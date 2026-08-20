@@ -2,6 +2,10 @@ package com.edem.blobhelper.jpa;
 
 import com.edem.blobhelper.core.exception.ContentNotFoundException;
 import com.edem.blobhelper.core.exception.ReferenceCountUnderflowException;
+import com.edem.blobhelper.core.storage.BlobResource;
+import com.edem.blobhelper.core.storage.BlobStorage;
+import com.edem.blobhelper.core.storage.PutBlobRequest;
+import com.edem.blobhelper.core.storage.StoredBlob;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
@@ -11,6 +15,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,6 +27,7 @@ class ReferenceCountServiceTest {
     private static EntityManagerFactory entityManagerFactory;
 
     private EntityManager entityManager;
+    private RecordingBlobStorage storage;
     private ReferenceCountService service;
 
     @BeforeAll
@@ -36,7 +43,8 @@ class ReferenceCountServiceTest {
     @BeforeEach
     void createEntityManager() {
         entityManager = entityManagerFactory.createEntityManager();
-        service = new ReferenceCountService(new AssetContentRepository(entityManager));
+        storage = new RecordingBlobStorage();
+        service = new ReferenceCountService(new AssetContentRepository(entityManager), storage);
     }
 
     @AfterEach
@@ -78,6 +86,21 @@ class ReferenceCountServiceTest {
         entityManager.clear();
 
         assertEquals(1L, entityManager.find(AssetContent.class, content.getId()).getRefCount());
+        assertEquals(List.of(), storage.deletedObjectKeys());
+    }
+
+    @Test
+    void releaseFinalReferenceDeletesPhysicalObjectOnce() {
+        AssetContent content = persistContent();
+
+        entityManager.clear();
+        entityManager.getTransaction().begin();
+        service.release(content.getId());
+        entityManager.getTransaction().commit();
+        entityManager.clear();
+
+        assertEquals(0L, entityManager.find(AssetContent.class, content.getId()).getRefCount());
+        assertEquals(List.of(content.getObjectKey()), storage.deletedObjectKeys());
     }
 
     @Test
@@ -97,6 +120,7 @@ class ReferenceCountServiceTest {
         entityManager.clear();
 
         assertEquals(0L, entityManager.find(AssetContent.class, content.getId()).getRefCount());
+        assertEquals(List.of(content.getObjectKey()), storage.deletedObjectKeys());
     }
 
     @Test
@@ -128,5 +152,34 @@ class ReferenceCountServiceTest {
         entityManager.persist(content);
         entityManager.getTransaction().commit();
         return content;
+    }
+
+    private static final class RecordingBlobStorage implements BlobStorage {
+
+        private final List<String> deletedObjectKeys = new ArrayList<>();
+
+        @Override
+        public StoredBlob put(PutBlobRequest request) {
+            throw new UnsupportedOperationException("put is not used by this test");
+        }
+
+        @Override
+        public BlobResource get(String objectKey) {
+            throw new UnsupportedOperationException("get is not used by this test");
+        }
+
+        @Override
+        public void delete(String objectKey) {
+            deletedObjectKeys.add(objectKey);
+        }
+
+        @Override
+        public boolean exists(String objectKey) {
+            throw new UnsupportedOperationException("exists is not used by this test");
+        }
+
+        private List<String> deletedObjectKeys() {
+            return List.copyOf(deletedObjectKeys);
+        }
     }
 }

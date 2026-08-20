@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-20 — Add final-reference delete orchestration
+
+- Added `BlobStorage` collaboration to `ReferenceCountService` and delete delegation only when a release reaches zero references.
+- Added JPA integration coverage for non-final releases, final physical deletion, and exactly-once delete behavior.
+- Modules affected: `blob-helper-jpa` and Epic 2 planning/status documentation.
+
 ## 2026-08-20 — Add reference retain and release service
 
 - Added lock-aware `ReferenceCountService` retain and release operations with missing-content and underflow protection.

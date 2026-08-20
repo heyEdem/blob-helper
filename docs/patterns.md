@@ -27,6 +27,7 @@
 - Testing: current tests are JUnit Jupiter tests with package-private test classes.
 - Dependency boundaries: reusable modules pair classpath-level package scanning with Maven Enforcer rules so both loaded classes and direct/transitive artifact coordinates are guarded.
 - JPA entities: use field access, a protected no-argument constructor, explicit snake_case column names, constructor validation for required metadata, portable lifecycle callbacks for timestamps, and standard `@Version` optimistic locking.
+- JPA repositories: wrap a caller-owned `EntityManager`, return `Optional` for lookup methods, and apply `LockModeType.PESSIMISTIC_WRITE` for mutation workflows that must hold a row lock through the caller's transaction.
 
 ## Testing Conventions
 

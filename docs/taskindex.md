@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-18
-**Completed:** 6/30 (20%)
+**Last Updated:** 2026-08-20
+**Completed:** 7/30 (23%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -11,7 +11,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | Epic | Title | Progress | Status |
 |---|---|---:|---|
 | 1 | Core library | 5/5 | Complete |
-| 2 | JPA metadata and reference counting | 1/6 | In Progress |
+| 2 | JPA metadata and reference counting | 2/6 | In Progress |
 | 3 | Spring Boot starter and service API | 0/5 | Not Started |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
@@ -52,7 +52,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 ## Epic 2 — JPA Metadata and Reference Counting
 
 - [x] 2.1 [Add JPA module and AssetContent entity](epics/epic-002-jpa-metadata-reference-counting/tasks/task-001-add-jpa-module-and-asset-content-entity.md)
-- [ ] 2.2 [Add repository identity lookups and locks](epics/epic-002-jpa-metadata-reference-counting/tasks/task-002-add-repository-identity-lookups-and-locks.md)
+- [x] 2.2 [Add repository identity lookups and locks](epics/epic-002-jpa-metadata-reference-counting/tasks/task-002-add-repository-identity-lookups-and-locks.md)
 - [ ] 2.3 [Add reference retain and release service](epics/epic-002-jpa-metadata-reference-counting/tasks/task-003-add-reference-retain-and-release-service.md)
 - [ ] 2.4 [Add final-reference delete orchestration](epics/epic-002-jpa-metadata-reference-counting/tasks/task-004-add-final-reference-delete-orchestration.md)
 - [ ] 2.5 [Add duplicate-key retry behavior](epics/epic-002-jpa-metadata-reference-counting/tasks/task-005-add-duplicate-key-retry-behavior.md)
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-20 | Completed task 2.2 with transaction-scoped identity lookup and pessimistic lock repository operations plus duplicate identity tests. |
 | 2026-08-18 | Completed task 2.1 with the JPA module, `AssetContent` mapping, and Hibernate/H2 mapping tests. |
 | 2026-07-16 | Completed task 1.5 with classpath scanning and Maven Enforcer dependency boundary checks; Epic 1 is complete. |
 | 2026-07-15 | Completed task 1.4 with the provider-neutral storage SPI, models, and domain exception hierarchy. |

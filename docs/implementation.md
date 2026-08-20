@@ -6,7 +6,9 @@
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-jpa/pom.xml`: persistence module build file. Exposes Jakarta Persistence and uses Hibernate/H2 in test scope.
 - `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
+- `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContentRepository.java`: EntityManager-backed repository for identity lookup and pessimistic write-locked lookup by content id; transaction lifecycle remains with the caller.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentMappingTest.java`: boots Hibernate against H2 and verifies persistence state, validation, table naming, identity uniqueness, and indexes.
+- `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentRepositoryTest.java`: verifies complete identity lookups, pessimistic write lock acquisition, missing-row behavior, constructor validation, and duplicate identity rejection.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/package-info.java`: package marker for provider-neutral core APIs.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHasher.java`: stream-based content hashing contract.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHash.java`: content identity value carrying algorithm, hash, and byte size.
@@ -44,16 +46,16 @@
 ### blob-helper-jpa
 
 - **Entry point:** `blob-helper-jpa/pom.xml`
-- **Key classes/functions:** `AssetContent` maps `blob_asset_content`; its public constructor validates required physical metadata, initializes new content with `refCount = 1`, and JPA lifecycle callbacks maintain creation/update timestamps.
+- **Key classes/functions:** `AssetContent` maps `blob_asset_content`; its public constructor validates required physical metadata, initializes new content with `refCount = 1`, and JPA lifecycle callbacks maintain creation/update timestamps. `AssetContentRepository.findByIdentity` queries the complete identity tuple, while `findByIdForUpdate` uses `LockModeType.PESSIMISTIC_WRITE`; both use the caller-owned `EntityManager` and transaction.
 - **Initialization:** Built as a Maven child of root `blob-helper`; consuming persistence environments discover the annotated entity, while tests bootstrap the `blob-helper-jpa-test` persistence unit directly.
-- **Non-obvious logic:** Content identity is enforced by the database tuple `hash_algorithm + content_hash + size_bytes`. UUID generation and optimistic locking use standard Jakarta Persistence annotations. Production code has no Hibernate or Spring imports; Hibernate and H2 are test-only dependencies.
+- **Non-obvious logic:** Content identity is enforced by the database tuple `hash_algorithm + content_hash + size_bytes`. UUID generation and optimistic locking use standard Jakarta Persistence annotations. Repository lookups return `Optional` for missing rows, and locked lookups require the caller's active transaction to retain the database row lock. Production code has no Hibernate or Spring imports; Hibernate and H2 are test-only dependencies.
 
 ### Documentation and Planning
 
 - **Entry point:** `docs/taskindex.md`
 - **Key files:** `docs/SPECIFICATION.md`, `docs/adrs/*.md`, `docs/implementation-plans/*.md`, `docs/epics/**/tasks/*.md`.
 - **Initialization:** Manual planning docs drive future implementation tasks.
-- **Non-obvious logic:** `docs/taskindex.md` is the status board. Epic 1 is complete and Task 2.1 is the first completed Epic 2 task.
+- **Non-obvious logic:** `docs/taskindex.md` is the status board. Epic 1 is complete and Tasks 2.1 and 2.2 are the completed Epic 2 tasks.
 
 ### CI
 

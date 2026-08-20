@@ -36,7 +36,7 @@ Current implementation state: root Maven reactor with `blob-helper-core` and `bl
 | Module/Package | Purpose |
 |---|---|
 | `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
-| `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, reference counts, timestamps, optimistic-lock state, and transaction-scoped repository lookups/locks. |
+| `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, reference counts, timestamps, optimistic-lock state, transaction-scoped repository lookups/locks, and lock-aware reference mutation; uses provider-neutral exceptions from `blob-helper-core`. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit BOM, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -74,6 +74,7 @@ Application deletes logical asset
 |---|---|
 | Java 21 | Project language/runtime target. |
 | Maven | Build and module orchestration. |
+| `blob-helper-core` | Reactor dependency that supplies provider-neutral content-not-found and reference-count-underflow exceptions to `blob-helper-jpa`. |
 | JUnit Jupiter | Unit testing. |
 | Maven Enforcer Plugin | Rejects Spring, JPA, AWS SDK, and Azure SDK dependencies from `blob-helper-core`, including transitive dependencies. |
 | Jakarta Persistence 3.2 | Portable entity mapping API used by `blob-helper-jpa`. |

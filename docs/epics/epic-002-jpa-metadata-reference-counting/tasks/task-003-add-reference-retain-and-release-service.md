@@ -1,6 +1,6 @@
 # Task 2.3: Add Reference Retain and Release Service
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-002](../../../implementation-plans/PLAN-002-jpa-metadata-and-reference-counting.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -15,13 +15,13 @@ Implement safe `ref_count` increment and decrement behavior.
 
 ## Steps
 
-- [ ] Add `retain(UUID assetContentId)`.
-- [ ] Add `release(UUID assetContentId)` with underflow protection.
-- [ ] Add tests for increment, decrement, and underflow failure.
-- [ ] Run `./mvnw -pl blob-helper-jpa -Dtest=ReferenceCountServiceTest test`.
+- [x] Add `retain(UUID assetContentId)`.
+- [x] Add `release(UUID assetContentId)` with underflow protection.
+- [x] Add tests for increment, decrement, and underflow failure.
+- [x] Run focused `ReferenceCountServiceTest` verification with the reactor dependency included.
 
 ## Acceptance
 
-- [ ] Retain increments exactly once.
-- [ ] Release decrements exactly once.
-- [ ] `ref_count` never goes below zero.
+- [x] Retain increments exactly once.
+- [x] Release decrements exactly once.
+- [x] `ref_count` never goes below zero.

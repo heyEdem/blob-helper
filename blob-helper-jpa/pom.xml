@@ -16,6 +16,11 @@
 
     <dependencies>
         <dependency>
+            <groupId>com.edem</groupId>
+            <artifactId>blob-helper-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>
             <version>3.2.0</version>

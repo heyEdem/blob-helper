@@ -156,6 +156,14 @@ public class AssetContent {
         return refCount;
     }
 
+    void incrementRefCount() {
+        refCount++;
+    }
+
+    void decrementRefCount() {
+        refCount--;
+    }
+
     public Instant getCreatedAt() {
         return createdAt;
     }

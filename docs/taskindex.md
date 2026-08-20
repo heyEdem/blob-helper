@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-20
-**Completed:** 9/30 (30%)
+**Completed:** 10/30 (33%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -11,12 +11,12 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | Epic | Title | Progress | Status |
 |---|---|---:|---|
 | 1 | Core library | 5/5 | Complete |
-| 2 | JPA metadata and reference counting | 4/6 | In Progress |
+| 2 | JPA metadata and reference counting | 5/6 | In Progress |
 | 3 | Spring Boot starter and service API | 0/5 | Not Started |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **8/30** | **In Progress** |
+| **Total** | | **10/30** | **In Progress** |
 
 ## Source Map
 
@@ -55,7 +55,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [x] 2.2 [Add repository identity lookups and locks](epics/epic-002-jpa-metadata-reference-counting/tasks/task-002-add-repository-identity-lookups-and-locks.md)
 - [x] 2.3 [Add reference retain and release service](epics/epic-002-jpa-metadata-reference-counting/tasks/task-003-add-reference-retain-and-release-service.md)
 - [x] 2.4 [Add final-reference delete orchestration](epics/epic-002-jpa-metadata-reference-counting/tasks/task-004-add-final-reference-delete-orchestration.md)
-- [ ] 2.5 [Add duplicate-key retry behavior](epics/epic-002-jpa-metadata-reference-counting/tasks/task-005-add-duplicate-key-retry-behavior.md)
+- [x] 2.5 [Add duplicate-key retry behavior](epics/epic-002-jpa-metadata-reference-counting/tasks/task-005-add-duplicate-key-retry-behavior.md)
 - [ ] 2.6 [Add concurrent duplicate upload integration test](epics/epic-002-jpa-metadata-reference-counting/tasks/task-006-add-concurrent-duplicate-upload-integration-test.md)
 
 ## Epic 3 — Spring Boot Starter and Service API
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-20 | Completed task 2.5 with create-or-retain duplicate-key retry, locked winner reload, exact reference increment, and coordinated JPA race coverage. |
 | 2026-08-20 | Completed task 2.4 with final-reference physical delete delegation, non-final release protection, and idempotent storage-delete coverage. |
 | 2026-08-20 | Completed task 2.3 with lock-aware retain/release operations, core exception handling, and underflow tests. |
 | 2026-08-20 | Completed task 2.2 with transaction-scoped identity lookup and pessimistic lock repository operations plus duplicate identity tests. |

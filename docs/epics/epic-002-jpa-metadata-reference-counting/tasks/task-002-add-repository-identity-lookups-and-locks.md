@@ -1,6 +1,6 @@
 # Task 2.2: Add Repository Identity Lookups and Locks
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-002](../../../implementation-plans/PLAN-002-jpa-metadata-and-reference-counting.md)  
 **ADRs:** [ADR-001](../../../adrs/ADR-001-content-identity-and-core-boundaries.md), [ADR-002](../../../adrs/ADR-002-deduplicated-upload-reference-counting.md)
 
@@ -15,13 +15,13 @@ Add repository operations for identity lookup and locked reference updates.
 
 ## Steps
 
-- [ ] Add lookup by `hashAlgorithm`, `contentHash`, and `sizeBytes`.
-- [ ] Add pessimistic locked lookup by id.
-- [ ] Add test for unique content identity enforcement.
-- [ ] Run `./mvnw -pl blob-helper-jpa -Dtest=AssetContentRepositoryTest test`.
+- [x] Add lookup by `hashAlgorithm`, `contentHash`, and `sizeBytes`.
+- [x] Add pessimistic locked lookup by id.
+- [x] Add test for unique content identity enforcement.
+- [x] Run `./mvnw -pl blob-helper-jpa -Dtest=AssetContentRepositoryTest test`.
 
 ## Acceptance
 
-- [ ] Duplicate identity insert fails.
-- [ ] Locked lookup can be used by retain/release services.
-- [ ] Repository does not know about logical application assets.
+- [x] Duplicate identity insert fails.
+- [x] Locked lookup can be used by retain/release services.
+- [x] Repository does not know about logical application assets.

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-20 — Add AssetContent repository lookups and locks
+
+- Added an EntityManager-backed repository for complete content identity lookup and pessimistic write-locked id lookup.
+- Added Hibernate/H2 tests for lookup behavior, missing rows, lock mode, constructor validation, and duplicate identity rejection.
+- Modules affected: `blob-helper-jpa` and Epic 2 planning/status documentation.
+
 ## 2026-08-18 — Add global PR writer workflow
 
 - Added the reusable `pr-writer` skill for Claude and Codex based on the KADO-65 pull request style.

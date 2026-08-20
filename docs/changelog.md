@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-20 — Add reference retain and release service
+
+- Added lock-aware `ReferenceCountService` retain and release operations with missing-content and underflow protection.
+- Added JPA/Hibernate tests for exactly-once increment/decrement behavior and zero-count release rejection.
+- Modules affected: `blob-helper-jpa`, `blob-helper-core` dependency boundary, and Epic 2 planning/status documentation.
+
 ## 2026-08-20 — Add AssetContent repository lookups and locks
 
 - Added an EntityManager-backed repository for complete content identity lookup and pessimistic write-locked id lookup.

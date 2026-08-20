@@ -28,6 +28,7 @@
 - Dependency boundaries: reusable modules pair classpath-level package scanning with Maven Enforcer rules so both loaded classes and direct/transitive artifact coordinates are guarded.
 - JPA entities: use field access, a protected no-argument constructor, explicit snake_case column names, constructor validation for required metadata, portable lifecycle callbacks for timestamps, and standard `@Version` optimistic locking.
 - JPA repositories: wrap a caller-owned `EntityManager`, return `Optional` for lookup methods, and apply `LockModeType.PESSIMISTIC_WRITE` for mutation workflows that must hold a row lock through the caller's transaction.
+- JPA create-or-retain mutation: flush a new identity insert inside the operation, classify SQL state `23505` as a duplicate-key race, restart the failed resource-local transaction, then reload the identity row with a pessimistic lock and increment exactly once; storage adapters remain outside this database boundary.
 
 ## Testing Conventions
 

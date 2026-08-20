@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-20 — Add duplicate-key retry behavior
+
+- Added `AssetContentMutationService.createOrRetain` with explicit insert flushing, duplicate-key transaction retry, locked winner reload, and exactly-once reference incrementing.
+- Added coordinated Hibernate/H2 coverage for new content, existing duplicates, and concurrent insert races without storage collaborators.
+- Modules affected: `blob-helper-jpa`, Epic 2 planning/status documentation, and the living implementation indexes.
+
 ## 2026-08-20 — Add final-reference delete orchestration
 
 - Added `BlobStorage` collaboration to `ReferenceCountService` and delete delegation only when a release reaches zero references.

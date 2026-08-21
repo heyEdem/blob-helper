@@ -2,7 +2,7 @@
 
 ## Entry Points
 
-- `pom.xml`: parent Maven reactor. Declares `blob-helper-core` and `blob-helper-jpa` as current modules.
+- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, and `blob-helper-spring-boot-starter` as current modules and manages JUnit/Spring Boot dependency BOMs.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-jpa/pom.xml`: persistence module build file. Depends on `blob-helper-core`, exposes Jakarta Persistence, and uses Hibernate/H2 in test scope.
 - `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
@@ -13,6 +13,9 @@
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentRepositoryTest.java`: verifies complete identity lookups, pessimistic write lock acquisition, missing-row behavior, constructor validation, and duplicate identity rejection.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentMutationServiceTest.java`: verifies new-row creation, ordinary duplicate retention, and a coordinated concurrent insert race that reloads the winner and increments its count once.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/ConcurrentUploadIntegrationTest.java`: verifies two parallel create-or-retain workers converge on one identity row and the final reference count equals the worker count.
+- `blob-helper-spring-boot-starter/pom.xml`: starter module build file with Spring Boot auto-configuration and configuration-processor dependencies.
+- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperProperties.java`: binds storage, deduplication, and cleanup settings under the `blob-helper` prefix, including upload-size parsing and reconciliation defaults.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperPropertiesTest.java`: verifies relaxed Spring Boot binding for configured values and the disabled-by-default reconciliation setting.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/package-info.java`: package marker for provider-neutral core APIs.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHasher.java`: stream-based content hashing contract.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHash.java`: content identity value carrying algorithm, hash, and byte size.
@@ -36,7 +39,7 @@
 ### Root Reactor
 
 - **Entry point:** `pom.xml`
-- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
+- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Spring Boot 3.5.10 BOM, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
 - **Initialization:** Maven builds modules listed under `<modules>`.
 - **Non-obvious logic:** Root no longer inherits `spring-boot-starter-parent`; it is a plain Maven parent POM.
 
@@ -53,6 +56,13 @@
 - **Key classes/functions:** `AssetContent` maps `blob_asset_content`; its public constructor validates required physical metadata, initializes new content with `refCount = 1`, and JPA lifecycle callbacks maintain creation/update timestamps. `AssetContentRepository.findByIdentity` queries the complete identity tuple, while `findByIdForUpdate` uses `LockModeType.PESSIMISTIC_WRITE`; `AssetContentMutationService.createOrRetain` returns an existing locked row or flushes a new insert and retries SQL state `23505` failures by restarting the failed resource-local transaction, reloading the identity row, and incrementing once. `ReferenceCountService.retain` and `release` mutate the locked managed entity exactly once, reject missing or underflowed rows, and invoke the injected idempotent `BlobStorage.delete` collaborator only for the final reference. `ConcurrentUploadIntegrationTest` runs the create-or-retain path from separate transactions and verifies one row with one reference per worker. Production code has no Hibernate or Spring imports; Hibernate and H2 are test-only dependencies.
 - **Initialization:** Built as a Maven child of root `blob-helper`; consuming persistence environments discover the annotated entity, while tests bootstrap the `blob-helper-jpa-test` persistence unit directly.
 - **Non-obvious logic:** Content identity is enforced by the database tuple `hash_algorithm + content_hash + size_bytes`. UUID generation and optimistic locking use standard Jakarta Persistence annotations. Repository lookups return `Optional` for missing rows, and locked lookups require the caller's active transaction to retain the database row lock. Reference-count mutation is package-private on the entity and exposed through the service, which throws core `ContentNotFoundException` and `ReferenceCountUnderflowException` before invalid state is persisted. Production code has no Hibernate or Spring imports; Hibernate and H2 are test-only dependencies.
+
+### blob-helper-spring-boot-starter
+
+- **Entry point:** `blob-helper-spring-boot-starter/pom.xml`
+- **Key classes/functions:** `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, deduplication hash and upload validation settings, and cleanup deletion/reconciliation settings. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
+- **Initialization:** Built as a Maven child of root `blob-helper`; Spring Boot auto-configuration support is available for later provider and service tasks, while this task only contributes properties binding.
+- **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, and the starter has no REST controllers or provider SDK dependencies.
 
 ### Documentation and Planning
 
@@ -75,12 +85,16 @@
 | `spring.application.name` | `blob-helper` | Present in root `src/main/resources/application.yaml`. |
 | `java.version` | `21` | Maven compiler release target. |
 | `junit.version` | `5.13.4` | JUnit BOM version. |
+| `spring-boot.version` | `3.5.10` | Spring Boot BOM version used by the starter module. |
 
-Planned future configuration from the specification:
+Implemented starter properties:
 
-| Property | Purpose |
-|---|---|
-| `blob-helper.storage.provider` | Selects `s3`, `azure`, `local`, or custom provider. |
-| `blob-helper.storage.key-prefix` | Prefix for generated object keys. |
-| `blob-helper.deduplication.hash-algorithm` | Initial target is `SHA-256`. |
-| `blob-helper.cleanup.reconciliation-enabled` | Disabled by default; controls reconciliation scheduling. |
+| Property | Default | Purpose |
+|---|---|---|
+| `blob-helper.storage.provider` | None | Selects `s3`, `azure`, `local`, or custom provider. |
+| `blob-helper.storage.key-prefix` | Empty | Prefix for generated object keys. |
+| `blob-helper.deduplication.hash-algorithm` | `SHA-256` | Content identity hash algorithm. |
+| `blob-helper.deduplication.max-upload-size` | `25MB` | Maximum upload size. |
+| `blob-helper.deduplication.strict-content-type-validation` | `false` | Rejects unsupported content types when enabled. |
+| `blob-helper.cleanup.delete-physical-on-zero-references` | `true` | Controls physical deletion after the final reference is released. |
+| `blob-helper.cleanup.reconciliation-enabled` | `false` | Controls reconciliation scheduling; disabled by default. |

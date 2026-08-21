@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-21
-**Completed:** 11/30 (37%)
+**Completed:** 12/30 (40%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -12,11 +12,11 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 |---|---|---:|---|
 | 1 | Core library | 5/5 | Complete |
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
-| 3 | Spring Boot starter and service API | 0/5 | Not Started |
+| 3 | Spring Boot starter and service API | 1/5 | In Progress |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **11/30** | **In Progress** |
+| **Total** | | **12/30** | **In Progress** |
 
 ## Source Map
 
@@ -60,7 +60,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 ## Epic 3 — Spring Boot Starter and Service API
 
-- [ ] 3.1 [Add starter module and properties](epics/epic-003-spring-boot-starter-service-api/tasks/task-001-add-starter-module-and-properties.md)
+- [x] 3.1 [Add starter module and properties](epics/epic-003-spring-boot-starter-service-api/tasks/task-001-add-starter-module-and-properties.md)
 - [ ] 3.2 [Add BlobDeduplicationService contract](epics/epic-003-spring-boot-starter-service-api/tasks/task-002-add-blob-deduplication-service-contract.md)
 - [ ] 3.3 [Implement new-content upload orchestration](epics/epic-003-spring-boot-starter-service-api/tasks/task-003-implement-new-content-upload-orchestration.md)
 - [ ] 3.4 [Implement duplicate-content upload orchestration](epics/epic-003-spring-boot-starter-service-api/tasks/task-004-implement-duplicate-content-upload-orchestration.md)
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-21 | Completed task 3.1 with the Spring Boot starter module, `blob-helper.*` properties binding, upload-size parsing, and disabled-by-default reconciliation. |
 | 2026-08-21 | Completed task 2.6 with a coordinated two-transaction duplicate upload integration test that verifies one identity row and one retained reference per worker. |
 | 2026-08-20 | Completed task 2.5 with create-or-retain duplicate-key retry, locked winner reload, exact reference increment, and coordinated JPA race coverage. |
 | 2026-08-20 | Completed task 2.4 with final-reference physical delete delegation, non-final release protection, and idempotent storage-delete coverage. |

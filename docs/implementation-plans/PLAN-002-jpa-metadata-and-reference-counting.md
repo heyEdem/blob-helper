@@ -39,7 +39,7 @@ Deduplication depends on a durable `AssetContent` record with a unique content i
 - [ ] **ReferenceCountServiceTest.releaseDoesNotDeleteWhenReferencesRemain:** Given `ref_count = 2`, when released, then `ref_count = 1` and storage delete is not called.
 - [ ] **ReferenceCountServiceTest.releaseFinalReferenceDeletesPhysicalObject:** Given `ref_count = 1`, when released, then storage delete is called once.
 - [ ] **ReferenceCountServiceTest.releaseUnderflowFails:** Given `ref_count = 0`, when released, then a reference count underflow exception is thrown.
-- [ ] **ConcurrentUploadIntegrationTest.concurrentDuplicatesCreateOneRow:** Given parallel uploads of identical bytes, when all complete, then one row exists and `ref_count` equals the upload count.
+- [x] **ConcurrentUploadIntegrationTest.concurrentDuplicatesCreateOneRow:** Given parallel uploads of identical bytes, when all complete, then one row exists and `ref_count` equals the upload count.
 
 ## Out of Scope (from Q5)
 

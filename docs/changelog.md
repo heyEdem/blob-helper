@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-21 — Add concurrent duplicate upload integration test
+
+- Added `ConcurrentUploadIntegrationTest` with separate JPA transactions coordinated to race on the same content identity.
+- Verified concurrent duplicate uploads converge on one `AssetContent` row with one retained reference per worker.
+- Modules affected: `blob-helper-jpa` tests and Epic 2 planning/status documentation.
+
 ## 2026-08-20 — Add duplicate-key retry behavior
 
 - Added `AssetContentMutationService.createOrRetain` with explicit insert flushing, duplicate-key transaction retry, locked winner reload, and exactly-once reference incrementing.

@@ -1,6 +1,6 @@
 # Task 2.6: Add Concurrent Duplicate Upload Integration Test
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-002](../../../implementation-plans/PLAN-002-jpa-metadata-and-reference-counting.md)  
 **ADR:** [ADR-002](../../../adrs/ADR-002-deduplicated-upload-reference-counting.md)
 
@@ -14,14 +14,14 @@ Prove parallel duplicate uploads converge on one content row.
 
 ## Steps
 
-- [ ] Start parallel workers using identical content identity.
-- [ ] Execute create-or-retain concurrently.
-- [ ] Assert one `AssetContent` row exists.
-- [ ] Assert `ref_count` equals the worker count.
-- [ ] Run `./mvnw -pl blob-helper-jpa -Dtest=ConcurrentUploadIntegrationTest test`.
+- [x] Start parallel workers using identical content identity.
+- [x] Execute create-or-retain concurrently.
+- [x] Assert one `AssetContent` row exists.
+- [x] Assert `ref_count` equals the worker count.
+- [x] Run `./mvnw -pl blob-helper-jpa -Dtest=ConcurrentUploadIntegrationTest test`.
 
 ## Acceptance
 
-- [ ] Concurrent duplicate uploads create one row.
-- [ ] Final reference count is correct.
-- [ ] The test fails if the unique constraint or retry path is removed.
+- [x] Concurrent duplicate uploads create one row.
+- [x] Final reference count is correct.
+- [x] The test fails if the unique constraint or retry path is removed.

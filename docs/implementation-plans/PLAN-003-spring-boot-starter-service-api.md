@@ -1,7 +1,7 @@
 # PLAN-003: Spring Boot Starter Service API
 
 **Date:** 2026-07-04  
-**Status:** Todo  
+**Status:** In Progress
 **Implements:** ADR-002, ADR-004  
 **Estimated complexity:** Large
 

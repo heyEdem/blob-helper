@@ -15,7 +15,10 @@
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/ConcurrentUploadIntegrationTest.java`: verifies two parallel create-or-retain workers converge on one identity row and the final reference count equals the worker count.
 - `blob-helper-spring-boot-starter/pom.xml`: starter module build file with Spring Boot auto-configuration and configuration-processor dependencies.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperProperties.java`: binds storage, deduplication, and cleanup settings under the `blob-helper` prefix, including upload-size parsing and reconciliation defaults.
+- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/service/BlobDeduplicationService.java`: provider-neutral application-facing contract for store, retain, release, and get operations.
+- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/service/DefaultBlobDeduplicationService.java`: default facade that delegates reference mutation and content retrieval to JPA/storage collaborators; upload orchestration is added by later Epic 3 tasks.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperPropertiesTest.java`: verifies relaxed Spring Boot binding for configured values and the disabled-by-default reconciliation setting.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/BlobDeduplicationServiceContractTest.java`: verifies the service method signatures, provider-neutral return types, and missing-content exception behavior.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/package-info.java`: package marker for provider-neutral core APIs.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHasher.java`: stream-based content hashing contract.
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/hash/ContentHash.java`: content identity value carrying algorithm, hash, and byte size.
@@ -60,9 +63,9 @@
 ### blob-helper-spring-boot-starter
 
 - **Entry point:** `blob-helper-spring-boot-starter/pom.xml`
-- **Key classes/functions:** `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, deduplication hash and upload validation settings, and cleanup deletion/reconciliation settings. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
-- **Initialization:** Built as a Maven child of root `blob-helper`; Spring Boot auto-configuration support is available for later provider and service tasks, while this task only contributes properties binding.
-- **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, and the starter has no REST controllers or provider SDK dependencies.
+- **Key classes/functions:** `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, deduplication hash and upload validation settings, and cleanup deletion/reconciliation settings. `BlobDeduplicationService` exposes storage-neutral `store`, `retain`, `release`, and `get` operations using core models. `DefaultBlobDeduplicationService` delegates retain/release and locked metadata retrieval to `blob-helper-jpa` and `BlobStorage`, converting missing metadata to `ContentNotFoundException`. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
+- **Initialization:** Built as a Maven child of root `blob-helper`; it depends on the provider-neutral core and JPA metadata modules while Spring Boot auto-configuration and upload orchestration remain later tasks.
+- **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, service callers retain transaction ownership, and the starter has no REST controllers or provider SDK dependencies. The `store` method remains the seam for the upcoming upload orchestration tasks.
 
 ### Documentation and Planning
 

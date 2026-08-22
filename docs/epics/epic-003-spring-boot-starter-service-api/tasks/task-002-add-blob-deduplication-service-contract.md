@@ -1,6 +1,6 @@
 # Task 3.2: Add BlobDeduplicationService Contract
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-003](../../../implementation-plans/PLAN-003-spring-boot-starter-service-api.md)  
 **ADRs:** [ADR-002](../../../adrs/ADR-002-deduplicated-upload-reference-counting.md), [ADR-004](../../../adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md)
 
@@ -16,13 +16,13 @@ Define the app-facing service API for store, retain, release, and get.
 
 ## Steps
 
-- [ ] Define `store(StoreBlobCommand)`, `retain(UUID)`, `release(UUID)`, and `get(UUID)`.
-- [ ] Return provider-neutral `BlobReference` and `BlobResource`.
-- [ ] Add a contract test for API shape and missing-content behavior.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobDeduplicationServiceContractTest test`.
+- [x] Define `store(StoreBlobCommand)`, `retain(UUID)`, `release(UUID)`, and `get(UUID)`.
+- [x] Return provider-neutral `BlobReference` and `BlobResource`.
+- [x] Add a contract test for API shape and missing-content behavior.
+- [x] Run the contract test through the reactor with `./mvnw -pl blob-helper-spring-boot-starter -am -Dtest=BlobDeduplicationServiceContractTest -Dsurefire.failIfNoSpecifiedTests=false test`.
 
 ## Acceptance
 
-- [ ] API exposes no AWS or Azure types.
-- [ ] Service does not create logical application assets.
-- [ ] Service can be used by application-owned controllers.
+- [x] API exposes no AWS or Azure types.
+- [x] Service does not create logical application assets.
+- [x] Service can be used by application-owned controllers.

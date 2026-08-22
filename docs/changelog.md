@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-22 — Add BlobDeduplicationService contract
+
+- Added the provider-neutral `BlobDeduplicationService` API and default retain/release/get facade.
+- Added missing-content contract coverage and starter dependencies on the core and JPA modules.
+- Modules affected: `blob-helper-spring-boot-starter` and Epic 3 planning/status documentation.
+
+## 2026-08-21 — Add Spring Boot starter properties
+
+- Added the `blob-helper-spring-boot-starter` Maven module and `BlobHelperProperties` binding for storage, deduplication, and cleanup configuration.
+- Added Spring Boot binding coverage for provider selection, upload-size parsing, content-type validation, physical deletion, and disabled-by-default reconciliation.
+- Modules affected: root reactor, `blob-helper-spring-boot-starter`, and Epic 3 planning/status documentation.
+
 ## 2026-08-21 — Add concurrent duplicate upload integration test
 
 - Added `ConcurrentUploadIntegrationTest` with separate JPA transactions coordinated to race on the same content identity.

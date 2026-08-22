@@ -1,6 +1,6 @@
 # Task 3.1: Add Starter Module and Properties
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-003](../../../implementation-plans/PLAN-003-spring-boot-starter-service-api.md)  
 **ADR:** [ADR-004](../../../adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md)
 
@@ -17,13 +17,13 @@ Create the Spring Boot starter module and bind `blob-helper.*` configuration.
 
 ## Steps
 
-- [ ] Add starter module to the reactor.
-- [ ] Add properties for `storage`, `deduplication`, and `cleanup`.
-- [ ] Bind provider, key prefix, max upload size, strict content type validation, delete-on-zero-references, and reconciliation settings.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter test`.
+- [x] Add starter module to the reactor.
+- [x] Add properties for `storage`, `deduplication`, and `cleanup`.
+- [x] Bind provider, key prefix, max upload size, strict content type validation, delete-on-zero-references, and reconciliation settings.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter test`.
 
 ## Acceptance
 
-- [ ] Properties bind from `blob-helper.*`.
-- [ ] Reconciliation is disabled by default.
-- [ ] No REST controllers are added.
+- [x] Properties bind from `blob-helper.*`.
+- [x] Reconciliation is disabled by default.
+- [x] No REST controllers are added.

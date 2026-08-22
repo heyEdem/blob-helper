@@ -4,7 +4,7 @@
 
 Maven multi-module Java 21 library project for a Spring Boot-compatible blob deduplication helper.
 
-Current implementation state: root Maven reactor with `blob-helper-core` and `blob-helper-jpa` modules. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
+Current implementation state: root Maven reactor with `blob-helper-core`, `blob-helper-jpa`, and `blob-helper-spring-boot-starter` modules. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
 
 ## Directory Map
 
@@ -14,6 +14,9 @@ Current implementation state: root Maven reactor with `blob-helper-core` and `bl
 │   ├── pom.xml
 │   └── src/
 ├── blob-helper-jpa/
+│   ├── pom.xml
+│   └── src/
+├── blob-helper-spring-boot-starter/
 │   ├── pom.xml
 │   └── src/
 ├── docs/
@@ -37,7 +40,8 @@ Current implementation state: root Maven reactor with `blob-helper-core` and `bl
 |---|---|
 | `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
 | `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, timestamps, optimistic-lock state, transaction-scoped repository lookups/locks, create-or-retain duplicate-key retry, lock-aware reference mutation, and final-reference delete delegation; uses provider-neutral contracts and exceptions from `blob-helper-core`. |
-| root `pom.xml` | Maven reactor parent with Java 21, JUnit BOM, compiler plugin, and Surefire plugin management. |
+| `blob-helper-spring-boot-starter` | Spring Boot integration module. Owns `blob-helper.*` configuration binding, the provider-neutral `BlobDeduplicationService` facade, and starter dependencies; it contains no REST controllers or provider SDK implementations. |
+| root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
 | `docs/adrs` | Architecture decisions for content identity, upload/ref-counting, release/reconciliation, and pluggable storage. |
@@ -75,11 +79,12 @@ Application deletes logical asset
 | Java 21 | Project language/runtime target. |
 | Maven | Build and module orchestration. |
 | `blob-helper-core` | Reactor dependency that supplies provider-neutral content-not-found and reference-count-underflow exceptions to `blob-helper-jpa`. |
+| `blob-helper-jpa` | Reactor dependency used by the starter service facade for metadata lookups and reference-count mutation. |
 | JUnit Jupiter | Unit testing. |
 | Maven Enforcer Plugin | Rejects Spring, JPA, AWS SDK, and Azure SDK dependencies from `blob-helper-core`, including transitive dependencies. |
 | Jakarta Persistence 3.2 | Portable entity mapping API used by `blob-helper-jpa`. |
 | Hibernate ORM 7.4 | Test-scope JPA provider used to verify entity mappings. |
 | H2 2.4 | Test-scope in-memory database for JPA mapping tests. |
-| Spring Boot | Present in legacy root shell source; planned starter integration, but not currently configured as a reactor module dependency. |
+| Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` properties binding and configuration metadata generation. |
 | AWS SDK | Planned only for `blob-helper-storage-s3`; not currently present. |
 | Azure Blob SDK | Planned only for `blob-helper-storage-azure`; not currently present. |

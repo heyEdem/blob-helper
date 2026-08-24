@@ -1,12 +1,15 @@
 package com.edem.blobhelper.service;
 
 import com.edem.blobhelper.core.exception.ContentNotFoundException;
+import com.edem.blobhelper.core.hash.Sha256ContentHasher;
+import com.edem.blobhelper.core.key.HashObjectKeyStrategy;
 import com.edem.blobhelper.core.model.BlobReference;
 import com.edem.blobhelper.core.model.StoreBlobCommand;
 import com.edem.blobhelper.core.storage.BlobResource;
 import com.edem.blobhelper.core.storage.BlobStorage;
 import com.edem.blobhelper.core.storage.PutBlobRequest;
 import com.edem.blobhelper.core.storage.StoredBlob;
+import com.edem.blobhelper.jpa.AssetContentMutationService;
 import com.edem.blobhelper.jpa.AssetContentRepository;
 import com.edem.blobhelper.jpa.ReferenceCountService;
 import jakarta.persistence.EntityManager;
@@ -64,7 +67,10 @@ class BlobDeduplicationServiceContractTest {
             DefaultBlobDeduplicationService service = new DefaultBlobDeduplicationService(
                     new AssetContentRepository(entityManager),
                     new ReferenceCountService(new AssetContentRepository(entityManager), storage),
-                    storage
+                    new AssetContentMutationService(entityManager),
+                    storage,
+                    new Sha256ContentHasher(),
+                    new HashObjectKeyStrategy("")
             );
             UUID missingId = UUID.randomUUID();
 

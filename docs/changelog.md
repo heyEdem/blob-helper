@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-24 — Add new-content upload orchestration
+
+- Added buffered upload hashing, deterministic object-key generation, provider-neutral storage writes, and JPA metadata creation through `DefaultBlobDeduplicationService`.
+- Added Hibernate/H2 service coverage for one physical write, one metadata row with `ref_count = 1`, and a non-duplicate `BlobReference`.
+- Modules affected: `blob-helper-spring-boot-starter` and Epic 3 planning/status documentation.
+
 ## 2026-08-22 — Add BlobDeduplicationService contract
 
 - Added the provider-neutral `BlobDeduplicationService` API and default retain/release/get facade.

@@ -69,6 +69,36 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
 
         byte[] bytes = readAll(command.content());
         ContentHash contentHash = hash(bytes);
+        return repository.findByIdentity(
+                        contentHash.algorithm(),
+                        contentHash.hash(),
+                        contentHash.sizeBytes()
+                )
+                .map(this::retainDuplicate)
+                .orElseGet(() -> storeNewContent(command, contentHash, bytes));
+    }
+
+    private BlobReference retainDuplicate(AssetContent existing) {
+        referenceCountService.retain(existing.getId());
+        return new BlobReference(
+                existing.getId(),
+                new ContentHash(
+                        existing.getHashAlgorithm(),
+                        existing.getContentHash(),
+                        existing.getSizeBytes()
+                ),
+                existing.getContentType(),
+                existing.getStorageProvider(),
+                existing.getObjectKey(),
+                true
+        );
+    }
+
+    private BlobReference storeNewContent(
+            StoreBlobCommand command,
+            ContentHash contentHash,
+            byte[] bytes
+    ) {
         String objectKey = objectKeyStrategy.generateKey(contentHash);
         StoredBlob stored = storage.put(new PutBlobRequest(
                 objectKey,

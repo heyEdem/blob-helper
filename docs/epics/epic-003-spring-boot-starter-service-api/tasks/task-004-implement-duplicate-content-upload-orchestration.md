@@ -1,6 +1,6 @@
 # Task 3.4: Implement Duplicate-Content Upload Orchestration
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-003](../../../implementation-plans/PLAN-003-spring-boot-starter-service-api.md)  
 **ADR:** [ADR-002](../../../adrs/ADR-002-deduplicated-upload-reference-counting.md)
 
@@ -15,14 +15,14 @@ Reuse existing physical content for byte-identical uploads.
 
 ## Steps
 
-- [ ] Write `reusesDuplicateContent`.
-- [ ] Detect existing content by hash algorithm, hash, and size.
-- [ ] Increment `ref_count`.
-- [ ] Skip `BlobStorage.put`.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobDeduplicationServiceTest test`.
+- [x] Write `reusesDuplicateContent`.
+- [x] Detect existing content by hash algorithm, hash, and size.
+- [x] Increment `ref_count`.
+- [x] Skip `BlobStorage.put`.
+- [x] Run the starter test through the Maven reactor.
 
 ## Acceptance
 
-- [ ] Duplicate content does not write storage.
-- [ ] Duplicate content increments `ref_count` once.
-- [ ] Returned `BlobReference` has `duplicate = true`.
+- [x] Duplicate content does not write storage.
+- [x] Duplicate content increments `ref_count` once.
+- [x] Returned `BlobReference` has `duplicate = true`.

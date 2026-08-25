@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BlobDeduplicationServiceTest {
 
@@ -108,6 +109,38 @@ class BlobDeduplicationServiceTest {
         assertEquals(1L, persisted.getRefCount());
         assertEquals("text/plain", persisted.getContentType());
         assertEquals("txt", persisted.getOriginalExtension());
+    }
+
+    @Test
+    void reusesDuplicateContent() {
+        BlobReference original = service.store(new StoreBlobCommand(
+                new ByteArrayInputStream(CONTENT),
+                "report.txt",
+                "text/plain",
+                CONTENT.length,
+                Map.of("source", "first-upload")
+        ));
+
+        BlobReference duplicate = service.store(new StoreBlobCommand(
+                new ByteArrayInputStream(CONTENT),
+                "copy.txt",
+                "text/plain",
+                CONTENT.length,
+                Map.of("source", "duplicate-upload")
+        ));
+
+        assertTrue(duplicate.duplicate());
+        assertEquals(original.assetContentId(), duplicate.assetContentId());
+        assertEquals(original.contentHash(), duplicate.contentHash());
+        assertEquals(1, storage.putCount.get());
+
+        AssetContent persisted = entityManager.find(AssetContent.class, original.assetContentId());
+        assertEquals(2L, persisted.getRefCount());
+
+        Long rowCount = entityManager.createQuery(
+                        "select count(content) from AssetContent content", Long.class)
+                .getSingleResult();
+        assertEquals(1L, rowCount);
     }
 
     private static final class RecordingBlobStorage implements BlobStorage {

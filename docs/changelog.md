@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-25 — Add duplicate-content upload orchestration
+
+- Added pre-write content identity lookup and lock-aware reference retention for duplicate uploads.
+- Duplicate uploads now skip `BlobStorage.put`, reuse the existing physical object, and return `BlobReference.duplicate = true`.
+- Added service coverage for one physical write, one metadata row, and `ref_count` increasing from one to two.
+- Modules affected: `blob-helper-spring-boot-starter` and Epic 3 planning/status documentation.
+
 ## 2026-08-24 — Add new-content upload orchestration
 
 - Added buffered upload hashing, deterministic object-key generation, provider-neutral storage writes, and JPA metadata creation through `DefaultBlobDeduplicationService`.

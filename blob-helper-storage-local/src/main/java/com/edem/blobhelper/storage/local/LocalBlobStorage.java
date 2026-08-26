@@ -89,7 +89,13 @@ public class LocalBlobStorage implements BlobStorage {
 
     private Path resolve(String objectKey) {
         validateKey(objectKey);
-        return root().resolve(objectKey);
+        Path root = root();
+        Path resolved = root.resolve(objectKey).normalize();
+        if (resolved.equals(root) || !resolved.startsWith(root)) {
+            throw new BlobValidationException(
+                    "objectKey must resolve inside the storage root: " + objectKey);
+        }
+        return resolved;
     }
 
     private void validateKey(String objectKey) {

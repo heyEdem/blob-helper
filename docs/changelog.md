@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Add path traversal protection
+
+- `LocalBlobStorage` now normalizes every resolved key and rejects keys that escape or equal the storage root before any file IO, throwing core `BlobValidationException`.
+- Rejected patterns include `../` parent traversal, absolute keys such as `/etc/passwd`, and self-resolving keys like `nested/..`; valid nested keys (including redundant `.` segments) still resolve.
+- Added temporary-directory tests proving escapes never touch the filesystem outside the root and that pre-existing sibling files remain unchanged.
+- Modules affected: `blob-helper-storage-local` and Epic 4 planning/status documentation.
+
 ## 2026-08-26 — Implement local put/get/delete/exists
 
 - Added `LocalBlobStorage`, a filesystem `BlobStorage` adapter that streams uploads under the configured root directory, creates parent directories on demand, and overwrites existing objects.

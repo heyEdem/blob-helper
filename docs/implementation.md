@@ -2,7 +2,7 @@
 
 ## Entry Points
 
-- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, and `blob-helper-spring-boot-starter` as current modules and manages JUnit/Spring Boot dependency BOMs.
+- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, and `blob-helper-storage-local` as current modules and manages JUnit/Spring Boot dependency BOMs.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-jpa/pom.xml`: persistence module build file. Depends on `blob-helper-core`, exposes Jakarta Persistence, and uses Hibernate/H2 in test scope.
 - `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
@@ -38,6 +38,9 @@
 - `blob-helper-core/src/main/java/com/edem/blobhelper/core/exception`: unchecked, provider-neutral exception hierarchy for validation, hashing, storage, missing content, and reference-count underflow.
 - `blob-helper-core/src/test/java/com/edem/blobhelper/core/CoreModuleBoundaryTest.java`: scans the effective test classpath and fails when Spring, JPA, AWS SDK, or Azure SDK classes enter core.
 - `blob-helper-core/src/test/java/com/edem/blobhelper/core/CoreModuleSmokeTest.java`: verifies the core test package is wired.
+- `blob-helper-storage-local/pom.xml`: local storage adapter module build file. Depends only on `blob-helper-core` and JUnit Jupiter; no cloud SDKs.
+- `blob-helper-storage-local/src/main/java/com/edem/blobhelper/storage/local/LocalBlobStorageProperties.java`: local provider configuration with a configurable `rootDirectory` (defaults to `blob-helper-storage`) that rejects null assignment.
+- `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStoragePropertiesTest.java`: verifies the default root directory, custom root binding, and null rejection.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -70,6 +73,13 @@
 - **Key classes/functions:** `BlobHelperAutoConfiguration` registers `BlobHelperProperties` and a `BlobStorageProviderValidator` (`SmartInitializingSingleton`) that fails startup for unsupported provider names, missing provider beans, selected providers without a matching bean (bean-name convention `<provider>BlobStorage`), and ambiguous multi-provider contexts. `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, deduplication hash and upload validation settings, and cleanup deletion/reconciliation settings. `BlobDeduplicationService` exposes storage-neutral `store`, `retain`, `release`, and `get` operations using core models. `DefaultBlobDeduplicationService` buffers upload bytes, hashes them with `ContentHasher`, checks the complete identity tuple, retains existing rows through the lock-aware `ReferenceCountService`, and for new content generates a deterministic key through `ObjectKeyStrategy`, writes through `BlobStorage`, and persists `AssetContent` through `AssetContentMutationService`. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on the provider-neutral core and JPA metadata modules. The auto-configuration is registered through `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`; provider modules contribute their own conditional `BlobStorage` beans in later epics.
 - **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, service callers retain transaction ownership, and the starter has no REST controllers or provider SDK dependencies. Provider validation runs after all singletons instantiate so failures name every conflicting or missing bean; supported provider names are `local`, `s3`, and `azure`, while a single unselected custom provider is accepted. Upload streams are buffered once so hashing and storage can consume equivalent byte sequences; duplicate matches reuse the persisted object key and content ID.
+
+### blob-helper-storage-local
+
+- **Entry point:** `blob-helper-storage-local/pom.xml`
+- **Key classes/functions:** `LocalBlobStorageProperties` carries the local provider root directory; it defaults to `blob-helper-storage`, accepts any custom `Path`, and rejects null assignment.
+- **Initialization:** Built as a Maven child of root `blob-helper`; it depends only on the provider-neutral core module with no Spring or cloud SDK dependencies.
+- **Non-obvious logic:** The adapter intentionally contains only configuration so far; `LocalBlobStorage` put/get/delete/exists behavior and path traversal protection land in later Epic 4 tasks.
 
 ### Documentation and Planning
 

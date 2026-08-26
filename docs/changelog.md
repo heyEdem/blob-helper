@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Implement local put/get/delete/exists
+
+- Added `LocalBlobStorage`, a filesystem `BlobStorage` adapter that streams uploads under the configured root directory, creates parent directories on demand, and overwrites existing objects.
+- `get` returns an owner-managed `BlobResource` stream and throws core `ContentNotFoundException` for missing objects; `delete` is idempotent through `Files.deleteIfExists`; `exists` reflects filesystem state.
+- Added JUnit temporary-directory integration coverage for the round trip, idempotent missing-object delete, overwrite behavior, existence checks, and blank-key rejection.
+- Modules affected: `blob-helper-storage-local` and Epic 4 planning/status documentation.
+
 ## 2026-08-26 — Add local storage module
 
 - Added the `blob-helper-storage-local` Maven module to the reactor with a dependency on `blob-helper-core` and no cloud SDKs.

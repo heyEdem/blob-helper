@@ -41,6 +41,8 @@
 - `blob-helper-storage-local/pom.xml`: local storage adapter module build file. Depends only on `blob-helper-core` and JUnit Jupiter; no cloud SDKs.
 - `blob-helper-storage-local/src/main/java/com/edem/blobhelper/storage/local/LocalBlobStorageProperties.java`: local provider configuration with a configurable `rootDirectory` (defaults to `blob-helper-storage`) that rejects null assignment.
 - `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStoragePropertiesTest.java`: verifies the default root directory, custom root binding, and null rejection.
+- `blob-helper-storage-local/src/main/java/com/edem/blobhelper/storage/local/LocalBlobStorage.java`: filesystem `BlobStorage` adapter that resolves object keys under the configured absolute root, streams uploads with parent-directory creation and overwrite semantics, returns owner-managed `BlobResource` streams, throws core `ContentNotFoundException` for missing reads, deletes idempotently via `Files.deleteIfExists`, and reports existence from the filesystem.
+- `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStorageIntegrationTest.java`: JUnit temporary-directory coverage for the put/get/delete round trip with filesystem assertions, idempotent missing-object delete, pre-write existence checks, overwrite behavior, and blank-key rejection.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -77,9 +79,9 @@
 ### blob-helper-storage-local
 
 - **Entry point:** `blob-helper-storage-local/pom.xml`
-- **Key classes/functions:** `LocalBlobStorageProperties` carries the local provider root directory; it defaults to `blob-helper-storage`, accepts any custom `Path`, and rejects null assignment.
+- **Key classes/functions:** `LocalBlobStorageProperties` carries the local provider root directory; it defaults to `blob-helper-storage`, accepts any custom `Path`, and rejects null assignment. `LocalBlobStorage` implements the core `BlobStorage` SPI against that root: `put` streams the request content to `{root}/{objectKey}` (creating parent directories, replacing existing files) and returns a `StoredBlob` with provider `local` and the root as bucket; `get` returns a closeable `BlobResource` or throws core `ContentNotFoundException` when absent; `delete` is idempotent through `Files.deleteIfExists`; `exists` delegates to filesystem checks.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends only on the provider-neutral core module with no Spring or cloud SDK dependencies.
-- **Non-obvious logic:** The adapter intentionally contains only configuration so far; `LocalBlobStorage` put/get/delete/exists behavior and path traversal protection land in later Epic 4 tasks.
+- **Non-obvious logic:** Keys are resolved against an absolute normalized root, but full path traversal hardening is deferred to task 4.3. Storage failures translate to unchecked core `BlobStorageException`; missing reads use `ContentNotFoundException`. Content type and metadata are not persisted by the local adapter.
 
 ### Documentation and Planning
 

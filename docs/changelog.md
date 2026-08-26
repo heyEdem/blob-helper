@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-26 — Implement S3 BlobStorage adapter
+
+- Added streaming S3 put/get, idempotent delete, and head-based exists behavior with bucket and object metadata mapping.
+- Mapped S3 404 responses to core not-found semantics and other provider failures to `BlobStorageException`; added credential-free contract tests because no external S3-compatible target is configured in the repository.
+- Modules affected: `blob-helper-storage-s3` and Epic 5 planning/status documentation.
+
 ## 2026-08-26 — Add S3 storage module
 
 - Added `blob-helper-storage-s3` to the Maven reactor with a module-local AWS SDK for Java 2.x BOM and S3 dependency.

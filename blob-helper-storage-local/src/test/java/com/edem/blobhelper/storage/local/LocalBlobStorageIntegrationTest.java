@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
@@ -105,6 +106,64 @@ class LocalBlobStorageIntegrationTest {
         assertThrows(BlobValidationException.class, () -> storage.get(" "));
         assertThrows(BlobValidationException.class, () -> storage.delete(null));
         assertThrows(BlobValidationException.class, () -> storage.exists(" "));
+    }
+
+    @Test
+    void rejectsParentDirectoryTraversal() throws IOException {
+        properties.setRootDirectory(tempRoot);
+        LocalBlobStorage storage = new LocalBlobStorage(properties);
+        Path outside = Files.createFile(
+                tempRoot.getParent().resolve("outside-" + UUID.randomUUID() + ".txt"));
+        byte[] outsideBytes = Files.readAllBytes(outside);
+
+        assertThrows(BlobValidationException.class,
+                () -> storage.put(request("../escaped.bin", "escape".getBytes(StandardCharsets.UTF_8))));
+        assertThrows(BlobValidationException.class, () -> storage.get("../escaped.bin"));
+        assertThrows(BlobValidationException.class, () -> storage.delete("../nested/../../escaped.bin"));
+        assertThrows(BlobValidationException.class, () -> storage.exists(".."));
+
+        assertFalse(Files.exists(tempRoot.resolve("escaped.bin")));
+        assertFalse(Files.exists(outside.getParent().resolve("escaped.bin")));
+        assertArrayEquals(outsideBytes, Files.readAllBytes(outside));
+    }
+
+    @Test
+    void rejectsAbsolutePathKeys() {
+        properties.setRootDirectory(tempRoot);
+        LocalBlobStorage storage = new LocalBlobStorage(properties);
+
+        assertThrows(BlobValidationException.class,
+                () -> storage.put(request("/etc/passwd", "nope".getBytes(StandardCharsets.UTF_8))));
+        assertThrows(BlobValidationException.class, () -> storage.get("/etc/passwd"));
+        assertThrows(BlobValidationException.class, () -> storage.delete("/etc/passwd"));
+        assertThrows(BlobValidationException.class, () -> storage.exists("/etc/passwd"));
+
+        assertFalse(Files.exists(tempRoot.resolve("etc")));
+    }
+
+    @Test
+    void rejectsSelfResolvingKeys() throws IOException {
+        properties.setRootDirectory(tempRoot);
+        LocalBlobStorage storage = new LocalBlobStorage(properties);
+
+        assertThrows(BlobValidationException.class, () -> storage.put(
+                request("nested/..", "self".getBytes(StandardCharsets.UTF_8))));
+        assertThrows(BlobValidationException.class, () -> storage.get("nested/.."));
+        assertTrue(Files.isDirectory(tempRoot));
+    }
+
+    @Test
+    void validNestedKeysStillWork() throws IOException {
+        properties.setRootDirectory(tempRoot);
+        LocalBlobStorage storage = new LocalBlobStorage(properties);
+        byte[] payload = "nested".getBytes(StandardCharsets.UTF_8);
+
+        storage.put(request("deep/nested/key/file.bin", payload));
+
+        assertTrue(storage.exists("deep/nested/key/./file.bin"));
+        try (BlobResource resource = storage.get("deep/nested/key/./file.bin")) {
+            assertArrayEquals(payload, readAll(resource.content()));
+        }
     }
 
     private PutBlobRequest request(String objectKey, byte[] payload) {

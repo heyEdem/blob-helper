@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Add provider auto-configuration validation
+
+- Added `BlobHelperAutoConfiguration` registered through Spring Boot `AutoConfiguration.imports`, enabling `BlobHelperProperties` and a startup provider validator.
+- Startup now fails clearly for unsupported provider names, missing provider beans, selected providers without a matching bean (`<provider>BlobStorage` naming convention), and ambiguous multi-provider contexts.
+- Added `ApplicationContextRunner` coverage for provider selection and every failure mode; added test-scope `spring-boot-test` and AssertJ to the starter module.
+- Epic 3 is complete (5/5). Modules affected: `blob-helper-spring-boot-starter` and planning/status documentation.
+
 ## 2026-08-25 — Add duplicate-content upload orchestration
 
 - Added pre-write content identity lookup and lock-aware reference retention for duplicate uploads.

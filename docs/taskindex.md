@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-26
-**Completed:** 17/30 (57%)
+**Completed:** 18/30 (60%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -13,10 +13,10 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 1 | Core library | 5/5 | Complete |
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
-| 4 | Local storage and integration tests | 1/4 | In Progress |
+| 4 | Local storage and integration tests | 2/4 | In Progress |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **17/30** | **In Progress** |
+| **Total** | | **18/30** | **In Progress** |
 
 ## Source Map
 
@@ -69,7 +69,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 ## Epic 4 — Local Storage and Integration Tests
 
 - [x] 4.1 [Add local storage module](epics/epic-004-local-storage-integration-tests/tasks/task-001-add-local-storage-module.md)
-- [ ] 4.2 [Implement local put get delete exists](epics/epic-004-local-storage-integration-tests/tasks/task-002-implement-local-put-get-delete-exists.md)
+- [x] 4.2 [Implement local put get delete exists](epics/epic-004-local-storage-integration-tests/tasks/task-002-implement-local-put-get-delete-exists.md)
 - [ ] 4.3 [Add path traversal protection](epics/epic-004-local-storage-integration-tests/tasks/task-003-add-path-traversal-protection.md)
 - [ ] 4.4 [Add local storage service integration tests](epics/epic-004-local-storage-integration-tests/tasks/task-004-add-local-storage-service-integration-tests.md)
 
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-26 | Completed task 4.2 with the filesystem `LocalBlobStorage` adapter implementing put/get/idempotent delete/exists against a configurable root directory. Epic 4 is in progress. |
 | 2026-08-26 | Completed task 4.1 with the `blob-helper-storage-local` reactor module, a `blob-helper-core` dependency with no cloud SDKs, and configurable root-directory properties. Epic 4 is in progress. |
 | 2026-08-26 | Completed task 3.5 with `BlobHelperAutoConfiguration`, registered via `AutoConfiguration.imports`, and a startup validator that fails clearly for unsupported, missing, and ambiguous providers. Epic 3 is complete. |
 | 2026-08-25 | Completed task 3.4 with pre-write content identity lookup, lock-aware duplicate reference retention, and no-op physical storage for duplicate uploads. |

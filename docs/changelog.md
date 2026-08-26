@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Add local storage service integration tests
+
+- Added `LocalStorageDeduplicationIntegrationTest` covering the real service, JPA metadata, and temporary-directory local storage flow.
+- Verified service readback, duplicate uploads retaining one physical file, and physical deletion after the final reference release.
+- Added `blob-helper-storage-local` as a test-scoped starter dependency; Epic 4 is complete (4/4).
+- Modules affected: `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, and Epic 4 planning/status documentation.
+
 ## 2026-08-26 — Add path traversal protection
 
 - `LocalBlobStorage` now normalizes every resolved key and rejects keys that escape or equal the storage root before any file IO, throwing core `BlobValidationException`.

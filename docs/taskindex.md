@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-26
-**Completed:** 20/30 (67%)
+**Completed:** 21/30 (70%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -14,9 +14,9 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 4/4 | Complete |
-| 5 | S3 and Azure storage adapters | 0/5 | Not Started |
+| 5 | S3 and Azure storage adapters | 1/5 | In Progress |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **20/30** | **In Progress** |
+| **Total** | | **21/30** | **In Progress** |
 
 ## Source Map
 
@@ -75,7 +75,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 ## Epic 5 — S3 and Azure Storage Adapters
 
-- [ ] 5.1 [Add S3 storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-001-add-s3-storage-module.md)
+- [x] 5.1 [Add S3 storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-001-add-s3-storage-module.md)
 - [ ] 5.2 [Implement S3 BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-002-implement-s3-blob-storage-adapter.md)
 - [ ] 5.3 [Add Azure storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-003-add-azure-storage-module.md)
 - [ ] 5.4 [Implement Azure BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-004-implement-azure-blob-storage-adapter.md)
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-26 | Completed task 5.1 with the isolated `blob-helper-storage-s3` module, AWS SDK v2 module-local BOM, and configurable bucket, region, endpoint override, and path-style access properties. Epic 5 is in progress. |
 | 2026-08-26 | Completed task 4.4 with a real local-provider service integration test covering temporary-directory storage, readback, duplicate physical-write avoidance, and final-reference deletion. Epic 4 is complete. |
 | 2026-08-26 | Completed task 4.3 with normalized key resolution, containment checks against the storage root, and rejection of `../`, absolute-path, and self-resolving keys before file IO. Epic 4 is in progress. |
 | 2026-08-26 | Completed task 4.2 with the filesystem `LocalBlobStorage` adapter implementing put/get/idempotent delete/exists against a configurable root directory. Epic 4 is in progress. |

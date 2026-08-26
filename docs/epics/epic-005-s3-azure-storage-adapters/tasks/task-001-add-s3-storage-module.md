@@ -1,6 +1,6 @@
 # Task 5.1: Add S3 Storage Module
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-005](../../../implementation-plans/PLAN-005-s3-azure-storage-adapters.md)  
 **ADR:** [ADR-004](../../../adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md)
 
@@ -16,12 +16,12 @@ Create the S3 provider module and configuration.
 
 ## Steps
 
-- [ ] Add module to the reactor.
-- [ ] Add AWS SDK dependency only in this module.
-- [ ] Add properties for bucket, region, endpoint override, and path-style access.
-- [ ] Run `./mvnw -pl blob-helper-storage-s3 test`.
+- [x] Add module to the reactor.
+- [x] Add AWS SDK dependency only in this module.
+- [x] Add properties for bucket, region, endpoint override, and path-style access.
+- [x] Run `./mvnw -pl blob-helper-storage-s3 test`.
 
 ## Acceptance
 
-- [ ] AWS SDK dependency is isolated to `blob-helper-storage-s3`.
-- [ ] S3-compatible storage can be configured.
+- [x] AWS SDK dependency is isolated to `blob-helper-storage-s3`.
+- [x] S3-compatible storage can be configured.

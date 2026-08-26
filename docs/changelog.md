@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Add S3 storage module
+
+- Added `blob-helper-storage-s3` to the Maven reactor with a module-local AWS SDK for Java 2.x BOM and S3 dependency.
+- Added configurable S3 properties for bucket, region, optional endpoint override, and path-style access, which defaults to disabled.
+- Verified AWS SDK isolation from `blob-helper-core` and `blob-helper-spring-boot-starter`; Epic 5 is in progress (1/5).
+- Modules affected: root reactor, `blob-helper-storage-s3`, and Epic 5 planning/status documentation.
+
 ## 2026-08-26 — Add local storage service integration tests
 
 - Added `LocalStorageDeduplicationIntegrationTest` covering the real service, JPA metadata, and temporary-directory local storage flow.

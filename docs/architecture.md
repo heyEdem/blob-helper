@@ -22,6 +22,9 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 ├── blob-helper-storage-local/
 │   ├── pom.xml
 │   └── src/
+├── blob-helper-storage-s3/
+│   ├── pom.xml
+│   └── src/
 ├── docs/
 │   ├── adrs/
 │   ├── epics/
@@ -45,6 +48,7 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 | `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, timestamps, optimistic-lock state, transaction-scoped repository lookups/locks, create-or-retain duplicate-key retry, lock-aware reference mutation, and final-reference delete delegation; uses provider-neutral contracts and exceptions from `blob-helper-core`. |
 | `blob-helper-spring-boot-starter` | Spring Boot integration module. Owns `blob-helper.*` configuration binding, the auto-configuration with provider validation that enforces exactly one configured `BlobStorage`, and the provider-neutral `BlobDeduplicationService` facade; it contains no REST controllers or provider SDK implementations. Its test suite uses the local adapter for end-to-end service coverage. |
 | `blob-helper-storage-local` | Local filesystem storage adapter module. Owns local provider configuration (`LocalBlobStorageProperties` with configurable root directory) and the `LocalBlobStorage` adapter implementing put, get, idempotent delete, and exists with normalized key resolution that rejects path traversal outside the root; depends only on `blob-helper-core` with no cloud SDKs. |
+| `blob-helper-storage-s3` | AWS S3 provider module. Owns the module-local AWS SDK v2 dependency management and S3 connection properties; S3 `BlobStorage` behavior is implemented in the next Epic 5 task. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -92,5 +96,5 @@ Application deletes logical asset
 | Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` auto-configuration, properties binding, and configuration metadata generation. |
 | spring-boot-test / AssertJ | Test-scope only in the starter module: `ApplicationContextRunner` context tests and fluent failure assertions. |
 | `blob-helper-storage-local` | Test-scope starter dependency used by the end-to-end local storage service integration test; it is not a starter runtime dependency. |
-| AWS SDK | Planned only for `blob-helper-storage-s3`; not currently present. |
+| AWS SDK for Java 2.x 2.54.4 | Isolated to `blob-helper-storage-s3` through its module-local BOM and `software.amazon.awssdk:s3` dependency; not present in core or starter. |
 | Azure Blob SDK | Planned only for `blob-helper-storage-azure`; not currently present. |

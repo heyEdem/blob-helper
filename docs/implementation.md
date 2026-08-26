@@ -44,6 +44,9 @@
 - `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStoragePropertiesTest.java`: verifies the default root directory, custom root binding, and null rejection.
 - `blob-helper-storage-local/src/main/java/com/edem/blobhelper/storage/local/LocalBlobStorage.java`: filesystem `BlobStorage` adapter that resolves object keys under the configured absolute root, streams uploads with parent-directory creation and overwrite semantics, returns owner-managed `BlobResource` streams, throws core `ContentNotFoundException` for missing reads, deletes idempotently via `Files.deleteIfExists`, and reports existence from the filesystem. Key resolution normalizes the resolved path and rejects keys that escape or equal the root with core `BlobValidationException` before any file IO.
 - `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStorageIntegrationTest.java`: JUnit temporary-directory coverage for the put/get/delete round trip with filesystem assertions, idempotent missing-object delete, pre-write existence checks, overwrite behavior, blank-key rejection, and traversal protection for `../`, absolute-path, and self-resolving keys plus valid nested-key access.
+- `blob-helper-storage-s3/pom.xml`: S3 provider module build file with `blob-helper-core`, JUnit, and an AWS SDK for Java 2.x BOM plus `software.amazon.awssdk:s3` dependency scoped to this module.
+- `blob-helper-storage-s3/src/main/java/com/edem/blobhelper/storage/s3/S3BlobStorageProperties.java`: provider-specific settings for bucket, region, optional endpoint override, and path-style access, with path-style access disabled by default.
+- `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStoragePropertiesTest.java`: verifies S3 connection settings and the default path-style access setting without credentials or network calls.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -83,6 +86,13 @@
 - **Key classes/functions:** `LocalBlobStorageProperties` carries the local provider root directory; it defaults to `blob-helper-storage`, accepts any custom `Path`, and rejects null assignment. `LocalBlobStorage` implements the core `BlobStorage` SPI against that root: `put` streams the request content to `{root}/{objectKey}` (creating parent directories, replacing existing files) and returns a `StoredBlob` with provider `local` and the root as bucket; `get` returns a closeable `BlobResource` or throws core `ContentNotFoundException` when absent; `delete` is idempotent through `Files.deleteIfExists`; `exists` delegates to filesystem checks.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends only on the provider-neutral core module with no Spring or cloud SDK dependencies.
 - **Non-obvious logic:** Keys resolve against an absolute normalized root; resolution then normalizes again and rejects results outside or equal to the root using component-based `startsWith` comparison, which defeats `..`, absolute-path, and prefix-collision escapes before any file IO. Storage failures translate to unchecked core `BlobStorageException`; missing reads use `ContentNotFoundException`. Content type and metadata are not persisted by the local adapter.
+
+### blob-helper-storage-s3
+
+- **Entry point:** `blob-helper-storage-s3/pom.xml`
+- **Key classes/functions:** `S3BlobStorageProperties` carries the S3 bucket, region, optional endpoint override, and path-style access flag. `S3BlobStorage` is intentionally deferred to task 5.2.
+- **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core` and imports the AWS SDK v2 BOM locally so AWS dependencies remain isolated to this provider module.
+- **Non-obvious logic:** The properties class is provider-specific and currently has no network or credential behavior. The optional endpoint override and path-style access setting support S3-compatible targets such as emulators without affecting core or starter APIs.
 
 ### Documentation and Planning
 

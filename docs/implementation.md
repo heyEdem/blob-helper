@@ -46,7 +46,9 @@
 - `blob-helper-storage-local/src/test/java/com/edem/blobhelper/storage/local/LocalBlobStorageIntegrationTest.java`: JUnit temporary-directory coverage for the put/get/delete round trip with filesystem assertions, idempotent missing-object delete, pre-write existence checks, overwrite behavior, blank-key rejection, and traversal protection for `../`, absolute-path, and self-resolving keys plus valid nested-key access.
 - `blob-helper-storage-s3/pom.xml`: S3 provider module build file with `blob-helper-core`, JUnit, and an AWS SDK for Java 2.x BOM plus `software.amazon.awssdk:s3` dependency scoped to this module.
 - `blob-helper-storage-s3/src/main/java/com/edem/blobhelper/storage/s3/S3BlobStorageProperties.java`: provider-specific settings for bucket, region, optional endpoint override, and path-style access, with path-style access disabled by default.
+- `blob-helper-storage-s3/src/main/java/com/edem/blobhelper/storage/s3/S3BlobStorage.java`: S3 `BlobStorage` adapter that uploads through `RequestBody.fromInputStream`, exposes `ResponseInputStream` through `BlobResource`, uses `headObject` for existence checks, deletes idempotently, and maps provider failures to core validation, not-found, and storage exceptions. It supports properties-based client construction and injected clients for tests.
 - `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStoragePropertiesTest.java`: verifies S3 connection settings and the default path-style access setting without credentials or network calls.
+- `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStorageContractTest.java`: verifies the S3 adapter round trip, request metadata, missing-object behavior, idempotent deletion, and provider exception mapping with an in-process SDK proxy.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -90,9 +92,9 @@
 ### blob-helper-storage-s3
 
 - **Entry point:** `blob-helper-storage-s3/pom.xml`
-- **Key classes/functions:** `S3BlobStorageProperties` carries the S3 bucket, region, optional endpoint override, and path-style access flag. `S3BlobStorage` is intentionally deferred to task 5.2.
+- **Key classes/functions:** `S3BlobStorageProperties` carries the S3 bucket, region, optional endpoint override, and path-style access flag. `S3BlobStorage` implements streaming put/get, idempotent delete, `headObject`-based exists, client construction, and provider exception translation.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core` and imports the AWS SDK v2 BOM locally so AWS dependencies remain isolated to this provider module.
-- **Non-obvious logic:** The properties class is provider-specific and currently has no network or credential behavior. The optional endpoint override and path-style access setting support S3-compatible targets such as emulators without affecting core or starter APIs.
+- **Non-obvious logic:** The optional endpoint override and path-style access setting support S3-compatible targets such as emulators without affecting core or starter APIs. Reads return the SDK response stream directly and therefore require callers to close `BlobResource`; provider 404 responses become `ContentNotFoundException` for reads and `false` for existence checks.
 
 ### Documentation and Planning
 

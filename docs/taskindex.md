@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-24
-**Completed:** 15/30 (50%)
+**Last Updated:** 2026-08-26
+**Completed:** 16/30 (53%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -12,11 +12,11 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 |---|---|---:|---|
 | 1 | Core library | 5/5 | Complete |
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
-| 3 | Spring Boot starter and service API | 4/5 | In Progress |
+| 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 0/4 | Not Started |
 | 5 | S3 and Azure storage adapters | 0/5 | Not Started |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **15/30** | **In Progress** |
+| **Total** | | **16/30** | **In Progress** |
 
 ## Source Map
 
@@ -64,7 +64,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [x] 3.2 [Add BlobDeduplicationService contract](epics/epic-003-spring-boot-starter-service-api/tasks/task-002-add-blob-deduplication-service-contract.md)
 - [x] 3.3 [Implement new-content upload orchestration](epics/epic-003-spring-boot-starter-service-api/tasks/task-003-implement-new-content-upload-orchestration.md)
 - [x] 3.4 [Implement duplicate-content upload orchestration](epics/epic-003-spring-boot-starter-service-api/tasks/task-004-implement-duplicate-content-upload-orchestration.md)
-- [ ] 3.5 [Add provider auto-configuration validation](epics/epic-003-spring-boot-starter-service-api/tasks/task-005-add-provider-auto-configuration-validation.md)
+- [x] 3.5 [Add provider auto-configuration validation](epics/epic-003-spring-boot-starter-service-api/tasks/task-005-add-provider-auto-configuration-validation.md)
 
 ## Epic 4 — Local Storage and Integration Tests
 
@@ -93,6 +93,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-26 | Completed task 3.5 with `BlobHelperAutoConfiguration`, registered via `AutoConfiguration.imports`, and a startup validator that fails clearly for unsupported, missing, and ambiguous providers. Epic 3 is complete. |
 | 2026-08-25 | Completed task 3.4 with pre-write content identity lookup, lock-aware duplicate reference retention, and no-op physical storage for duplicate uploads. |
 | 2026-08-24 | Completed task 3.3 with buffered upload hashing, deterministic object-key generation, one physical storage write, and `AssetContent` creation through the JPA create-or-retain service. |
 | 2026-08-22 | Completed task 3.2 with the provider-neutral `BlobDeduplicationService` contract, default retain/release/get facade, and missing-content coverage. |

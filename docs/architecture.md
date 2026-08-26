@@ -40,7 +40,7 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 |---|---|
 | `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
 | `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, timestamps, optimistic-lock state, transaction-scoped repository lookups/locks, create-or-retain duplicate-key retry, lock-aware reference mutation, and final-reference delete delegation; uses provider-neutral contracts and exceptions from `blob-helper-core`. |
-| `blob-helper-spring-boot-starter` | Spring Boot integration module. Owns `blob-helper.*` configuration binding, the provider-neutral `BlobDeduplicationService` facade, and starter dependencies; it contains no REST controllers or provider SDK implementations. |
+| `blob-helper-spring-boot-starter` | Spring Boot integration module. Owns `blob-helper.*` configuration binding, the auto-configuration with provider validation that enforces exactly one configured `BlobStorage`, and the provider-neutral `BlobDeduplicationService` facade; it contains no REST controllers or provider SDK implementations. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -85,6 +85,7 @@ Application deletes logical asset
 | Jakarta Persistence 3.2 | Portable entity mapping API used by `blob-helper-jpa`. |
 | Hibernate ORM 7.4 | Test-scope JPA provider used to verify entity mappings. |
 | H2 2.4 | Test-scope in-memory database for JPA mapping tests. |
-| Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` properties binding and configuration metadata generation. |
+| Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` auto-configuration, properties binding, and configuration metadata generation. |
+| spring-boot-test / AssertJ | Test-scope only in the starter module: `ApplicationContextRunner` context tests and fluent failure assertions. |
 | AWS SDK | Planned only for `blob-helper-storage-s3`; not currently present. |
 | Azure Blob SDK | Planned only for `blob-helper-storage-azure`; not currently present. |

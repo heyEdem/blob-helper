@@ -33,6 +33,7 @@
         <module>blob-helper-core</module>
         <module>blob-helper-jpa</module>
         <module>blob-helper-spring-boot-starter</module>
+        <module>blob-helper-storage-local</module>
     </modules>
 
     <dependencyManagement>

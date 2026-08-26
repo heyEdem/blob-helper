@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-26 — Add local storage module
+
+- Added the `blob-helper-storage-local` Maven module to the reactor with a dependency on `blob-helper-core` and no cloud SDKs.
+- Added `LocalBlobStorageProperties` with a configurable root directory (`blob-helper-storage` default) and null-rejection on assignment.
+- Added property coverage for defaults, custom roots, and null rejection; full `./mvnw verify` passes.
+- Modules affected: root reactor, `blob-helper-storage-local`, and Epic 4 planning/status documentation.
+
 ## 2026-08-26 — Add provider auto-configuration validation
 
 - Added `BlobHelperAutoConfiguration` registered through Spring Boot `AutoConfiguration.imports`, enabling `BlobHelperProperties` and a startup provider validator.

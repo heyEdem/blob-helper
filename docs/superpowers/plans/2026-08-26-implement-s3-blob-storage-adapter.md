@@ -23,4 +23,4 @@
 - [x] Run focused and full Maven verification.
 - [x] Update implementation/task/epic indexes and append the dated changelog entry.
 - [x] Re-scan changed files and direct neighbors after committing.
-- [ ] Commit, push the milestone branch, and create a pull request targeting `main`.
+- [x] Commit, push the milestone branch, and create a pull request targeting `main`.

@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-27 — Add Azure storage module
+
+- Added `blob-helper-storage-azure` to the Maven reactor with a module-local Azure SDK BOM and `azure-storage-blob` dependency.
+- Added `AzureBlobStorageProperties` for container, connection string, endpoint, and account name configuration without Azure SDK types.
+- Added credential-free properties coverage and verified the focused module test, Azure dependency tree, and full reactor build.
+- Modules affected: root reactor, `blob-helper-storage-azure`, and Epic 5 planning/status documentation.
+
 ## 2026-08-26 — Implement S3 BlobStorage adapter
 
 - Added streaming S3 put/get, idempotent delete, and head-based exists behavior with bucket and object metadata mapping.

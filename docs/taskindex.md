@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-26
-**Completed:** 22/30 (73%)
+**Last Updated:** 2026-08-27
+**Completed:** 23/30 (77%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -14,9 +14,9 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 4/4 | Complete |
-| 5 | S3 and Azure storage adapters | 2/5 | In Progress |
+| 5 | S3 and Azure storage adapters | 3/5 | In Progress |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **22/30** | **In Progress** |
+| **Total** | | **23/30** | **In Progress** |
 
 ## Source Map
 
@@ -38,6 +38,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | JPA module tests | `./mvnw -pl blob-helper-jpa test` |
 | Starter tests | `./mvnw -pl blob-helper-spring-boot-starter test` |
 | Local storage tests | `./mvnw -pl blob-helper-storage-local test` |
+| Azure module tests | `./mvnw -pl blob-helper-storage-azure test` |
 | Dependency boundary checks | `./mvnw test -Dtest='*BoundaryTest'` |
 | Inspect tracked planning docs | `git status --short docs` |
 
@@ -77,7 +78,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 - [x] 5.1 [Add S3 storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-001-add-s3-storage-module.md)
 - [x] 5.2 [Implement S3 BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-002-implement-s3-blob-storage-adapter.md)
-- [ ] 5.3 [Add Azure storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-003-add-azure-storage-module.md)
+- [x] 5.3 [Add Azure storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-003-add-azure-storage-module.md)
 - [ ] 5.4 [Implement Azure BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-004-implement-azure-blob-storage-adapter.md)
 - [ ] 5.5 [Add provider SDK boundary and contract tests](epics/epic-005-s3-azure-storage-adapters/tasks/task-005-add-provider-sdk-boundary-and-contract-tests.md)
 
@@ -93,6 +94,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-27 | Completed task 5.3 with the isolated `blob-helper-storage-azure` module, Azure SDK BOM/dependency, and configurable container, connection string, endpoint, and account name properties. Epic 5 is in progress (3/5). |
 | 2026-08-26 | Completed task 5.2 with streaming S3 put/get, idempotent delete, head-based existence checks, domain exception mapping, and credential-free contract tests. Epic 5 is in progress (2/5). |
 | 2026-08-26 | Completed task 5.1 with the isolated `blob-helper-storage-s3` module, AWS SDK v2 module-local BOM, and configurable bucket, region, endpoint override, and path-style access properties. Epic 5 is in progress. |
 | 2026-08-26 | Completed task 4.4 with a real local-provider service integration test covering temporary-directory storage, readback, duplicate physical-write avoidance, and final-reference deletion. Epic 4 is complete. |

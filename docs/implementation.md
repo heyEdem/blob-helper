@@ -51,7 +51,9 @@
 - `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStorageContractTest.java`: verifies the S3 adapter round trip, request metadata, missing-object behavior, idempotent deletion, and provider exception mapping with an in-process SDK proxy.
 - `blob-helper-storage-azure/pom.xml`: Azure provider module build file with `blob-helper-core`, JUnit, and a module-local Azure SDK BOM plus `com.azure:azure-storage-blob` dependency.
 - `blob-helper-storage-azure/src/main/java/com/edem/blobhelper/storage/azure/AzureBlobStorageProperties.java`: provider configuration bean for the Azure container, connection string, optional endpoint, and account name; it contains no Azure SDK types.
+- `blob-helper-storage-azure/src/main/java/com/edem/blobhelper/storage/azure/AzureBlobStorage.java`: Azure `BlobStorage` adapter with properties-based or injected-client construction, streaming uploads with content headers and metadata, property-backed reads, idempotent deletion, existence checks, and Azure-to-core exception mapping.
 - `blob-helper-storage-azure/src/test/java/com/edem/blobhelper/storage/azure/AzureBlobStoragePropertiesTest.java`: verifies all Azure connection settings can be assigned and read without credentials or network calls.
+- `blob-helper-storage-azure/src/test/java/com/edem/blobhelper/storage/azure/AzureBlobStorageContractTest.java`: verifies the Azure adapter round trip, request headers and metadata, missing-object behavior, idempotent deletion, and provider exception mapping against an in-process HTTP fake.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -102,9 +104,9 @@
 ### blob-helper-storage-azure
 
 - **Entry point:** `blob-helper-storage-azure/pom.xml`
-- **Key classes/functions:** `AzureBlobStorageProperties` carries the Azure container, connection string, optional endpoint, and account name used by the future adapter; its focused test verifies the configuration surface.
+- **Key classes/functions:** `AzureBlobStorageProperties` carries the Azure container, connection string, optional endpoint, and account name. `AzureBlobStorage` implements the core `BlobStorage` SPI using an injected or builder-created `BlobContainerClient`; `put` streams content with Azure HTTP headers and metadata, `get` reads blob properties before returning an owner-managed stream, `delete` uses `deleteIfExists`, and `exists` delegates to the provider.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core`, imports the Azure SDK BOM version `1.3.8` locally, and declares `azure-storage-blob` without a version so Azure dependencies remain isolated to this provider module.
-- **Non-obvious logic:** The properties bean deliberately uses only JDK types, leaving Azure SDK client construction and provider exception mapping to task 5.4. This permits Azure configuration without changing provider-neutral core APIs.
+- **Non-obvious logic:** Azure 404 responses map to core `ContentNotFoundException` for reads and `false` for existence checks; other Azure provider failures become core `BlobStorageException`. The contract test uses the real Azure SDK against an in-process JDK HTTP server, so normal verification needs no Azure credentials or external service.
 
 ### Documentation and Planning
 

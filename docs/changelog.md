@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-27 — Implement Azure BlobStorage adapter
+
+- Added streaming Azure Blob Storage put/get, idempotent delete, existence checks, and core exception mapping.
+- Added credential-free SDK-backed contract tests using an in-process HTTP fake.
+- Modules affected: `blob-helper-storage-azure` and Epic 5 planning/status documentation.
+
 ## 2026-08-27 — Add Azure storage module
 
 - Added `blob-helper-storage-azure` to the Maven reactor with a module-local Azure SDK BOM and `azure-storage-blob` dependency.

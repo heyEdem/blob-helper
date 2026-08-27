@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-27
-**Completed:** 24/30 (80%)
+**Completed:** 25/30 (83%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -14,9 +14,9 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 2 | JPA metadata and reference counting | 6/6 | Complete |
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 4/4 | Complete |
-| 5 | S3 and Azure storage adapters | 4/5 | In Progress |
+| 5 | S3 and Azure storage adapters | 5/5 | Complete |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **24/30** | **In Progress** |
+| **Total** | | **25/30** | **In Progress** |
 
 ## Source Map
 
@@ -80,7 +80,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [x] 5.2 [Implement S3 BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-002-implement-s3-blob-storage-adapter.md)
 - [x] 5.3 [Add Azure storage module](epics/epic-005-s3-azure-storage-adapters/tasks/task-003-add-azure-storage-module.md)
 - [x] 5.4 [Implement Azure BlobStorage adapter](epics/epic-005-s3-azure-storage-adapters/tasks/task-004-implement-azure-blob-storage-adapter.md)
-- [ ] 5.5 [Add provider SDK boundary and contract tests](epics/epic-005-s3-azure-storage-adapters/tasks/task-005-add-provider-sdk-boundary-and-contract-tests.md)
+- [x] 5.5 [Add provider SDK boundary and contract tests](epics/epic-005-s3-azure-storage-adapters/tasks/task-005-add-provider-sdk-boundary-and-contract-tests.md)
 
 ## Epic 6 — Reconciliation and Observability
 
@@ -94,6 +94,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-27 | Completed task 5.5 with reactor POM ownership checks for AWS/Azure SDKs, credential-free provider-testing documentation, and a passing `ProviderDependencyBoundaryTest`. Epic 5 is complete (5/5). |
 | 2026-08-27 | Completed task 5.4 with streaming Azure put/get, idempotent delete, existence checks, core exception mapping, and credential-free SDK-backed contract tests using an in-process HTTP fake. Epic 5 is in progress (4/5). |
 | 2026-08-27 | Completed task 5.3 with the isolated `blob-helper-storage-azure` module, Azure SDK BOM/dependency, and configurable container, connection string, endpoint, and account name properties. Epic 5 is in progress (3/5). |
 | 2026-08-26 | Completed task 5.2 with streaming S3 put/get, idempotent delete, head-based existence checks, domain exception mapping, and credential-free contract tests. Epic 5 is in progress (2/5). |

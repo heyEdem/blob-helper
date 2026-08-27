@@ -32,6 +32,7 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 │   ├── adrs/
 │   ├── epics/
 │   ├── implementation-plans/
+│   ├── provider-testing.md
 │   ├── SPECIFICATION.md
 │   └── taskindex.md
 ├── .github/
@@ -47,7 +48,7 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 
 | Module/Package | Purpose |
 |---|---|
-| `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement. |
+| `blob-helper-core` | Provider-neutral core module. Owns streaming content hashing, deterministic hash-derived object key generation, the storage SPI, command/result models, domain exceptions, and dependency-boundary enforcement, including the reactor-level provider SDK ownership test. |
 | `blob-helper-jpa` | Framework-independent relational metadata module. Owns the `AssetContent` JPA mapping, content-identity uniqueness, physical object metadata, timestamps, optimistic-lock state, transaction-scoped repository lookups/locks, create-or-retain duplicate-key retry, lock-aware reference mutation, and final-reference delete delegation; uses provider-neutral contracts and exceptions from `blob-helper-core`. |
 | `blob-helper-spring-boot-starter` | Spring Boot integration module. Owns `blob-helper.*` configuration binding, the auto-configuration with provider validation that enforces exactly one configured `BlobStorage`, and the provider-neutral `BlobDeduplicationService` facade; it contains no REST controllers or provider SDK implementations. Its test suite uses the local adapter for end-to-end service coverage. |
 | `blob-helper-storage-local` | Local filesystem storage adapter module. Owns local provider configuration (`LocalBlobStorageProperties` with configurable root directory) and the `LocalBlobStorage` adapter implementing put, get, idempotent delete, and exists with normalized key resolution that rejects path traversal outside the root; depends only on `blob-helper-core` with no cloud SDKs. |

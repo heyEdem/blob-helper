@@ -1,7 +1,7 @@
 # PLAN-005: S3 and Azure Storage Adapters
 
 **Date:** 2026-07-04  
-**Status:** Todo  
+**Status:** Complete
 **Implements:** ADR-004  
 **Estimated complexity:** Large
 
@@ -36,7 +36,7 @@ The library must support cloud storage providers without leaking provider SDK de
 
 - [ ] **S3BlobStorageContractTest.putGetDeleteRoundTrip:** Given S3-compatible test storage, when storing, reading, and deleting a blob, then storage state matches each operation.
 - [ ] **AzureBlobStorageContractTest.putGetDeleteRoundTrip:** Given Azure test storage, when storing, reading, and deleting a blob, then storage state matches each operation.
-- [ ] **ProviderDependencyBoundaryTest.providerSdksStayOutOfCoreAndStarter:** Given the Maven reactor, then AWS and Azure SDK dependencies appear only in provider modules.
+- [x] **ProviderDependencyBoundaryTest.providerSdksStayOutOfCoreAndStarter:** Given the Maven reactor, then AWS and Azure SDK dependencies appear only in provider modules.
 
 ## Out of Scope (from Q5)
 
@@ -52,7 +52,7 @@ The library must support cloud storage providers without leaking provider SDK de
 
 ## Definition of Done
 
-- [ ] All acceptance criteria tests pass
-- [ ] No out-of-scope files were modified
-- [ ] ADR invariants are enforced in code
+- [x] All acceptance criteria tests pass
+- [x] No out-of-scope files were modified
+- [x] ADR invariants are enforced in code
 - [ ] PR reviewed and merged

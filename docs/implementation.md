@@ -2,7 +2,7 @@
 
 ## Entry Points
 
-- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, and `blob-helper-storage-local` as current modules and manages JUnit/Spring Boot dependency BOMs.
+- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, and `blob-helper-storage-azure` as current modules and manages JUnit/Spring Boot dependency BOMs.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-jpa/pom.xml`: persistence module build file. Depends on `blob-helper-core`, exposes Jakarta Persistence, and uses Hibernate/H2 in test scope.
 - `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
@@ -49,6 +49,9 @@
 - `blob-helper-storage-s3/src/main/java/com/edem/blobhelper/storage/s3/S3BlobStorage.java`: S3 `BlobStorage` adapter that uploads through `RequestBody.fromInputStream`, exposes `ResponseInputStream` through `BlobResource`, uses `headObject` for existence checks, deletes idempotently, and maps provider failures to core validation, not-found, and storage exceptions. It supports properties-based client construction and injected clients for tests.
 - `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStoragePropertiesTest.java`: verifies S3 connection settings and the default path-style access setting without credentials or network calls.
 - `blob-helper-storage-s3/src/test/java/com/edem/blobhelper/storage/s3/S3BlobStorageContractTest.java`: verifies the S3 adapter round trip, request metadata, missing-object behavior, idempotent deletion, and provider exception mapping with an in-process SDK proxy.
+- `blob-helper-storage-azure/pom.xml`: Azure provider module build file with `blob-helper-core`, JUnit, and a module-local Azure SDK BOM plus `com.azure:azure-storage-blob` dependency.
+- `blob-helper-storage-azure/src/main/java/com/edem/blobhelper/storage/azure/AzureBlobStorageProperties.java`: provider configuration bean for the Azure container, connection string, optional endpoint, and account name; it contains no Azure SDK types.
+- `blob-helper-storage-azure/src/test/java/com/edem/blobhelper/storage/azure/AzureBlobStoragePropertiesTest.java`: verifies all Azure connection settings can be assigned and read without credentials or network calls.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 
@@ -95,6 +98,13 @@
 - **Key classes/functions:** `S3BlobStorageProperties` carries the S3 bucket, region, optional endpoint override, and path-style access flag. `S3BlobStorage` implements streaming put/get, idempotent delete, `headObject`-based exists, client construction, and provider exception translation.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core` and imports the AWS SDK v2 BOM locally so AWS dependencies remain isolated to this provider module.
 - **Non-obvious logic:** The optional endpoint override and path-style access setting support S3-compatible targets such as emulators without affecting core or starter APIs. Reads return the SDK response stream directly and therefore require callers to close `BlobResource`; provider 404 responses become `ContentNotFoundException` for reads and `false` for existence checks.
+
+### blob-helper-storage-azure
+
+- **Entry point:** `blob-helper-storage-azure/pom.xml`
+- **Key classes/functions:** `AzureBlobStorageProperties` carries the Azure container, connection string, optional endpoint, and account name used by the future adapter; its focused test verifies the configuration surface.
+- **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core`, imports the Azure SDK BOM version `1.3.8` locally, and declares `azure-storage-blob` without a version so Azure dependencies remain isolated to this provider module.
+- **Non-obvious logic:** The properties bean deliberately uses only JDK types, leaving Azure SDK client construction and provider exception mapping to task 5.4. This permits Azure configuration without changing provider-neutral core APIs.
 
 ### Documentation and Planning
 

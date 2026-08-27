@@ -1,6 +1,6 @@
 # Task 5.3: Add Azure Storage Module
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-005](../../../implementation-plans/PLAN-005-s3-azure-storage-adapters.md)  
 **ADR:** [ADR-004](../../../adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md)
 
@@ -16,12 +16,12 @@ Create the Azure Blob Storage provider module and configuration.
 
 ## Steps
 
-- [ ] Add module to the reactor.
-- [ ] Add Azure Blob SDK dependency only in this module.
-- [ ] Add properties for container, connection string, endpoint, and account name.
-- [ ] Run `./mvnw -pl blob-helper-storage-azure test`.
+- [x] Add module to the reactor.
+- [x] Add Azure Blob SDK dependency only in this module.
+- [x] Add properties for container, connection string, endpoint, and account name.
+- [x] Run `./mvnw -pl blob-helper-storage-azure test`.
 
 ## Acceptance
 
-- [ ] Azure SDK dependency is isolated to `blob-helper-storage-azure`.
-- [ ] Azure provider can be configured without changing core APIs.
+- [x] Azure SDK dependency is isolated to `blob-helper-storage-azure`.
+- [x] Azure provider can be configured without changing core APIs.

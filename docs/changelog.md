@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-27 — Add provider SDK boundary checks
+
+- Added `ProviderDependencyBoundaryTest` to verify AWS and Azure SDK ownership remains isolated to their provider modules.
+- Added `docs/provider-testing.md` documenting credential-free default tests and opt-in external provider test execution.
+- Epic 5 is complete (5/5); the project task index is 25/30 complete.
+- Modules affected: `blob-helper-core`, root Maven test configuration, provider-testing documentation, and Epic 5 planning/status documentation.
+
 ## 2026-08-27 — Implement Azure BlobStorage adapter
 
 - Added streaming Azure Blob Storage put/get, idempotent delete, existence checks, and core exception mapping.

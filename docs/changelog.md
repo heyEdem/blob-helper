@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-08-28 — Define local multi-instance dashboard
+
+- Added the approved design and ADR for a fully local, read-only, pull-based dashboard with YAML self-registration.
+- Added Epic 7 and PLAN-007 for the optional management module, standalone dashboard, SQLite aggregate history, light/dark UI, and seven-day failure retention.
+- Updated the specification, architecture, implementation index, five-question requirements, patterns, README, and testing guidance.
+- Modules affected: planned `blob-helper-spring-boot-management`, planned `blob-helper-dashboard`, and project documentation.
+
 ## 2026-08-27 — Add provider SDK boundary checks
 
 - Added `ProviderDependencyBoundaryTest` to verify AWS and Azure SDK ownership remains isolated to their provider modules.

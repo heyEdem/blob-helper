@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-27
-**Completed:** 25/30 (83%)
+**Last Updated:** 2026-08-28
+**Completed:** 25/35 (71%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -16,7 +16,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 4 | Local storage and integration tests | 4/4 | Complete |
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
 | 6 | Reconciliation and observability | 0/5 | Not Started |
-| **Total** | | **25/30** | **In Progress** |
+| 7 | Local dashboard and multi-instance monitoring | 0/5 | Not Started |
+| **Total** | | **25/35** | **In Progress** |
 
 ## Source Map
 
@@ -28,6 +29,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 4 | [ADR-004](adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md) | [PLAN-004](implementation-plans/PLAN-004-local-storage-adapter-and-integration-tests.md) | [epic-004-local-storage-integration-tests](epics/epic-004-local-storage-integration-tests/README.md) |
 | 5 | [ADR-004](adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md) | [PLAN-005](implementation-plans/PLAN-005-s3-azure-storage-adapters.md) | [epic-005-s3-azure-storage-adapters](epics/epic-005-s3-azure-storage-adapters/README.md) |
 | 6 | [ADR-003](adrs/ADR-003-release-delete-and-reconciliation.md) | [PLAN-006](implementation-plans/PLAN-006-reconciliation-observability.md) | [epic-006-reconciliation-observability](epics/epic-006-reconciliation-observability/README.md) |
+| 7 | [ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md) | [PLAN-007](implementation-plans/PLAN-007-local-dashboard-monitoring.md) | [epic-007-local-dashboard-monitoring](epics/epic-007-local-dashboard-monitoring/README.md) |
 
 ## Verification Commands
 
@@ -40,6 +42,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | Local storage tests | `./mvnw -pl blob-helper-storage-local test` |
 | Azure module tests | `./mvnw -pl blob-helper-storage-azure test` |
 | Dependency boundary checks | `./mvnw test -Dtest='*BoundaryTest'` |
+| Dashboard module tests | `./mvnw -pl blob-helper-spring-boot-management,blob-helper-dashboard test` |
 | Inspect tracked planning docs | `git status --short docs` |
 
 ## Epic 1 — Core Library
@@ -90,10 +93,19 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [ ] 6.4 [Add Micrometer metrics](epics/epic-006-reconciliation-observability/tasks/task-004-add-micrometer-metrics.md)
 - [ ] 6.5 [Add structured operational logging](epics/epic-006-reconciliation-observability/tasks/task-005-add-structured-operational-logging.md)
 
+## Epic 7 — Local Dashboard and Multi-Instance Monitoring
+
+- [ ] 7.1 [Add management module and local read-only API](epics/epic-007-local-dashboard-monitoring/tasks/task-001-add-management-module-and-local-read-only-api.md)
+- [ ] 7.2 [Add YAML self-registration and dashboard shell](epics/epic-007-local-dashboard-monitoring/tasks/task-002-add-yaml-self-registration-and-dashboard-shell.md)
+- [ ] 7.3 [Add SQLite polling history and failure retention](epics/epic-007-local-dashboard-monitoring/tasks/task-003-add-sqlite-polling-history-and-failure-retention.md)
+- [ ] 7.4 [Add dashboard API and light/dark static UI](epics/epic-007-local-dashboard-monitoring/tasks/task-004-add-dashboard-api-and-static-ui.md)
+- [ ] 7.5 [Add multi-instance end-to-end verification](epics/epic-007-local-dashboard-monitoring/tasks/task-005-add-multi-instance-end-to-end-verification.md)
+
 ## Notes
 
 | Date | Note |
 |---|---|
+| 2026-08-28 | Added approved Epic 7 for a fully local, read-only, pull-based dashboard with YAML self-registration, SQLite aggregate history, and seven-day failure retention. Project scope is now 25/35 tasks complete. |
 | 2026-08-27 | Completed task 5.5 with reactor POM ownership checks for AWS/Azure SDKs, credential-free provider-testing documentation, and a passing `ProviderDependencyBoundaryTest`. Epic 5 is complete (5/5). |
 | 2026-08-27 | Completed task 5.4 with streaming Azure put/get, idempotent delete, existence checks, core exception mapping, and credential-free SDK-backed contract tests using an in-process HTTP fake. Epic 5 is in progress (4/5). |
 | 2026-08-27 | Completed task 5.3 with the isolated `blob-helper-storage-azure` module, Azure SDK BOM/dependency, and configurable container, connection string, endpoint, and account name properties. Epic 5 is in progress (3/5). |

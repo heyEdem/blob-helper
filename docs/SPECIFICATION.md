@@ -30,6 +30,8 @@ multiple object storage providers.
 - Handle concurrent uploads of the same file safely.
 - Support transparent upload, download, and delete workflows.
 - Provide reconciliation tools for reference count drift.
+- Provide a lightweight local dashboard for monitoring multiple Blob Helper
+  instances and measuring deduplication savings over time.
 
 ## 3. Non-Goals
 
@@ -165,6 +167,28 @@ Responsibilities:
 - implement `BlobStorage`
 - store files under a configured directory
 - support deterministic integration tests without cloud credentials
+
+### blob-helper-spring-boot-management
+
+Optional Spring Boot management module for consuming applications.
+
+Responsibilities:
+
+- expose local, read-only health, metrics, information, and failure endpoints
+- self-register the application with a local Blob Helper dashboard
+- report provider-neutral operational data without exposing provider credentials
+
+### blob-helper-dashboard
+
+Standalone local administration dashboard.
+
+Responsibilities:
+
+- accept self-registration from multiple local Blob Helper instances
+- pull operational data from registered management endpoints
+- retain aggregate traffic and deduplication history in SQLite
+- retain detailed failures for seven days
+- present a read-only light/dark web dashboard
 
 ## 6. Storage Abstraction
 
@@ -461,6 +485,26 @@ The library should provide a reconciliation service that can:
 The first implementation can expose the service without enabling scheduled
 repairs by default.
 
+## 14.1 Dashboard Monitoring
+
+The optional local dashboard must not access consuming application databases or
+object stores directly. Instances self-register with their instance ID, display
+name, advertised management URL, provider name, and API version. The dashboard
+polls each instance independently and marks only the affected instance stale or
+disconnected when a poll fails.
+
+The dashboard tracks Blob Helper's traffic contribution, not provider billing:
+
+- upload attempts and duplicate uploads
+- physical uploads and bytes written to the configured provider
+- logical bytes accepted and avoided bytes from deduplication
+- downloads, deletes, operation failures, and latency summaries
+
+Successful operations are represented by aggregate counters. Detailed failure
+records are retained for seven days; aggregate metric history is retained
+independently. The dashboard is read-only and cannot delete blobs or repair
+reference counts.
+
 ## 15. Security and Validation
 
 The library should support:
@@ -497,6 +541,10 @@ Logs should include:
 - hash prefix only, not necessarily full hash
 - duplicate/new decision
 
+The optional dashboard provides the operator-facing view for these metrics and
+failure signals. It is local-only in the first version and stores its own
+registry and history in SQLite.
+
 ## 17. Testing Strategy
 
 ### Unit Tests
@@ -522,6 +570,15 @@ Logs should include:
 
 S3 and Azure tests should be separated from normal unit tests because they need
 external services or containers/emulators.
+
+### Dashboard Tests
+
+- management endpoint contract tests
+- self-registration and idempotent instance upsert
+- multi-instance polling and independent failure status
+- cumulative counter delta and process-reset handling
+- SQLite metric persistence and seven-day failure retention
+- read-only dashboard API and static UI smoke coverage
 
 ## 18. Implementation Phases
 
@@ -568,6 +625,14 @@ external services or containers/emulators.
 - structured logs
 - cleanup reporting
 
+### Phase 7: Local Dashboard and Multi-Instance Monitoring
+
+- optional local management API and YAML self-registration
+- standalone pull-based dashboard
+- SQLite aggregate metric history
+- seven-day detailed failure history
+- read-only light/dark dashboard UI
+
 ## 19. Open Questions
 
 - Should zero-reference content be deleted immediately or tombstoned first?
@@ -577,6 +642,8 @@ external services or containers/emulators.
   production usage?
 - Should provider modules support checksums from object storage APIs in addition
   to SHA-256?
+- Should remote dashboard access and authentication be added after the
+  local-only MVP?
 
 ## 20. Success Criteria
 
@@ -590,3 +657,5 @@ The project is successful when another Spring Boot app can:
 6. safely delete physical objects only after the last reference is gone
 7. switch from S3 to Azure by changing dependency and configuration, not business
    logic
+8. start a local dashboard, see multiple instances self-register, and inspect
+   historical traffic contribution and deduplication savings

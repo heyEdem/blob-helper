@@ -13,6 +13,11 @@ Add drift reporting, optional repair, metrics, and structured logs for Blob Help
 
 Reference counts can drift if consuming applications fail after partial operations. Operators also need metrics for deduplication value and cleanup failures.
 
+The planned [PLAN-007 local dashboard](PLAN-007-local-dashboard-monitoring.md)
+will consume the metrics and failure signals produced by this plan. Dashboard
+registration, polling, SQLite persistence, and UI concerns remain outside this
+plan.
+
 ## What to Build
 
 - Add a reconciliation service with an application-provided logical reference count source.

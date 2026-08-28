@@ -6,6 +6,10 @@ Maven multi-module Java 21 library project for a Spring Boot-compatible blob ded
 
 Current implementation state: root Maven reactor with `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, and `blob-helper-storage-azure` modules. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
 
+Planned next subsystem: optional `blob-helper-spring-boot-management` instance
+instrumentation and a separate `blob-helper-dashboard` local monitoring
+application, as defined by [ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md).
+
 ## Directory Map
 
 ```text
@@ -26,6 +30,12 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 │   ├── pom.xml
 │   └── src/
 ├── blob-helper-storage-azure/
+│   ├── pom.xml
+│   └── src/
+├── blob-helper-spring-boot-management/  (planned)
+│   ├── pom.xml
+│   └── src/
+├── blob-helper-dashboard/  (planned)
 │   ├── pom.xml
 │   └── src/
 ├── docs/
@@ -54,6 +64,8 @@ Current implementation state: root Maven reactor with `blob-helper-core`, `blob-
 | `blob-helper-storage-local` | Local filesystem storage adapter module. Owns local provider configuration (`LocalBlobStorageProperties` with configurable root directory) and the `LocalBlobStorage` adapter implementing put, get, idempotent delete, and exists with normalized key resolution that rejects path traversal outside the root; depends only on `blob-helper-core` with no cloud SDKs. |
 | `blob-helper-storage-s3` | AWS S3 provider module. Owns the module-local AWS SDK v2 dependency management, S3 connection properties, and `S3BlobStorage` adapter implementing the provider-neutral `BlobStorage` contract with streaming access and domain exception mapping. |
 | `blob-helper-storage-azure` | Azure Blob Storage provider module. Owns the module-local Azure SDK BOM and Blob SDK dependency, Azure connection properties, and `AzureBlobStorage`, which implements streaming put/get, idempotent delete, existence checks, and provider-to-core exception mapping without exposing Azure types through core. |
+| `blob-helper-spring-boot-management` *(planned)* | Optional instance-side management module. Owns local read-only information, health, metrics, and failure endpoints plus YAML-driven self-registration; it does not own application assets, blob bytes, or provider credentials. |
+| `blob-helper-dashboard` *(planned)* | Standalone local monitoring application. Owns multi-instance registration, pull polling, SQLite aggregate history, seven-day failure retention, read-only REST views, and the static light/dark UI. |
 | root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler plugin, and Surefire plugin management. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
@@ -85,6 +97,16 @@ Application deletes logical asset
   -> if final reference: delete physical object through BlobStorage
 ```
 
+Planned monitoring flow:
+
+```text
+Blob Helper instance starts
+  -> optional management module self-registers with local dashboard
+  -> dashboard polls read-only management endpoints
+  -> dashboard stores aggregate snapshots and recent failures in SQLite
+  -> static UI displays per-instance and combined trends
+```
+
 ## External Dependencies
 
 | Name | Purpose |
@@ -103,3 +125,4 @@ Application deletes logical asset
 | `blob-helper-storage-local` | Test-scope starter dependency used by the end-to-end local storage service integration test; it is not a starter runtime dependency. |
 | AWS SDK for Java 2.x 2.54.4 | Isolated to `blob-helper-storage-s3` through its module-local BOM and `software.amazon.awssdk:s3` dependency; not present in core or starter. |
 | Azure SDK for Java 1.3.8 BOM / Blob SDK 12.35.0 | Isolated to `blob-helper-storage-azure` through its module-local BOM and `com.azure:azure-storage-blob` dependency; not present in core or starter. |
+| SQLite JDBC / Spring JDBC *(planned)* | Dashboard-only persistence for local instance registrations, aggregate metric snapshots, and seven-day failure details. |

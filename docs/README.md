@@ -13,6 +13,8 @@
 - [ADRs](adrs/): architecture decisions.
 - [Implementation Plans](implementation-plans/): phase-level implementation plans.
 - [Epics](epics/): per-epic implementation task folders.
+- [Local dashboard design](plans/2026-08-28-local-dashboard-design.md): approved
+  MVP design for multi-instance local monitoring.
 
 ## Project Goal
 

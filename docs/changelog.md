@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-28 — Add reconciliation contracts
+
+- Added an application-owned logical reference count callback plus immutable validated reconciliation report and mismatch records.
+- Kept report generation independent from repair commands and consuming-application schema details.
+- Modules affected: `blob-helper-spring-boot-starter` and Epic 6 planning/status documentation.
+
 ## 2026-08-28 — Define local multi-instance dashboard
 
 - Added the approved design and ADR for a fully local, read-only, pull-based dashboard with YAML self-registration.

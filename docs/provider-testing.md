@@ -35,3 +35,7 @@ Credential-dependent tests are not part of the default path. When an external S3
 ```
 
 Do not add cloud credentials, secrets, or required external endpoints to the normal Maven verification workflow.
+
+The planned local dashboard is also credential-free: its integration tests use
+in-process management endpoints and a temporary SQLite database. They must not
+connect directly to S3, Azure, or consuming application databases.

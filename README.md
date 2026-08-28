@@ -36,11 +36,18 @@ blob-helper-jpa
 blob-helper-spring-boot-starter
 blob-helper-storage-s3
 blob-helper-storage-azure
+blob-helper-spring-boot-management  (planned)
+blob-helper-dashboard                (planned)
 blob-helper-storage-local
 ```
 
 `blob-helper-core` contains hashing, deduplication contracts, and storage-neutral
 interfaces. Storage providers live in separate adapter modules.
+
+The planned optional management module exposes local read-only operational data
+and self-registers instances with the planned standalone dashboard. The
+dashboard polls multiple local instances and stores aggregate history in
+SQLite; it does not manage blob bytes or provider credentials.
 
 ## High-Level Flow
 
@@ -69,5 +76,7 @@ Delete logical asset
 
 ## Status
 
-This repository currently contains the Spring Boot project shell and project
-documentation. Implementation will follow the specification in `docs/`.
+Phases 1–5 are complete: the core library, JPA metadata and reference counting,
+Spring Boot starter, local storage, S3, and Azure adapters are implemented and
+verified. The local dashboard and multi-instance monitoring design is approved
+for the next implementation epic; see [Epic 7](docs/epics/epic-007-local-dashboard-monitoring/README.md).

@@ -36,3 +36,10 @@
 **Why:** Reference-count drift repair can mutate production metadata and must be explicit.  
 **Tradeoffs:** Operators must choose when to repair instead of relying on automatic mutation.  
 **Alternatives considered:** Scheduled repair enabled by default was rejected.
+
+## Local dashboard uses self-registration and pull collection
+
+**Date:** 2026-08-28
+**Why:** Developers and operators need one lightweight read-only view across multiple local Blob Helper instances, including historical traffic contribution and deduplication savings.
+**Tradeoffs:** The dashboard only observes instances while their local management endpoints are reachable, and the MVP is not suitable for remote deployment.
+**Alternatives considered:** An embedded dashboard, push-only telemetry, and direct database/object-store access were rejected for the initial version because they increase deployment coupling, delivery complexity, or provider/schema coupling.

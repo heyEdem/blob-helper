@@ -137,3 +137,44 @@ Reference count drift, failed deletes, and operational savings are detectable an
 - Do not enable scheduled repairs by default.
 - Do not assume a consuming application's logical asset schema.
 - Do not log full content hashes unless explicitly configured.
+
+## FQ-006: Local Dashboard and Multi-Instance Monitoring
+
+**Q1 - What outcome are we protecting?**
+Developers and operators can see the health, traffic contribution, deduplication
+savings, and recent failures of multiple local Blob Helper instances from one
+read-only console.
+
+**Q2 - What must never break?**
+
+- Dashboard collection must not require direct access to application databases,
+  blob stores, or provider credentials.
+- Instances must be able to self-register through `application.yaml`.
+- The dashboard must poll instances independently and preserve history in
+  SQLite.
+- Aggregate metrics must survive detailed-failure cleanup.
+- Detailed failures must be retained for seven days only.
+- The local MVP must bind to loopback and expose no mutation actions.
+
+**Q3 - Where should this logic live?**
+
+- Local management endpoints and self-registration live in the optional
+  `blob-helper-spring-boot-management` module.
+- Registration, polling, persistence, and dashboard APIs/UI live in
+  `blob-helper-dashboard`.
+- Blob bytes, logical assets, and provider credentials remain with the
+  consuming application.
+
+**Q4 - What test proves the rule?**
+
+- `MultiInstanceDashboardIntegrationTest.twoInstancesRegisterAndContributeIndependentMetrics`: two instances register and contribute separate and combined metrics.
+- `MetricDeltaCalculatorTest.counterResetStartsNewBaseline`: a restarted instance never creates negative traffic deltas.
+- `FailureEventRepositoryTest.retainsFailuresForSevenDays`: old detailed failures are removed while aggregate snapshots remain.
+- `DashboardControllerTest.dashboardIsReadOnly`: dashboard routes expose no mutation actions.
+
+**Q5 - What should AI not touch?**
+
+- Do not add remote authentication or remote dashboard exposure to the local MVP.
+- Do not store cloud-provider credentials in the dashboard.
+- Do not store every successful upload as a raw event.
+- Do not add delete or reconciliation-repair buttons to the first dashboard.

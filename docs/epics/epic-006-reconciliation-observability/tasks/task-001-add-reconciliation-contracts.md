@@ -1,6 +1,6 @@
 # Task 6.1: Add Reconciliation Contracts
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-006](../../../implementation-plans/PLAN-006-reconciliation-observability.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -16,12 +16,12 @@ Define how consuming applications report logical reference counts to Blob Helper
 
 ## Steps
 
-- [ ] Add callback/query adapter interface for app-owned logical assets.
-- [ ] Add report and mismatch records.
-- [ ] Keep repair commands separate from report generation.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter test`.
+- [x] Add callback/query adapter interface for app-owned logical assets.
+- [x] Add report and mismatch records.
+- [x] Keep repair commands separate from report generation.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter test`.
 
 ## Acceptance
 
-- [ ] No application logical schema is assumed.
-- [ ] Reconciliation can report expected and actual counts.
+- [x] No application logical schema is assumed.
+- [x] Reconciliation can report expected and actual counts.

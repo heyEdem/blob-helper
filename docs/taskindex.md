@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-28
-**Completed:** 25/35 (71%)
+**Completed:** 26/35 (74%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -15,9 +15,9 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 4/4 | Complete |
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
-| 6 | Reconciliation and observability | 0/5 | Not Started |
+| 6 | Reconciliation and observability | 1/5 | In Progress |
 | 7 | Local dashboard and multi-instance monitoring | 0/5 | Not Started |
-| **Total** | | **25/35** | **In Progress** |
+| **Total** | | **26/35** | **In Progress** |
 
 ## Source Map
 
@@ -87,7 +87,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 ## Epic 6 — Reconciliation and Observability
 
-- [ ] 6.1 [Add reconciliation contracts](epics/epic-006-reconciliation-observability/tasks/task-001-add-reconciliation-contracts.md)
+- [x] 6.1 [Add reconciliation contracts](epics/epic-006-reconciliation-observability/tasks/task-001-add-reconciliation-contracts.md)
 - [ ] 6.2 [Implement mismatch reporting](epics/epic-006-reconciliation-observability/tasks/task-002-implement-mismatch-reporting.md)
 - [ ] 6.3 [Implement opt-in repair](epics/epic-006-reconciliation-observability/tasks/task-003-implement-opt-in-repair.md)
 - [ ] 6.4 [Add Micrometer metrics](epics/epic-006-reconciliation-observability/tasks/task-004-add-micrometer-metrics.md)
@@ -105,6 +105,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-28 | Completed task 6.1 with application-owned logical reference count contracts and immutable reconciliation report/mismatch values. Epic 6 is in progress (1/5). |
 | 2026-08-28 | Added approved Epic 7 for a fully local, read-only, pull-based dashboard with YAML self-registration, SQLite aggregate history, and seven-day failure retention. Project scope is now 25/35 tasks complete. |
 | 2026-08-27 | Completed task 5.5 with reactor POM ownership checks for AWS/Azure SDKs, credential-free provider-testing documentation, and a passing `ProviderDependencyBoundaryTest`. Epic 5 is complete (5/5). |
 | 2026-08-27 | Completed task 5.4 with streaming Azure put/get, idempotent delete, existence checks, core exception mapping, and credential-free SDK-backed contract tests using an in-process HTTP fake. Epic 5 is in progress (4/5). |

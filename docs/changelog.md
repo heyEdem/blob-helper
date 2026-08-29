@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-29 — Implement reconciliation mismatch reporting
+
+- Added a read-only reconciliation service that compares stored reference counts with application-provided logical counts and reports omitted IDs as zero expected references.
+- Added a repository query for loading all physical content metadata and Hibernate/H2 integration coverage proving mismatch details and no database mutation.
+- Modules affected: `blob-helper-jpa`, `blob-helper-spring-boot-starter`, and Epic 6 planning/status documentation.
+
 ## 2026-08-28 — Add reconciliation contracts
 
 - Added an application-owned logical reference count callback plus immutable validated reconciliation report and mismatch records.

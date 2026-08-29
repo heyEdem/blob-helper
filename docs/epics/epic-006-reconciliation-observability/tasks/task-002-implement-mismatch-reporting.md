@@ -1,6 +1,6 @@
 # Task 6.2: Implement Mismatch Reporting
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-006](../../../implementation-plans/PLAN-006-reconciliation-observability.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -15,13 +15,13 @@ Compare stored `ref_count` values with application-provided logical counts.
 
 ## Steps
 
-- [ ] Write `reportsReferenceCountMismatch`.
-- [ ] Load physical content metadata.
-- [ ] Ask the application count source for expected counts.
-- [ ] Return mismatch reports without mutating the database.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=ReconciliationServiceTest test`.
+- [x] Write `reportsReferenceCountMismatch`.
+- [x] Load physical content metadata.
+- [x] Ask the application count source for expected counts.
+- [x] Return mismatch reports without mutating the database.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=ReconciliationServiceTest test`.
 
 ## Acceptance
 
-- [ ] Reporting works with repair disabled.
-- [ ] Mismatches include asset content id, expected count, and actual count.
+- [x] Reporting works with repair disabled.
+- [x] Mismatches include asset content id, expected count, and actual count.

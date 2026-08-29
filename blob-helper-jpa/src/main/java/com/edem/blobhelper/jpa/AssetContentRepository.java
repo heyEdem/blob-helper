@@ -3,6 +3,7 @@ package com.edem.blobhelper.jpa;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,5 +49,10 @@ public final class AssetContentRepository {
                 id,
                 LockModeType.PESSIMISTIC_WRITE
         ));
+    }
+
+    public List<AssetContent> findAll() {
+        return entityManager.createQuery("select content from AssetContent content", AssetContent.class)
+                .getResultList();
     }
 }

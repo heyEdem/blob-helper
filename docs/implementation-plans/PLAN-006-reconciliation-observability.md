@@ -39,7 +39,7 @@ plan.
 ## Acceptance Criteria (from Q4)
 
 - [ ] **ReconciliationServiceTest.reportsReferenceCountMismatch:** Given actual and expected counts differ, when reconciliation runs, then a mismatch report is returned.
-- [ ] **ReconciliationServiceTest.repairsOnlyWhenEnabled:** Given repair disabled, when reconciliation finds drift, then no database mutation occurs.
+- [x] **ReconciliationServiceTest.repairsOnlyWhenEnabled:** Given repair disabled, when reconciliation finds drift, then no database mutation occurs.
 - [ ] **BlobHelperMetricsTest.recordsDuplicateAndSkippedUpload:** Given a duplicate upload, then duplicate and skipped-upload metrics are incremented.
 - [ ] **BlobHelperLoggingTest.logsHashPrefixOnlyByDefault:** Given an upload, then logs include a hash prefix and do not include the full content hash.
 

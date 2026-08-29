@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-08-29 — Implement opt-in reconciliation repair
+
+- Added an explicit, disabled-by-default repair operation that converges drift through the lock-aware JPA reference-count boundary.
+- Added coverage for enabled repairs, disabled no-mutation behavior, and final-reference physical deletion.
+
 ## 2026-08-29 — Implement reconciliation mismatch reporting
 
 - Added a read-only reconciliation service that compares stored reference counts with application-provided logical counts and reports omitted IDs as zero expected references.

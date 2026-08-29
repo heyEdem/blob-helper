@@ -1,6 +1,6 @@
 # Task 6.3: Implement Opt-In Repair
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-006](../../../implementation-plans/PLAN-006-reconciliation-observability.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -15,14 +15,14 @@ Repair reference count drift only when explicitly enabled.
 
 ## Steps
 
-- [ ] Add repair-enabled configuration.
-- [ ] Write `repairsOnlyWhenEnabled`.
-- [ ] Keep disabled mode read-only.
-- [ ] Update `ref_count` only through the JPA reference-count boundary.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=ReconciliationServiceTest test`.
+- [x] Add repair-enabled configuration.
+- [x] Write `repairsOnlyWhenEnabled`.
+- [x] Keep disabled mode read-only.
+- [x] Update `ref_count` only through the JPA reference-count boundary.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=ReconciliationServiceTest test`.
 
 ## Acceptance
 
-- [ ] Repair disabled is the default.
-- [ ] Disabled repair performs no database mutation.
-- [ ] Enabled repair is explicit and auditable.
+- [x] Repair disabled is the default.
+- [x] Disabled repair performs no database mutation.
+- [x] Enabled repair is explicit and auditable.

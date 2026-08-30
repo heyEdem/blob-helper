@@ -1,6 +1,6 @@
 # Task 6.4: Add Micrometer Metrics
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-006](../../../implementation-plans/PLAN-006-reconciliation-observability.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -15,12 +15,12 @@ Expose metrics for upload volume, deduplication savings, storage latency, delete
 
 ## Steps
 
-- [ ] Add counters for uploads, duplicates, skipped physical writes, accepted bytes, and avoided bytes.
-- [ ] Add timers for hashing and storage writes.
-- [ ] Add counters for storage delete failures and repairs.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobHelperMetricsTest test`.
+- [x] Add counters for uploads, duplicates, skipped physical writes, accepted bytes, and avoided bytes.
+- [x] Add timers for hashing and storage writes.
+- [x] Add counters for storage delete failures and repairs.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobHelperMetricsTest test`.
 
 ## Acceptance
 
-- [ ] Duplicate upload increments duplicate and skipped-upload metrics.
-- [ ] Metrics are optional through normal Spring Boot/Micrometer behavior.
+- [x] Duplicate upload increments duplicate and skipped-upload metrics.
+- [x] Metrics are optional through normal Spring Boot/Micrometer behavior.

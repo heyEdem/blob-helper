@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-08-29 — Implement opt-in reconciliation repair
+
+- Added an explicit, disabled-by-default repair operation that converges drift through the lock-aware JPA reference-count boundary.
+- Added coverage for enabled repairs, disabled no-mutation behavior, and final-reference physical deletion.
+
 ## 2026-08-29 — Implement reconciliation mismatch reporting
 
 - Added a read-only reconciliation service that compares stored reference counts with application-provided logical counts and reports omitted IDs as zero expected references.
@@ -185,3 +190,8 @@
 - First codebase-indexer scan of Blob Helper.
 - Generated `docs/architecture.md`, `docs/implementation.md`, `docs/patterns.md`, `docs/decisions.md`, and `docs/changelog.md`.
 - Detected Java 21 Maven reactor with current `blob-helper-core` module and planning docs for JPA, Spring Boot starter, local storage, S3/Azure adapters, and reconciliation.
+## 2026-08-30 — Add Micrometer metrics
+
+- Added optional Micrometer counters and timers for upload outcomes, deduplication savings, hashing and storage latency, delete failures, and reconciliation repairs.
+- Instrumented the starter service and reconciliation flow while preserving no-registry compatibility.
+- Modules affected: `blob-helper-spring-boot-starter`, Epic 6 planning/status documentation, and the living implementation indexes.

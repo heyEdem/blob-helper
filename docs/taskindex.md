@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-28
-**Completed:** 27/35 (77%)
+**Last Updated:** 2026-08-29
+**Completed:** 29/35 (83%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -15,9 +15,9 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 3 | Spring Boot starter and service API | 5/5 | Complete |
 | 4 | Local storage and integration tests | 4/4 | Complete |
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
-| 6 | Reconciliation and observability | 2/5 | In Progress |
+| 6 | Reconciliation and observability | 4/5 | In Progress |
 | 7 | Local dashboard and multi-instance monitoring | 0/5 | Not Started |
-| **Total** | | **27/35** | **In Progress** |
+| **Total** | | **28/35** | **In Progress** |
 
 ## Source Map
 
@@ -89,8 +89,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 - [x] 6.1 [Add reconciliation contracts](epics/epic-006-reconciliation-observability/tasks/task-001-add-reconciliation-contracts.md)
 - [x] 6.2 [Implement mismatch reporting](epics/epic-006-reconciliation-observability/tasks/task-002-implement-mismatch-reporting.md)
-- [ ] 6.3 [Implement opt-in repair](epics/epic-006-reconciliation-observability/tasks/task-003-implement-opt-in-repair.md)
-- [ ] 6.4 [Add Micrometer metrics](epics/epic-006-reconciliation-observability/tasks/task-004-add-micrometer-metrics.md)
+- [x] 6.3 [Implement opt-in repair](epics/epic-006-reconciliation-observability/tasks/task-003-implement-opt-in-repair.md)
+- [x] 6.4 [Add Micrometer metrics](epics/epic-006-reconciliation-observability/tasks/task-004-add-micrometer-metrics.md)
 - [ ] 6.5 [Add structured operational logging](epics/epic-006-reconciliation-observability/tasks/task-005-add-structured-operational-logging.md)
 
 ## Epic 7 — Local Dashboard and Multi-Instance Monitoring
@@ -105,6 +105,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-30 | Completed task 6.4 with optional Micrometer counters/timers for upload outcomes, deduplication savings, hashing/storage latency, delete failures, and repairs. Epic 6 is in progress (4/5). |
+| 2026-08-29 | Completed task 6.3 with explicit repair enablement, read-only disabled behavior, and lock-aware retain/release repair operations. Epic 6 is in progress (3/5). |
 | 2026-08-29 | Completed task 6.2 with read-only mismatch reporting across stored content rows, application-provided counts, omitted-ID detection, and no-mutation verification. Epic 6 is in progress (2/5). |
 | 2026-08-28 | Completed task 6.1 with application-owned logical reference count contracts and immutable reconciliation report/mismatch values. Epic 6 is in progress (1/5). |
 | 2026-08-28 | Added approved Epic 7 for a fully local, read-only, pull-based dashboard with YAML self-registration, SQLite aggregate history, and seven-day failure retention. Project scope is now 25/35 tasks complete. |

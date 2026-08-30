@@ -1,6 +1,7 @@
 package com.edem.blobhelper.service;
 
 import com.edem.blobhelper.core.exception.ContentNotFoundException;
+import com.edem.blobhelper.core.exception.BlobStorageException;
 import com.edem.blobhelper.core.hash.ContentHash;
 import com.edem.blobhelper.core.hash.ContentHasher;
 import com.edem.blobhelper.core.key.ObjectKeyStrategy;
@@ -14,6 +15,7 @@ import com.edem.blobhelper.jpa.AssetContent;
 import com.edem.blobhelper.jpa.AssetContentMutationService;
 import com.edem.blobhelper.jpa.AssetContentRepository;
 import com.edem.blobhelper.jpa.ReferenceCountService;
+import com.edem.blobhelper.observability.BlobHelperMetrics;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -37,6 +39,7 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
     private final BlobStorage storage;
     private final ContentHasher contentHasher;
     private final ObjectKeyStrategy objectKeyStrategy;
+    private final BlobHelperMetrics metrics;
 
     public DefaultBlobDeduplicationService(
             AssetContentRepository repository,
@@ -45,6 +48,26 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
             BlobStorage storage,
             ContentHasher contentHasher,
             ObjectKeyStrategy objectKeyStrategy
+    ) {
+        this(
+                repository,
+                referenceCountService,
+                mutationService,
+                storage,
+                contentHasher,
+                objectKeyStrategy,
+                new BlobHelperMetrics(null)
+        );
+    }
+
+    public DefaultBlobDeduplicationService(
+            AssetContentRepository repository,
+            ReferenceCountService referenceCountService,
+            AssetContentMutationService mutationService,
+            BlobStorage storage,
+            ContentHasher contentHasher,
+            ObjectKeyStrategy objectKeyStrategy,
+            BlobHelperMetrics metrics
     ) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.referenceCountService = Objects.requireNonNull(
@@ -61,6 +84,7 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
                 objectKeyStrategy,
                 "objectKeyStrategy must not be null"
         );
+        this.metrics = Objects.requireNonNull(metrics, "metrics must not be null");
     }
 
     @Override
@@ -74,8 +98,14 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
                         contentHash.hash(),
                         contentHash.sizeBytes()
                 )
-                .map(this::retainDuplicate)
-                .orElseGet(() -> storeNewContent(command, contentHash, bytes));
+                .map(existing -> {
+                    metrics.recordUpload(contentHash.sizeBytes(), true);
+                    return retainDuplicate(existing);
+                })
+                .orElseGet(() -> {
+                    metrics.recordUpload(contentHash.sizeBytes(), false);
+                    return storeNewContent(command, contentHash, bytes);
+                });
     }
 
     private BlobReference retainDuplicate(AssetContent existing) {
@@ -100,14 +130,14 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
             byte[] bytes
     ) {
         String objectKey = objectKeyStrategy.generateKey(contentHash);
-        StoredBlob stored = storage.put(new PutBlobRequest(
-                objectKey,
-                new ByteArrayInputStream(bytes),
-                contentHash.sizeBytes(),
-                command.contentType(),
-                command.filename(),
-                command.metadata()
-        ));
+        StoredBlob stored = metrics.recordStorageWrite(() -> storage.put(new PutBlobRequest(
+                    objectKey,
+                    new ByteArrayInputStream(bytes),
+                    contentHash.sizeBytes(),
+                    command.contentType(),
+                    command.filename(),
+                    command.metadata()
+            )));
 
         AssetContent candidate = new AssetContent(
                 contentHash.algorithm(),
@@ -138,7 +168,12 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
 
     @Override
     public void release(UUID assetContentId) {
-        referenceCountService.release(assetContentId);
+        try {
+            referenceCountService.release(assetContentId);
+        } catch (BlobStorageException failure) {
+            metrics.recordDeleteFailure();
+            throw failure;
+        }
     }
 
     @Override
@@ -152,11 +187,13 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
     }
 
     private ContentHash hash(byte[] bytes) {
-        try {
-            return contentHasher.hash(new ByteArrayInputStream(bytes));
-        } catch (IOException failure) {
-            throw new IllegalStateException("Content hashing failed", failure);
-        }
+        return metrics.recordHashing(() -> {
+            try {
+                return contentHasher.hash(new ByteArrayInputStream(bytes));
+            } catch (IOException failure) {
+                throw new IllegalStateException("Content hashing failed", failure);
+            }
+        });
     }
 
     private static byte[] readAll(InputStream stream) {

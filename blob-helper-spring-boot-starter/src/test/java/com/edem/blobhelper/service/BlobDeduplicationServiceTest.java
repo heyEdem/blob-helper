@@ -16,6 +16,8 @@ import com.edem.blobhelper.jpa.ReferenceCountService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import com.edem.blobhelper.observability.BlobHelperMetrics;
+import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -41,6 +43,7 @@ class BlobDeduplicationServiceTest {
 
     private EntityManager entityManager;
     private RecordingBlobStorage storage;
+    private SimpleMeterRegistry metricsRegistry;
     private DefaultBlobDeduplicationService service;
 
     @BeforeAll
@@ -60,6 +63,7 @@ class BlobDeduplicationServiceTest {
         entityManager = entityManagerFactory.createEntityManager();
         entityManager.getTransaction().begin();
         storage = new RecordingBlobStorage();
+        metricsRegistry = new SimpleMeterRegistry();
         ContentHasher hasher = new Sha256ContentHasher();
         AssetContentRepository repository = new AssetContentRepository(entityManager);
         service = new DefaultBlobDeduplicationService(
@@ -68,7 +72,8 @@ class BlobDeduplicationServiceTest {
                 new AssetContentMutationService(entityManager),
                 storage,
                 hasher,
-                new HashObjectKeyStrategy("")
+                new HashObjectKeyStrategy(""),
+                new BlobHelperMetrics(metricsRegistry)
         );
     }
 
@@ -99,6 +104,9 @@ class BlobDeduplicationServiceTest {
         assertEquals(storage.lastStored.provider(), reference.storageProvider());
 
         assertEquals(1, storage.putCount.get());
+        assertEquals(1.0, metricsRegistry.get("blob.helper.uploads").counter().count());
+        assertEquals((double) CONTENT.length,
+                metricsRegistry.get("blob.helper.bytes.accepted").counter().count());
 
         Long rowCount = entityManager.createQuery(
                         "select count(content) from AssetContent content", Long.class)
@@ -133,6 +141,12 @@ class BlobDeduplicationServiceTest {
         assertEquals(original.assetContentId(), duplicate.assetContentId());
         assertEquals(original.contentHash(), duplicate.contentHash());
         assertEquals(1, storage.putCount.get());
+        assertEquals(2.0, metricsRegistry.get("blob.helper.uploads").counter().count());
+        assertEquals(1.0, metricsRegistry.get("blob.helper.duplicates").counter().count());
+        assertEquals(1.0, metricsRegistry.get("blob.helper.skipped.physical.writes")
+                .counter().count());
+        assertEquals((double) CONTENT.length, metricsRegistry.get("blob.helper.bytes.avoided")
+                .counter().count());
 
         AssetContent persisted = entityManager.find(AssetContent.class, original.assetContentId());
         assertEquals(2L, persisted.getRefCount());

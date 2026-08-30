@@ -16,6 +16,8 @@ import com.edem.blobhelper.jpa.AssetContentMutationService;
 import com.edem.blobhelper.jpa.AssetContentRepository;
 import com.edem.blobhelper.jpa.ReferenceCountService;
 import com.edem.blobhelper.observability.BlobHelperMetrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,6 +34,9 @@ import java.util.UUID;
  * so the same bytes can be hashed and replayed to provider-neutral storage.</p>
  */
 public final class DefaultBlobDeduplicationService implements BlobDeduplicationService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultBlobDeduplicationService.class);
+    private static final int HASH_PREFIX_LENGTH = 8;
 
     private final AssetContentRepository repository;
     private final ReferenceCountService referenceCountService;
@@ -100,11 +105,15 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
                 )
                 .map(existing -> {
                     metrics.recordUpload(contentHash.sizeBytes(), true);
-                    return retainDuplicate(existing);
+                    BlobReference reference = retainDuplicate(existing);
+                    logUpload(reference);
+                    return reference;
                 })
                 .orElseGet(() -> {
                     metrics.recordUpload(contentHash.sizeBytes(), false);
-                    return storeNewContent(command, contentHash, bytes);
+                    BlobReference reference = storeNewContent(command, contentHash, bytes);
+                    logUpload(reference);
+                    return reference;
                 });
     }
 
@@ -168,10 +177,12 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
 
     @Override
     public void release(UUID assetContentId) {
+        AssetContent content = repository.findByIdForUpdate(assetContentId).orElse(null);
         try {
             referenceCountService.release(assetContentId);
         } catch (BlobStorageException failure) {
             metrics.recordDeleteFailure();
+            logDeleteFailure(assetContentId, content, failure);
             throw failure;
         }
     }
@@ -194,6 +205,38 @@ public final class DefaultBlobDeduplicationService implements BlobDeduplicationS
                 throw new IllegalStateException("Content hashing failed", failure);
             }
         });
+    }
+
+    private static void logUpload(BlobReference reference) {
+        LOGGER.info(
+                "event=blob.upload contentId={} provider={} objectKey={} decision={} hashPrefix={} sizeBytes={}",
+                reference.assetContentId(),
+                reference.storageProvider(),
+                reference.objectKey(),
+                reference.duplicate() ? "duplicate" : "new",
+                hashPrefix(reference.contentHash().hash()),
+                reference.contentHash().sizeBytes()
+        );
+    }
+
+    private static void logDeleteFailure(
+            UUID assetContentId,
+            AssetContent content,
+            BlobStorageException failure
+    ) {
+        LOGGER.error(
+                "event=blob.delete.failed contentId={} provider={} objectKey={} errorType={} failureMessage={}",
+                assetContentId,
+                content == null ? "unknown" : content.getStorageProvider(),
+                content == null ? "unknown" : content.getObjectKey(),
+                failure.getClass().getSimpleName(),
+                failure.getMessage(),
+                failure
+        );
+    }
+
+    private static String hashPrefix(String hash) {
+        return hash.substring(0, Math.min(HASH_PREFIX_LENGTH, hash.length()));
     }
 
     private static byte[] readAll(InputStream stream) {

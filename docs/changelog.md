@@ -190,3 +190,8 @@
 - First codebase-indexer scan of Blob Helper.
 - Generated `docs/architecture.md`, `docs/implementation.md`, `docs/patterns.md`, `docs/decisions.md`, and `docs/changelog.md`.
 - Detected Java 21 Maven reactor with current `blob-helper-core` module and planning docs for JPA, Spring Boot starter, local storage, S3/Azure adapters, and reconciliation.
+## 2026-08-30 — Add Micrometer metrics
+
+- Added optional Micrometer counters and timers for upload outcomes, deduplication savings, hashing and storage latency, delete failures, and reconciliation repairs.
+- Instrumented the starter service and reconciliation flow while preserving no-registry compatibility.
+- Modules affected: `blob-helper-spring-boot-starter`, Epic 6 planning/status documentation, and the living implementation indexes.

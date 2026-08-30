@@ -4,6 +4,7 @@ import com.edem.blobhelper.core.exception.BlobValidationException;
 import com.edem.blobhelper.jpa.AssetContent;
 import com.edem.blobhelper.jpa.AssetContentRepository;
 import com.edem.blobhelper.jpa.ReferenceCountService;
+import com.edem.blobhelper.observability.BlobHelperMetrics;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,9 +24,10 @@ public final class ReconciliationService {
     private final AssetContentRepository repository;
     private final ReferenceCountService referenceCountService;
     private final boolean repairEnabled;
+    private final BlobHelperMetrics metrics;
 
     public ReconciliationService(AssetContentRepository repository) {
-        this(repository, null, false);
+        this(repository, null, false, new BlobHelperMetrics(null));
     }
 
     public ReconciliationService(
@@ -33,11 +35,21 @@ public final class ReconciliationService {
             ReferenceCountService referenceCountService,
             boolean repairEnabled
     ) {
+        this(repository, referenceCountService, repairEnabled, new BlobHelperMetrics(null));
+    }
+
+    public ReconciliationService(
+            AssetContentRepository repository,
+            ReferenceCountService referenceCountService,
+            boolean repairEnabled,
+            BlobHelperMetrics metrics
+    ) {
         this.repository = Objects.requireNonNull(repository, "repository must not be null");
         this.referenceCountService = repairEnabled
                 ? Objects.requireNonNull(referenceCountService, "referenceCountService must not be null")
                 : referenceCountService;
         this.repairEnabled = repairEnabled;
+        this.metrics = Objects.requireNonNull(metrics, "metrics must not be null");
     }
 
     public ReconciliationReport reconcile(LogicalReferenceCountSource source) {
@@ -93,6 +105,7 @@ public final class ReconciliationService {
                 referenceCountService.release(mismatch.assetContentId());
             }
         }
+        metrics.recordRepair();
     }
 
     private record ReconciliationSnapshot(int checkedContentCount, List<ReconciliationMismatch> mismatches) {

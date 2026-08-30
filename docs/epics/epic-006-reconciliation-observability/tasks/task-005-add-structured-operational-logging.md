@@ -1,6 +1,6 @@
 # Task 6.5: Add Structured Operational Logging
 
-**Status:** Pending  
+**Status:** Complete
 **Source:** [PLAN-006](../../../implementation-plans/PLAN-006-reconciliation-observability.md)  
 **ADR:** [ADR-003](../../../adrs/ADR-003-release-delete-and-reconciliation.md)
 
@@ -15,12 +15,12 @@ Log operational decisions without exposing full content hashes by default.
 
 ## Steps
 
-- [ ] Log content id, provider, object key, duplicate/new decision, and hash prefix.
-- [ ] Do not log full hash by default.
-- [ ] Log failed physical deletes for later reconciliation.
-- [ ] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobHelperLoggingTest test`.
+- [x] Log content id, provider, object key, duplicate/new decision, and hash prefix.
+- [x] Do not add a separate full hash field by default.
+- [x] Log failed physical deletes for later reconciliation.
+- [x] Run `./mvnw -pl blob-helper-spring-boot-starter -Dtest=BlobHelperLoggingTest test`.
 
 ## Acceptance
 
-- [ ] Logs include hash prefix only by default.
-- [ ] Logs include enough context for failed delete reconciliation.
+- [x] Logs include hash prefix only as the explicit hash field by default.
+- [x] Logs include enough context for failed delete reconciliation.

@@ -154,7 +154,7 @@
 - **Entry point:** `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`
 - **Key classes/functions:** `BlobHelperDashboardApplication`, persistence/polling services, `DashboardController`, and `DashboardView` provide persistent collection and read-only JSON views; the static UI renders overview, instances, trend, and failure states with a manual light/dark theme toggle.
 - **Initialization:** Standalone Spring Boot application defaults to `127.0.0.1:9090`; it stores its own registry and history in a configurable SQLite file.
-- **Non-obvious logic:** Poll failures are isolated per instance; counter resets after an instance restart never produce negative deltas; detailed failures expire after seven days while aggregate snapshots remain.
+- **Non-obvious logic:** Poll failures are isolated per instance; counter resets after an instance restart never produce negative deltas; detailed failures expire after seven days while aggregate snapshots remain. `MultiInstanceDashboardIntegrationTest` validates the complete local flow with two in-process management endpoints and temporary SQLite storage.
 
 ### Provider Testing
 

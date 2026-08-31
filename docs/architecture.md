@@ -6,7 +6,8 @@ Maven multi-module Java 21 library project for a Spring Boot-compatible blob ded
 
 Current implementation state: root Maven reactor with `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, `blob-helper-storage-azure`, the optional `blob-helper-spring-boot-management` module, and the standalone `blob-helper-dashboard` application. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
 
-Planned next subsystem: multi-instance end-to-end verification, as defined by
+The local dashboard subsystem is implemented and covered by credential-free
+multi-instance end-to-end verification, as defined by
 [ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md).
 
 ## Directory Map

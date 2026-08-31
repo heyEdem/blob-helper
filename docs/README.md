@@ -15,6 +15,8 @@
 - [Epics](epics/): per-epic implementation task folders.
 - [Local dashboard design](plans/2026-08-28-local-dashboard-design.md): approved
   MVP design for multi-instance local monitoring.
+- Local dashboard verification is covered by credential-free integration tests
+  using in-process management endpoints and temporary SQLite storage.
 
 ## Project Goal
 

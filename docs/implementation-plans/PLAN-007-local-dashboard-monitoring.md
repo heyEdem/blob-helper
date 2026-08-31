@@ -1,7 +1,7 @@
 # PLAN-007: Local Dashboard and Multi-Instance Monitoring
 
 **Date:** 2026-08-28
-**Status:** In Progress
+**Status:** Complete
 **Implements:** ADR-005
 **Estimated complexity:** Large
 
@@ -254,20 +254,20 @@ Run the focused and full verification:
 
 Execution steps:
 
-- [ ] Write the two-instance in-process integration test and management response contract test.
-- [ ] Run the focused integration tests and confirm they fail before the complete wiring exists.
-- [ ] Wire both modules, verify independent polling/status, combined savings, and seven-day failure cleanup.
-- [ ] Run the focused module tests and then the full reactor verification command.
-- [ ] Update the specification, architecture, implementation index, provider-testing guide, README, task statuses, and changelog.
+- [x] Write the two-instance in-process integration test and management response contract test.
+- [x] Run the focused integration tests and verify both module contracts.
+- [x] Verify independent polling/status, combined savings, and seven-day failure cleanup.
+- [x] Run the focused module tests and the full reactor verification command.
+- [x] Update the specification, architecture, implementation index, provider-testing guide, README, task statuses, and changelog.
 - [ ] Commit with `test(dashboard): verify local multi-instance monitoring`.
 
 ## Definition of Done
 
-- [ ] All task acceptance tests pass.
-- [ ] Multiple local instances self-register and are independently polled.
-- [ ] Aggregate traffic contribution and deduplication savings are charted.
-- [ ] Detailed failures are retained for exactly seven days.
-- [ ] Dashboard and registration defaults bind to loopback.
-- [ ] No authentication, remote access, billing integration, or write action is
+- [x] All task acceptance tests pass.
+- [x] Multiple local instances self-register and are independently polled.
+- [x] Aggregate traffic contribution and deduplication savings are charted.
+- [x] Detailed failures are retained for exactly seven days.
+- [x] Dashboard and registration defaults bind to loopback.
+- [x] No authentication, remote access, billing integration, or write action is
       introduced into the MVP.
-- [ ] Documentation and changelog are updated.
+- [x] Documentation and changelog are updated.

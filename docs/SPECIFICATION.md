@@ -633,6 +633,11 @@ external services or containers/emulators.
 - seven-day detailed failure history
 - read-only light/dark dashboard UI
 
+The local monitoring flow is verified with two in-process management endpoints,
+independent failure status, aggregate metric contribution, and seven-day
+detailed failure retention. Verification uses temporary SQLite storage and no
+cloud credentials.
+
 ## 19. Open Questions
 
 - Should zero-reference content be deleted immediately or tombstoned first?

@@ -1,6 +1,6 @@
 # Task 7.4: Add Dashboard API and Light/Dark Static UI
 
-**Status:** Pending
+**Status:** Complete
 **Source:** [PLAN-007](../../../implementation-plans/PLAN-007-local-dashboard-monitoring.md)
 **ADR:** [ADR-005](../../../adrs/ADR-005-local-dashboard-pull-monitoring.md)
 
@@ -20,13 +20,13 @@ RabbitMQ-style local console.
 
 ## Acceptance
 
-- [ ] API exposes read-only overview, instances, metric history, and recent
+- [x] API exposes read-only overview, instances, metric history, and recent
       failures resources.
-- [ ] UI includes overview, instances, instance detail, failures, and settings
+- [x] UI includes overview, instances, instance detail, failures, and settings
       views.
-- [ ] UI shows upload attempts, duplicate uploads, physical uploads, logical
+- [x] UI shows upload attempts, duplicate uploads, physical uploads, logical
       bytes, physical bytes, avoided bytes, provider health, and errors.
-- [ ] Light and dark themes work from the first release, with system preference
+- [x] Light and dark themes work from the first release, with system preference
       detection and a manual toggle.
-- [ ] Empty, loading, stale, disconnected, and failed states are explicit.
-- [ ] No UI action mutates instance state or storage.
+- [x] Empty, loading, stale, disconnected, and failed states are explicit.
+- [x] No UI action mutates instance state or storage.

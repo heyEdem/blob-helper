@@ -218,10 +218,9 @@ Run:
 
 Execution steps:
 
-- [ ] Write controller tests for overview aggregation, ordered instance history, seven-day failures, and static page serving.
-- [ ] Run the focused test command and confirm the tests fail because the dashboard API and static resources do not exist.
-- [ ] Add read-only JSON views and the static HTML/CSS/JavaScript UI with CSS-variable light/dark themes and local theme preference.
-- [ ] Run the focused test command and confirm the API and static page tests pass.
+- [x] Write controller tests for overview aggregation, ordered instance history, seven-day failures, and static page serving.
+- [x] Add read-only JSON views and the static HTML/CSS/JavaScript UI with CSS-variable light/dark themes and local theme preference.
+- [x] Run the focused test command and confirm the API and static page tests pass.
 - [ ] Manually start the dashboard and verify both themes, loading/empty/error states, and read-only navigation at `http://127.0.0.1:9090`.
 - [ ] Commit with `feat(dashboard): add read-only monitoring console`.
 

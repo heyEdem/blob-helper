@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-31 — Add dashboard API and static console
+
+- Added read-only overview, instance status, history, and seven-day failure endpoints.
+- Added responsive vanilla HTML/CSS/JavaScript console with light/dark themes, trend visualization, and explicit loading, empty, disconnected, and error states.
+- Modules affected: `blob-helper-dashboard` and Epic 7 planning/status documentation.
+
 ## 2026-08-31 — Persist dashboard polling history
 
 - Added SQLite-backed instance registrations, interval metric snapshots, persisted status, and failure events with indexed instance/time queries.

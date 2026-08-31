@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-08-31 — Add local read-only management API
+
+- Added the optional `blob-helper-spring-boot-management` module with disabled-by-default Spring Boot auto-configuration.
+- Added provider-neutral info, health, metrics, and recent-failure response contracts with GET-only endpoints.
+- Modules affected: `blob-helper-spring-boot-management`, root Maven reactor, and Epic 7 planning/status documentation.
+
+## 2026-08-30 — Add structured operational logging
+
+- Added structured upload decision logs for new and duplicate content with content ID, provider, object key, decision, size, and an explicit short hash prefix.
+- Added failed physical-delete logs with reconciliation context and SLF4J/Logback-backed coverage.
+- Completed Epic 6 (5/5); project scope is now 30/35 tasks complete.
+- Modules affected: `blob-helper-spring-boot-starter` and Epic 6 planning/status documentation.
+
 ## 2026-08-29 — Implement opt-in reconciliation repair
 
 - Added an explicit, disabled-by-default repair operation that converges drift through the lock-aware JPA reference-count boundary.

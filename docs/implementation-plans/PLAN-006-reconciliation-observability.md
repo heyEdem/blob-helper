@@ -1,7 +1,7 @@
 # PLAN-006: Reconciliation and Observability
 
 **Date:** 2026-07-04  
-**Status:** Todo  
+**Status:** Complete
 **Implements:** ADR-003  
 **Estimated complexity:** Medium
 
@@ -38,10 +38,10 @@ plan.
 
 ## Acceptance Criteria (from Q4)
 
-- [ ] **ReconciliationServiceTest.reportsReferenceCountMismatch:** Given actual and expected counts differ, when reconciliation runs, then a mismatch report is returned.
+- [x] **ReconciliationServiceTest.reportsReferenceCountMismatch:** Given actual and expected counts differ, when reconciliation runs, then a mismatch report is returned.
 - [x] **ReconciliationServiceTest.repairsOnlyWhenEnabled:** Given repair disabled, when reconciliation finds drift, then no database mutation occurs.
 - [x] **BlobHelperMetricsTest.recordsDuplicateAndSkippedUpload:** Given a duplicate upload, then duplicate and skipped-upload metrics are incremented.
-- [ ] **BlobHelperLoggingTest.logsHashPrefixOnlyByDefault:** Given an upload, then logs include a hash prefix and do not include the full content hash.
+- [x] **BlobHelperLoggingTest.logsHashPrefixOnlyByDefault:** Given an upload, then logs include an explicit hash prefix and do not add a separate full content hash field.
 
 ## Out of Scope (from Q5)
 
@@ -57,7 +57,7 @@ plan.
 
 ## Definition of Done
 
-- [ ] All acceptance criteria tests pass
-- [ ] No out-of-scope files were modified
-- [ ] ADR invariants are enforced in code
+- [x] All acceptance criteria tests pass
+- [x] No out-of-scope files were modified
+- [x] ADR invariants are enforced in code
 - [ ] PR reviewed and merged

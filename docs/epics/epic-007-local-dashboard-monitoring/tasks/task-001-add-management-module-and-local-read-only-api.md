@@ -1,6 +1,6 @@
 # Task 7.1: Add Management Module and Local Read-Only API
 
-**Status:** Pending
+**Status:** Complete
 **Source:** [PLAN-007](../../../implementation-plans/PLAN-007-local-dashboard-monitoring.md)
 **ADR:** [ADR-005](../../../adrs/ADR-005-local-dashboard-pull-monitoring.md)
 
@@ -23,12 +23,12 @@ credentials.
 
 ## Acceptance
 
-- [ ] Management is disabled unless explicitly enabled.
-- [ ] `GET /blob-helper/management/v1/info`, `/health`, `/metrics`, and
+- [x] Management is disabled unless explicitly enabled.
+- [x] `GET /blob-helper/management/v1/info`, `/health`, `/metrics`, and
       `/failures` are read-only and return provider-neutral JSON.
-- [ ] Responses include instance ID/name, provider, cumulative operation and
+- [x] Responses include instance ID/name, provider, cumulative operation and
       byte counters, current content totals, and recent failure details.
-- [ ] No endpoint accepts blob deletion, reference repair, or provider
+- [x] No endpoint accepts blob deletion, reference repair, or provider
       credentials.
-- [ ] The module depends on the starter/core contracts and introduces no cloud
+- [x] The module depends on the starter/core contracts and introduces no cloud
       SDK dependency.

@@ -37,6 +37,7 @@
         <module>blob-helper-storage-s3</module>
         <module>blob-helper-storage-azure</module>
         <module>blob-helper-spring-boot-management</module>
+        <module>blob-helper-dashboard</module>
     </modules>
 
     <dependencyManagement>

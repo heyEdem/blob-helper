@@ -2,7 +2,7 @@
 
 ## Entry Points
 
-- `pom.xml`: parent Maven reactor. Declares `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, and `blob-helper-storage-azure` as current modules, manages JUnit/Spring Boot dependency BOMs, and configures Surefire to ignore a named test pattern in modules that do not contain that test.
+- `pom.xml`: parent Maven reactor. Declares the core, persistence, starter, storage, management, and dashboard modules, manages JUnit/Spring Boot dependency BOMs, and configures Surefire to ignore a named test pattern in modules that do not contain that test.
 - `blob-helper-core/pom.xml`: core module build file. Depends on JUnit Jupiter for tests.
 - `blob-helper-jpa/pom.xml`: persistence module build file. Depends on `blob-helper-core`, exposes Jakarta Persistence, and uses Hibernate/H2 in test scope.
 - `blob-helper-jpa/src/main/java/com/edem/blobhelper/jpa/AssetContent.java`: JPA entity for unique physical content identity, object location, metadata, reference count, timestamps, and optimistic locking.
@@ -69,9 +69,19 @@
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementSnapshot.java`: provider-neutral info, health, metrics, and failure response records plus the failure-source extension point.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementController.java`: exposes GET-only `/v1/info`, `/health`, `/metrics`, and `/failures` endpoints under the configurable management base path.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementAutoConfiguration.java`: conditionally registers the management controller only when `blob-helper.management.enabled=true`.
-- `blob-helper-dashboard/pom.xml` *(planned)*: standalone dashboard build file with Spring Web, Spring JDBC, SQLite JDBC, and static-resource serving dependencies.
-- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard` *(planned)*: local registration, multi-instance polling, SQLite repositories, seven-day failure cleanup, and read-only dashboard API.
-- `blob-helper-dashboard/src/main/resources/static` *(planned)*: vanilla HTML/CSS/JavaScript dashboard with responsive light and dark themes.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/DashboardRegistrationProperties.java`: binds opt-in dashboard URL, instance identity, advertised management URL, and optional explicit stable ID.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/InstanceRegistrationClient.java`: asynchronously self-registers after application readiness, derives a stable name-based UUID when needed, and isolates dashboard outages from application startup.
+- `blob-helper-dashboard/pom.xml`: standalone executable dashboard with Spring Web, Spring JDBC, SQLite JDBC, and Spring Boot repackaging.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`: standalone dashboard entry point with loopback/9090 defaults.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistration.java`: validated provider-neutral registration record.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistrationController.java`: local registration endpoint backed by stable-ID SQLite upsert and readback.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/DashboardDatabase.java`: initializes SQLite tables and indexes for instances, metric snapshots, and failure events.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/InstanceRepository.java`: parameterized registration/status repository with last-seen and failure state.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/MetricSnapshotRepository.java`: stores ordered per-instance interval metric snapshots.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/FailureEventRepository.java`: stores failure details and deletes only events older than the configured retention window.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/MetricDeltaCalculator.java`: converts cumulative management counters into non-negative interval deltas and handles process resets.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/InstancePollingService.java`: independently polls registered instances, persists snapshots/status, records failures, and runs retention cleanup.
+- `blob-helper-dashboard/src/main/resources/application.yaml`: dashboard defaults for loopback binding, port 9090, database path, polling interval, and failure retention.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 - `docs/provider-testing.md`: documents credential-free provider contract coverage and the opt-in path for future external provider tests.
@@ -134,10 +144,10 @@
 - **Initialization:** Optional Spring Boot auto-configuration is registered through `AutoConfiguration.imports`; management is disabled unless explicitly enabled.
 - **Non-obvious logic:** Missing Micrometer meters and metadata repositories produce safe zero totals, and failure details are supplied through an optional provider-neutral source. The module does not receive S3/Azure credentials.
 
-### blob-helper-dashboard *(planned)*
+### blob-helper-dashboard
 
 - **Entry point:** `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`
-- **Key classes/functions:** registration controller/client, per-instance polling service, cumulative-counter delta calculator, SQLite repositories, dashboard view controller, and static UI resources.
+- **Key classes/functions:** `BlobHelperDashboardApplication`, `InstanceRegistrationController`, `InstanceRepository`, `MetricSnapshotRepository`, `FailureEventRepository`, `MetricDeltaCalculator`, and `InstancePollingService` provide persistent registration, independent polling, interval history, status, and bounded failure details; dashboard views and static UI remain follow-up work.
 - **Initialization:** Standalone Spring Boot application defaults to `127.0.0.1:9090`; it stores its own registry and history in a configurable SQLite file.
 - **Non-obvious logic:** Poll failures are isolated per instance; counter resets after an instance restart never produce negative deltas; detailed failures expire after seven days while aggregate snapshots remain.
 
@@ -182,10 +192,11 @@ Implemented starter properties:
 | `blob-helper.cleanup.reconciliation-enabled` | `false` | Controls reconciliation scheduling; disabled by default. |
 | `blob-helper.management.enabled` | `false` | Enables the local read-only management API in a consuming application. |
 | `blob-helper.management.base-path` | `/blob-helper/management` | Base path for local management endpoints. |
-| `blob-helper.dashboard-registration.enabled` *(planned)* | `false` | Enables self-registration with the local dashboard. |
-| `blob-helper.dashboard-registration.dashboard-url` *(planned)* | None | Local dashboard registration URL. |
-| `blob-helper.dashboard-registration.instance-name` *(planned)* | Application name | Display name shown in the dashboard. |
-| `blob-helper.dashboard-registration.advertised-url` *(planned)* | None | Management URL the dashboard polls. |
+| `blob-helper.dashboard-registration.enabled` | `false` | Enables asynchronous self-registration with the local dashboard. |
+| `blob-helper.dashboard-registration.dashboard-url` | None | Local dashboard registration URL. |
+| `blob-helper.dashboard-registration.instance-name` | `blob-helper` | Display name shown in the dashboard. |
+| `blob-helper.dashboard-registration.advertised-url` | None | Management URL the dashboard polls. |
+| `blob-helper.dashboard-registration.instance-id` | Generated | Optional UUID; otherwise derived stably from instance name and advertised URL. |
 
 Planned dashboard settings:
 
@@ -194,5 +205,5 @@ Planned dashboard settings:
 | `server.address` | `127.0.0.1` | Local-only dashboard bind address. |
 | `server.port` | `9090` | Dedicated dashboard port. |
 | `blob-helper.dashboard.database-path` | `./blob-helper-dashboard.sqlite` | SQLite file location. |
-| `blob-helper.dashboard.polling-interval` | `30s` | Interval between instance polls. |
-| `blob-helper.dashboard.failure-retention` | `7d` | Detailed failure retention period. |
+| `blob-helper.dashboard.polling-interval` | `30s` | Fixed delay between instance polls. |
+| `blob-helper.dashboard.failure-retention` | `7d` | Detailed failure retention period; aggregate snapshots are retained. |

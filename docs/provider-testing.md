@@ -36,6 +36,14 @@ Credential-dependent tests are not part of the default path. When an external S3
 
 Do not add cloud credentials, secrets, or required external endpoints to the normal Maven verification workflow.
 
-The planned local dashboard is also credential-free: its integration tests use
-in-process management endpoints and a temporary SQLite database. They must not
-connect directly to S3, Azure, or consuming application databases.
+The local dashboard is also credential-free: its integration tests use two
+in-process management endpoints and a temporary SQLite database. They verify
+registration, independent polling/status, aggregate contribution, and bounded
+failure retention. They must not connect directly to S3, Azure, or consuming
+application databases.
+
+Run the local monitoring verification with:
+
+```bash
+./mvnw -pl blob-helper-spring-boot-management,blob-helper-dashboard test
+```

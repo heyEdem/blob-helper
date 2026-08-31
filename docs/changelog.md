@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-31 — Verify local multi-instance monitoring
+
+- Added management response contract coverage and a two-instance in-process end-to-end test for registration, polling, aggregate savings, failure isolation, and seven-day retention cleanup.
+- Updated local-only startup, verification, and completion documentation for Epic 7.
+- Modules affected: `blob-helper-spring-boot-management`, `blob-helper-dashboard`, and project documentation.
+
+## 2026-08-31 — Add dashboard API and static console
+
+- Added read-only overview, instance status, history, and seven-day failure endpoints.
+- Added responsive vanilla HTML/CSS/JavaScript console with light/dark themes, trend visualization, and explicit loading, empty, disconnected, and error states.
+- Modules affected: `blob-helper-dashboard` and Epic 7 planning/status documentation.
+
 ## 2026-08-31 — Persist dashboard polling history
 
 - Added SQLite-backed instance registrations, interval metric snapshots, persisted status, and failure events with indexed instance/time queries.

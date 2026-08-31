@@ -1,8 +1,8 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-31
-**Completed:** 33/35 (94%)
-**Status:** In Progress
+**Completed:** 35/35 (100%)
+**Status:** Complete
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
 
@@ -16,8 +16,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 4 | Local storage and integration tests | 4/4 | Complete |
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
 | 6 | Reconciliation and observability | 5/5 | Complete |
-| 7 | Local dashboard and multi-instance monitoring | 3/5 | In Progress |
-| **Total** | | **33/35** | **In Progress** |
+| 7 | Local dashboard and multi-instance monitoring | 5/5 | Complete |
+| **Total** | | **35/35** | **Complete** |
 
 ## Source Map
 
@@ -98,13 +98,15 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [x] 7.1 [Add management module and local read-only API](epics/epic-007-local-dashboard-monitoring/tasks/task-001-add-management-module-and-local-read-only-api.md)
 - [x] 7.2 [Add YAML self-registration and dashboard shell](epics/epic-007-local-dashboard-monitoring/tasks/task-002-add-yaml-self-registration-and-dashboard-shell.md)
 - [x] 7.3 [Add SQLite polling history and failure retention](epics/epic-007-local-dashboard-monitoring/tasks/task-003-add-sqlite-polling-history-and-failure-retention.md)
-- [ ] 7.4 [Add dashboard API and light/dark static UI](epics/epic-007-local-dashboard-monitoring/tasks/task-004-add-dashboard-api-and-static-ui.md)
-- [ ] 7.5 [Add multi-instance end-to-end verification](epics/epic-007-local-dashboard-monitoring/tasks/task-005-add-multi-instance-end-to-end-verification.md)
+- [x] 7.4 [Add dashboard API and light/dark static UI](epics/epic-007-local-dashboard-monitoring/tasks/task-004-add-dashboard-api-and-static-ui.md)
+- [x] 7.5 [Add multi-instance end-to-end verification](epics/epic-007-local-dashboard-monitoring/tasks/task-005-add-multi-instance-end-to-end-verification.md)
 
 ## Notes
 
 | Date | Note |
 |---|---|
+| 2026-08-31 | Completed task 7.5 with two-instance in-process management polling, independent failure/status verification, dashboard contract coverage, and credential-free seven-day retention verification. Epic 7 and the project are complete (35/35). |
+| 2026-08-31 | Completed task 7.4 with read-only overview/history/failure APIs, responsive vanilla dashboard UI, explicit operational states, and persisted light/dark theme choice. Project scope is now 34/35 tasks complete. |
 | 2026-08-31 | Completed task 7.3 with SQLite-backed registrations, interval metric snapshots, independent scheduled polling, reset-safe deltas, persisted instance status, and seven-day failure cleanup. Project scope is now 33/35 tasks complete. |
 | 2026-08-31 | Completed task 7.2 with asynchronous YAML-configured self-registration, stable instance IDs, idempotent dashboard registration, and an executable loopback dashboard shell. Project scope is now 32/35 tasks complete. |
 | 2026-08-31 | Completed task 7.1 with the optional management module, disabled-by-default GET-only API, provider-neutral snapshots, and no cloud SDK dependencies. Project scope is now 31/35 tasks complete. |

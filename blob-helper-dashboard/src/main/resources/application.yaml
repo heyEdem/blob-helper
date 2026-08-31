@@ -7,3 +7,8 @@ blob-helper:
     database-path: ./blob-helper-dashboard.sqlite
     polling-interval: 30s
     failure-retention: 7d
+
+spring:
+  datasource:
+    url: jdbc:sqlite:${blob-helper.dashboard.database-path:./blob-helper-dashboard.sqlite}
+    driver-class-name: org.sqlite.JDBC

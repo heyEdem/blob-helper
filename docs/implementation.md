@@ -71,10 +71,16 @@
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementAutoConfiguration.java`: conditionally registers the management controller only when `blob-helper.management.enabled=true`.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/DashboardRegistrationProperties.java`: binds opt-in dashboard URL, instance identity, advertised management URL, and optional explicit stable ID.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/InstanceRegistrationClient.java`: asynchronously self-registers after application readiness, derives a stable name-based UUID when needed, and isolates dashboard outages from application startup.
-- `blob-helper-dashboard/pom.xml`: standalone executable dashboard shell with Spring Web and Spring Boot repackaging; persistence dependencies remain for later dashboard tasks.
+- `blob-helper-dashboard/pom.xml`: standalone executable dashboard with Spring Web, Spring JDBC, SQLite JDBC, and Spring Boot repackaging.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`: standalone dashboard entry point with loopback/9090 defaults.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistration.java`: validated provider-neutral registration record.
-- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistrationController.java`: local registration endpoint with in-memory stable-ID upsert and readback for the shell phase.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistrationController.java`: local registration endpoint backed by stable-ID SQLite upsert and readback.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/DashboardDatabase.java`: initializes SQLite tables and indexes for instances, metric snapshots, and failure events.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/InstanceRepository.java`: parameterized registration/status repository with last-seen and failure state.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/MetricSnapshotRepository.java`: stores ordered per-instance interval metric snapshots.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/FailureEventRepository.java`: stores failure details and deletes only events older than the configured retention window.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/MetricDeltaCalculator.java`: converts cumulative management counters into non-negative interval deltas and handles process resets.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/InstancePollingService.java`: independently polls registered instances, persists snapshots/status, records failures, and runs retention cleanup.
 - `blob-helper-dashboard/src/main/resources/application.yaml`: dashboard defaults for loopback binding, port 9090, database path, polling interval, and failure retention.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
@@ -141,7 +147,7 @@
 ### blob-helper-dashboard
 
 - **Entry point:** `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`
-- **Key classes/functions:** `BlobHelperDashboardApplication`, `InstanceRegistrationController`, and `InstanceRegistration` provide the standalone shell and stable-ID registration surface; polling, SQLite repositories, dashboard views, and static UI remain follow-up work.
+- **Key classes/functions:** `BlobHelperDashboardApplication`, `InstanceRegistrationController`, `InstanceRepository`, `MetricSnapshotRepository`, `FailureEventRepository`, `MetricDeltaCalculator`, and `InstancePollingService` provide persistent registration, independent polling, interval history, status, and bounded failure details; dashboard views and static UI remain follow-up work.
 - **Initialization:** Standalone Spring Boot application defaults to `127.0.0.1:9090`; it stores its own registry and history in a configurable SQLite file.
 - **Non-obvious logic:** Poll failures are isolated per instance; counter resets after an instance restart never produce negative deltas; detailed failures expire after seven days while aggregate snapshots remain.
 
@@ -198,6 +204,6 @@ Planned dashboard settings:
 |---|---|---|
 | `server.address` | `127.0.0.1` | Local-only dashboard bind address. |
 | `server.port` | `9090` | Dedicated dashboard port. |
-| `blob-helper.dashboard.database-path` | `./blob-helper-dashboard.sqlite` | Planned SQLite file location. |
-| `blob-helper.dashboard.polling-interval` | `30s` | Planned interval between instance polls. |
-| `blob-helper.dashboard.failure-retention` | `7d` | Planned detailed failure retention period. |
+| `blob-helper.dashboard.database-path` | `./blob-helper-dashboard.sqlite` | SQLite file location. |
+| `blob-helper.dashboard.polling-interval` | `30s` | Fixed delay between instance polls. |
+| `blob-helper.dashboard.failure-retention` | `7d` | Detailed failure retention period; aggregate snapshots are retained. |

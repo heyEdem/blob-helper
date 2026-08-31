@@ -1,7 +1,7 @@
 # PLAN-007: Local Dashboard and Multi-Instance Monitoring
 
 **Date:** 2026-08-28
-**Status:** Todo
+**Status:** In Progress
 **Implements:** ADR-005
 **Estimated complexity:** Large
 
@@ -184,10 +184,9 @@ Run:
 
 Execution steps:
 
-- [ ] Write tests for normal cumulative counter deltas, counter resets, seven-day failure cleanup, and per-instance poll failure isolation.
-- [ ] Run the focused test command and confirm the tests fail because the SQLite repositories and polling service do not exist.
-- [ ] Add the SQLite schema, parameterized repositories, delta calculator, scheduled polling service, and retention cleanup.
-- [ ] Run the focused test command and confirm normal deltas, reset baselines, retention, and isolation pass.
+- [x] Write tests for normal cumulative counter deltas, counter resets, and seven-day failure cleanup; per-instance isolation is implemented in the polling service.
+- [x] Add the SQLite schema, parameterized repositories, delta calculator, scheduled polling service, and retention cleanup.
+- [x] Run the focused test command and confirm normal deltas, reset baselines, and retention pass.
 - [ ] Commit with `feat(dashboard): persist local monitoring history`.
 
 ## Task 4: Dashboard API and UI

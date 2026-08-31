@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-31 — Persist dashboard polling history
+
+- Added SQLite-backed instance registrations, interval metric snapshots, persisted status, and failure events with indexed instance/time queries.
+- Added scheduled multi-instance polling with reset-safe cumulative counter deltas and seven-day failure-only retention cleanup.
+- Modules affected: `blob-helper-dashboard` and Epic 7 planning/status documentation.
+
 ## 2026-08-31 — Add self-registration and dashboard shell
 
 - Added the standalone executable `blob-helper-dashboard` module with loopback/9090 defaults and local registration endpoint.

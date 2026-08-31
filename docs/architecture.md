@@ -4,10 +4,10 @@
 
 Maven multi-module Java 21 library project for a Spring Boot-compatible blob deduplication helper.
 
-Current implementation state: root Maven reactor with `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, `blob-helper-storage-azure`, and the optional `blob-helper-spring-boot-management` module. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
+Current implementation state: root Maven reactor with `blob-helper-core`, `blob-helper-jpa`, `blob-helper-spring-boot-starter`, `blob-helper-storage-local`, `blob-helper-storage-s3`, `blob-helper-storage-azure`, the optional `blob-helper-spring-boot-management` module, and the standalone `blob-helper-dashboard` application. The original Spring Boot shell class still exists under root `src/`, but the root project is now `pom` packaging and the shell source is not part of a reactor child module.
 
-Planned next subsystem: SQLite-backed polling history and the dashboard UI, as
-defined by [ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md).
+Planned next subsystem: the read-only dashboard API and static UI, as defined by
+[ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md).
 
 ## Directory Map
 
@@ -126,4 +126,4 @@ Blob Helper instance starts
 | SLF4J API | Starter logging facade for provider-neutral operational events; application logging backends remain consumer-configured. |
 | AWS SDK for Java 2.x 2.54.4 | Isolated to `blob-helper-storage-s3` through its module-local BOM and `software.amazon.awssdk:s3` dependency; not present in core or starter. |
 | Azure SDK for Java 1.3.8 BOM / Blob SDK 12.35.0 | Isolated to `blob-helper-storage-azure` through its module-local BOM and `com.azure:azure-storage-blob` dependency; not present in core or starter. |
-| SQLite JDBC / Spring JDBC *(planned)* | Dashboard-only persistence for local instance registrations, aggregate metric snapshots, and seven-day failure details. |
+| SQLite JDBC / Spring JDBC | Dashboard-only persistence for local instance registrations, interval metric snapshots, and seven-day failure details. |

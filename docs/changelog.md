@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-31 — Add local read-only management API
+
+- Added the optional `blob-helper-spring-boot-management` module with disabled-by-default Spring Boot auto-configuration.
+- Added provider-neutral info, health, metrics, and recent-failure response contracts with GET-only endpoints.
+- Modules affected: `blob-helper-spring-boot-management`, root Maven reactor, and Epic 7 planning/status documentation.
+
 ## 2026-08-30 — Add structured operational logging
 
 - Added structured upload decision logs for new and duplicate content with content ID, provider, object key, decision, size, and an explicit short hash prefix.

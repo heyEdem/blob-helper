@@ -64,8 +64,11 @@
 - `blob-helper-storage-azure/src/main/java/com/edem/blobhelper/storage/azure/AzureBlobStorage.java`: Azure `BlobStorage` adapter with properties-based or injected-client construction, streaming uploads with content headers and metadata, property-backed reads, idempotent deletion, existence checks, and Azure-to-core exception mapping.
 - `blob-helper-storage-azure/src/test/java/com/edem/blobhelper/storage/azure/AzureBlobStoragePropertiesTest.java`: verifies all Azure connection settings can be assigned and read without credentials or network calls.
 - `blob-helper-storage-azure/src/test/java/com/edem/blobhelper/storage/azure/AzureBlobStorageContractTest.java`: verifies the Azure adapter round trip, request headers and metadata, missing-object behavior, idempotent deletion, and provider exception mapping against an in-process HTTP fake.
-- `blob-helper-spring-boot-management/pom.xml` *(planned)*: optional instance management module build file; it will depend on the starter and Spring Web without cloud-provider SDKs.
-- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management` *(planned)*: local read-only management endpoints, provider-neutral snapshots, YAML properties, and self-registration client.
+- `blob-helper-spring-boot-management/pom.xml`: optional instance management module build file; it depends on the starter, Spring Web, and Micrometer without cloud-provider SDKs.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementProperties.java`: binds disabled-by-default management enablement, base path, instance ID, and instance name.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementSnapshot.java`: provider-neutral info, health, metrics, and failure response records plus the failure-source extension point.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementController.java`: exposes GET-only `/v1/info`, `/health`, `/metrics`, and `/failures` endpoints under the configurable management base path.
+- `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementAutoConfiguration.java`: conditionally registers the management controller only when `blob-helper.management.enabled=true`.
 - `blob-helper-dashboard/pom.xml` *(planned)*: standalone dashboard build file with Spring Web, Spring JDBC, SQLite JDBC, and static-resource serving dependencies.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard` *(planned)*: local registration, multi-instance polling, SQLite repositories, seven-day failure cleanup, and read-only dashboard API.
 - `blob-helper-dashboard/src/main/resources/static` *(planned)*: vanilla HTML/CSS/JavaScript dashboard with responsive light and dark themes.
@@ -124,12 +127,12 @@
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core`, imports the Azure SDK BOM version `1.3.8` locally, and declares `azure-storage-blob` without a version so Azure dependencies remain isolated to this provider module.
 - **Non-obvious logic:** Azure 404 responses map to core `ContentNotFoundException` for reads and `false` for existence checks; other Azure provider failures become core `BlobStorageException`. The contract test uses the real Azure SDK against an in-process JDK HTTP server, so normal verification needs no Azure credentials or external service.
 
-### blob-helper-spring-boot-management *(planned)*
+### blob-helper-spring-boot-management
 
 - **Entry point:** `blob-helper-spring-boot-management/pom.xml`
-- **Key classes/functions:** `BlobHelperManagementProperties` will control opt-in local management and YAML self-registration; `BlobHelperManagementController` will expose `/blob-helper/management/v1/info`, `/health`, `/metrics`, and `/failures` as read-only provider-neutral JSON.
-- **Initialization:** Optional Spring Boot auto-configuration registered through `AutoConfiguration.imports`; management is disabled unless explicitly enabled.
-- **Non-obvious logic:** The module reports Blob Helper traffic contribution rather than provider billing and does not receive S3/Azure credentials. Registration is local-only and tokenless in the MVP.
+- **Key classes/functions:** `BlobHelperManagementProperties` controls opt-in management identity and base path; `BlobHelperManagementController` exposes `/blob-helper/management/v1/info`, `/health`, `/metrics`, and `/failures` as read-only provider-neutral JSON.
+- **Initialization:** Optional Spring Boot auto-configuration is registered through `AutoConfiguration.imports`; management is disabled unless explicitly enabled.
+- **Non-obvious logic:** Missing Micrometer meters and metadata repositories produce safe zero totals, and failure details are supplied through an optional provider-neutral source. The module does not receive S3/Azure credentials.
 
 ### blob-helper-dashboard *(planned)*
 
@@ -177,8 +180,8 @@ Implemented starter properties:
 | `blob-helper.deduplication.strict-content-type-validation` | `false` | Rejects unsupported content types when enabled. |
 | `blob-helper.cleanup.delete-physical-on-zero-references` | `true` | Controls physical deletion after the final reference is released. |
 | `blob-helper.cleanup.reconciliation-enabled` | `false` | Controls reconciliation scheduling; disabled by default. |
-| `blob-helper.management.enabled` *(planned)* | `false` | Enables the local read-only management API in a consuming application. |
-| `blob-helper.management.base-path` *(planned)* | `/blob-helper/management` | Base path for local management endpoints. |
+| `blob-helper.management.enabled` | `false` | Enables the local read-only management API in a consuming application. |
+| `blob-helper.management.base-path` | `/blob-helper/management` | Base path for local management endpoints. |
 | `blob-helper.dashboard-registration.enabled` *(planned)* | `false` | Enables self-registration with the local dashboard. |
 | `blob-helper.dashboard-registration.dashboard-url` *(planned)* | None | Local dashboard registration URL. |
 | `blob-helper.dashboard-registration.instance-name` *(planned)* | Application name | Display name shown in the dashboard. |

@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
 **Last Updated:** 2026-08-30
-**Completed:** 30/35 (86%)
+**Completed:** 31/35 (89%)
 **Status:** In Progress
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -17,7 +17,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
 | 6 | Reconciliation and observability | 5/5 | Complete |
 | 7 | Local dashboard and multi-instance monitoring | 0/5 | Not Started |
-| **Total** | | **30/35** | **In Progress** |
+| **Total** | | **31/35** | **In Progress** |
 
 ## Source Map
 
@@ -95,7 +95,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 ## Epic 7 — Local Dashboard and Multi-Instance Monitoring
 
-- [ ] 7.1 [Add management module and local read-only API](epics/epic-007-local-dashboard-monitoring/tasks/task-001-add-management-module-and-local-read-only-api.md)
+- [x] 7.1 [Add management module and local read-only API](epics/epic-007-local-dashboard-monitoring/tasks/task-001-add-management-module-and-local-read-only-api.md)
 - [ ] 7.2 [Add YAML self-registration and dashboard shell](epics/epic-007-local-dashboard-monitoring/tasks/task-002-add-yaml-self-registration-and-dashboard-shell.md)
 - [ ] 7.3 [Add SQLite polling history and failure retention](epics/epic-007-local-dashboard-monitoring/tasks/task-003-add-sqlite-polling-history-and-failure-retention.md)
 - [ ] 7.4 [Add dashboard API and light/dark static UI](epics/epic-007-local-dashboard-monitoring/tasks/task-004-add-dashboard-api-and-static-ui.md)
@@ -105,6 +105,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 
 | Date | Note |
 |---|---|
+| 2026-08-31 | Completed task 7.1 with the optional management module, disabled-by-default GET-only API, provider-neutral snapshots, and no cloud SDK dependencies. Project scope is now 31/35 tasks complete. |
 | 2026-08-30 | Completed task 6.5 with structured upload decision logs, short explicit hash prefixes, and failed physical-delete context. Epic 6 is complete (5/5); project scope is now 30/35 tasks complete. |
 | 2026-08-30 | Completed task 6.4 with optional Micrometer counters/timers for upload outcomes, deduplication savings, hashing/storage latency, delete failures, and repairs. Epic 6 is in progress (4/5). |
 | 2026-08-29 | Completed task 6.3 with explicit repair enablement, read-only disabled behavior, and lock-aware retain/release repair operations. Epic 6 is in progress (3/5). |

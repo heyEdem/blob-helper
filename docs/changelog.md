@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-08-31 — Add self-registration and dashboard shell
+
+- Added the standalone executable `blob-helper-dashboard` module with loopback/9090 defaults and local registration endpoint.
+- Added asynchronous management-side self-registration with YAML configuration, stable generated instance IDs, and outage isolation.
+- Modules affected: `blob-helper-dashboard`, `blob-helper-spring-boot-management`, root Maven reactor, and Epic 7 planning/status documentation.
+
 ## 2026-08-31 — Add local read-only management API
 
 - Added the optional `blob-helper-spring-boot-management` module with disabled-by-default Spring Boot auto-configuration.

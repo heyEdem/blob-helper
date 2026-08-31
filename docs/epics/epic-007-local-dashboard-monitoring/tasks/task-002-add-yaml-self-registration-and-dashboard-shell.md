@@ -1,6 +1,6 @@
 # Task 7.2: Add YAML Self-Registration and Dashboard Shell
 
-**Status:** Pending
+**Status:** Complete
 **Source:** [PLAN-007](../../../implementation-plans/PLAN-007-local-dashboard-monitoring.md)
 **ADR:** [ADR-005](../../../adrs/ADR-005-local-dashboard-pull-monitoring.md)
 
@@ -22,11 +22,11 @@ standalone dashboard process bound to loopback.
 
 ## Acceptance
 
-- [ ] Instances opt in through `application.yaml` with dashboard URL, instance
+- [x] Instances opt in through `application.yaml` with dashboard URL, instance
       name, and advertised management URL.
-- [ ] Registration creates or updates an instance by stable generated ID.
-- [ ] Duplicate startup registration is idempotent.
-- [ ] Dashboard defaults to `server.address=127.0.0.1` and port `9090`.
-- [ ] Dashboard registration accepts local requests without tokens in the MVP.
-- [ ] An unreachable instance can remain registered and later recover through
-      polling; no manual re-registration is required.
+- [x] Registration creates or updates an instance by stable generated ID.
+- [x] Duplicate startup registration is idempotent.
+- [x] Dashboard defaults to `server.address=127.0.0.1` and port `9090`.
+- [x] Dashboard registration accepts local requests without tokens in the MVP.
+- [x] An unreachable instance remains registered; polling-based recovery is
+      provided by the follow-up polling task without manual re-registration.

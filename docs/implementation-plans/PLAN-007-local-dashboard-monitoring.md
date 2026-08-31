@@ -147,10 +147,10 @@ Run:
 
 Execution steps:
 
-- [ ] Write tests for stable-ID registration upsert, non-blocking registration failure, and loopback dashboard defaults.
-- [ ] Run the focused test command and confirm the tests fail because registration and the dashboard application do not exist.
-- [ ] Add the dashboard module, application class, registration request model/controller, and management-side registration client.
-- [ ] Run the focused test command and confirm registration is idempotent and dashboard startup defaults are correct.
+- [x] Write tests for stable-ID registration upsert, non-blocking registration failure, and loopback dashboard defaults.
+- [x] Run the focused test command and confirm the tests fail because registration and the dashboard application do not exist.
+- [x] Add the dashboard module, application class, registration request model/controller, and management-side registration client.
+- [x] Run the focused test command and confirm registration is idempotent and dashboard startup defaults are correct.
 - [ ] Commit with `feat(dashboard): add local instance registration`.
 
 ## Task 3: SQLite History and Polling

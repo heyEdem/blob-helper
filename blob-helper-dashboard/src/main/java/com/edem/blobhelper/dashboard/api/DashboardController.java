@@ -27,13 +27,15 @@ public class DashboardController {
     @GetMapping("/overview")
     public DashboardView.Overview overview() {
         var all = snapshots.findAll();
+        var registered = instances.findAll();
         long uploads = all.stream().mapToLong(MetricSnapshotRepository.Snapshot::uploads).sum();
         long duplicates = all.stream().mapToLong(MetricSnapshotRepository.Snapshot::duplicates).sum();
         long logical = all.stream().mapToLong(MetricSnapshotRepository.Snapshot::logicalBytes).sum();
         long physical = all.stream().mapToLong(MetricSnapshotRepository.Snapshot::physicalBytes).sum();
         long avoided = all.stream().mapToLong(MetricSnapshotRepository.Snapshot::avoidedBytes).sum();
         var trend = all.stream().map(s -> new DashboardView.TrendPoint(s.observedAt(), s.logicalBytes(), s.physicalBytes(), s.avoidedBytes(), s.uploads(), s.duplicates())).toList();
-        return new DashboardView.Overview(instances.findAll().size(), instances.findAll().stream().filter(i -> "HEALTHY".equals(i.status())).count(), uploads, duplicates, all.stream().mapToLong(MetricSnapshotRepository.Snapshot::skippedPhysicalWrites).sum(), logical, physical, avoided, uploads == 0 ? 0 : (double) duplicates / uploads, trend);
+        long contentCount = registered.stream().mapToLong(i -> metricsFor(i.id()).contentCount()).sum();
+        return new DashboardView.Overview(registered.size(), registered.stream().filter(i -> "HEALTHY".equals(i.status())).count(), uploads, duplicates, all.stream().mapToLong(MetricSnapshotRepository.Snapshot::skippedPhysicalWrites).sum(), logical, physical, avoided, uploads == 0 ? 0 : (double) duplicates / uploads, uploads - duplicates, contentCount, trend);
     }
 
     @GetMapping("/instances/status")
@@ -45,10 +47,27 @@ public class DashboardController {
     }
 
     @GetMapping("/failures")
-    public List<DashboardView.Failure> failures(@RequestParam(required = false) Instant since) {
+    public List<DashboardView.Failure> failures(@RequestParam(name = "since", required = false) Instant since) {
         Instant boundary = since == null ? Instant.now().minus(7, ChronoUnit.DAYS) : since;
         return failures.findSince(boundary).stream().map(f -> new DashboardView.Failure(f.id(), f.instanceId(), f.occurredAt(), f.operation(), f.message())).toList();
     }
 
-    private DashboardView.Instance view(InstanceRepository.Instance i) { return new DashboardView.Instance(i.id(), i.name(), i.url(), i.status(), i.registeredAt(), i.lastSeenAt(), i.lastFailureAt(), i.lastFailureMessage()); }
+    private DashboardView.Instance view(InstanceRepository.Instance i) {
+        var metrics = metricsFor(i.id());
+        long uploads = metrics.uploads();
+        long duplicates = metrics.duplicates();
+        return new DashboardView.Instance(i.id(), i.name(), i.url(), i.status(), i.registeredAt(), i.lastSeenAt(), i.lastFailureAt(), i.lastFailureMessage(), uploads, uploads - duplicates, duplicates, uploads == 0 ? 0 : (double) duplicates / uploads, metrics.contentCount(), metrics.physicalBytes(), metrics.avoidedBytes());
+    }
+
+    private InstanceMetrics metricsFor(UUID instanceId) {
+        var points = snapshots.findByInstance(instanceId);
+        long uploads = points.stream().mapToLong(MetricSnapshotRepository.Snapshot::uploads).sum();
+        long duplicates = points.stream().mapToLong(MetricSnapshotRepository.Snapshot::duplicates).sum();
+        long physicalBytes = points.stream().mapToLong(MetricSnapshotRepository.Snapshot::physicalBytes).sum();
+        long avoidedBytes = points.stream().mapToLong(MetricSnapshotRepository.Snapshot::avoidedBytes).sum();
+        long contentCount = points.isEmpty() ? 0 : points.getLast().contentCount();
+        return new InstanceMetrics(uploads, duplicates, contentCount, physicalBytes, avoidedBytes);
+    }
+
+    private record InstanceMetrics(long uploads, long duplicates, long contentCount, long physicalBytes, long avoidedBytes) { }
 }

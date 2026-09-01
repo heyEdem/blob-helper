@@ -232,3 +232,31 @@
 - Added optional Micrometer counters and timers for upload outcomes, deduplication savings, hashing and storage latency, delete failures, and reconciliation repairs.
 - Instrumented the starter service and reconciliation flow while preserving no-registry compatibility.
 - Modules affected: `blob-helper-spring-boot-starter`, Epic 6 planning/status documentation, and the living implementation indexes.
+## 2026-09-01 — Align dashboard monitoring with demo console
+
+- Fixed dashboard polling compatibility with the demo management URL and explicit `since` parameter binding.
+- Restyled the read-only dashboard with the demo console's slate, amber, blue, and light/dark theme system.
+- Modules affected: `blob-helper-dashboard` and the demo registration configuration.
+
+## 2026-09-01 — Show current metrics on dashboard registration
+
+- The first successful poll now records an instance's existing cumulative metrics instead of displaying an empty baseline.
+- Updated delta-calculation and multi-instance integration coverage.
+- Modules affected: `blob-helper-dashboard`.
+
+## 2026-09-01 — Fix dashboard refresh and metric layout
+
+- Fixed the overview refresh error caused by a stale duplicate-rate selector and made rendering resilient to optional UI elements.
+- Removed the duplicate avoided-bytes side card, aligned the fleet table columns, and styled the `LATEST EVENT` label with the dashboard blue accent.
+- Modules affected: `blob-helper-dashboard` static HTML, CSS, and JavaScript.
+
+## 2026-09-01 — Balance dashboard overview and settings alignment
+
+- Reduced the hero panel scale and widened the supporting metrics area for a more even first-view composition.
+- Restored the four-column desktop configuration row so “Polling interval / 30 seconds” aligns with the other settings; mobile remains two columns.
+- Modules affected: `blob-helper-dashboard` static CSS.
+
+## 2026-09-01 — Fix first configuration cell inset
+
+- Restored the left padding on the first “Polling interval” settings cell so it aligns with the other configuration entries.
+- Modules affected: `blob-helper-dashboard` static CSS.

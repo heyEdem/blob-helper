@@ -8,6 +8,16 @@ class MetricDeltaCalculatorTest {
     private final MetricDeltaCalculator.Cumulative before = new MetricDeltaCalculator.Cumulative(10, 4, 3, 1_000, 400, 600);
 
     @Test
+    void firstSampleReflectsCurrentCumulativeValues() {
+        var delta = calculator.calculate(before, null);
+
+        assertThat(delta.uploads()).isEqualTo(10);
+        assertThat(delta.logicalBytes()).isEqualTo(1_000);
+        assertThat(delta.avoidedBytes()).isEqualTo(400);
+        assertThat(delta.physicalBytes()).isEqualTo(600);
+    }
+
+    @Test
     void calculatesCounterDelta() {
         var delta = calculator.calculate(new MetricDeltaCalculator.Cumulative(13, 5, 4, 1_300, 500, 800), before);
         assertThat(delta.uploads()).isEqualTo(3);

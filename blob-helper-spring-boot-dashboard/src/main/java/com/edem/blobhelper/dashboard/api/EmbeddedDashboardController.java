@@ -74,10 +74,14 @@ public class EmbeddedDashboardController {
             @Override
             public void addViewControllers(ViewControllerRegistry registry) {
                 registry.addViewController(properties.getBasePath())
-                        .setViewName("forward:/blob-helper/dashboard/index.html");
+                        .setViewName(rootViewName(properties.getBasePath(), false));
                 registry.addViewController(properties.getBasePath() + "/")
-                        .setViewName("forward:/blob-helper/dashboard/index.html");
+                        .setViewName(rootViewName(properties.getBasePath(), true));
             }
         };
+    }
+
+    public static String rootViewName(String basePath, boolean trailingSlash) {
+        return trailingSlash ? "forward:/blob-helper/dashboard/index.html" : "redirect:" + basePath + "/";
     }
 }

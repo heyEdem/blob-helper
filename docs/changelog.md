@@ -1,5 +1,10 @@
 # Changelog
 
+## 2026-09-01 — Fix embedded dashboard root asset paths
+
+- Redirected the no-trailing-slash dashboard URL to its slash form so relative CSS and JavaScript assets resolve correctly.
+- Modules affected: `blob-helper-spring-boot-dashboard`.
+
 ## 2026-09-01 — Add embedded dashboard starter
 
 - Added the optional `blob-helper-spring-boot-dashboard` module with default-on, read-only current-process API and packaged responsive UI at `/blob-helper/dashboard`.

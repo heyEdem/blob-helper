@@ -1,7 +1,7 @@
 # Blob Helper Task Index
 
-**Last Updated:** 2026-08-31
-**Completed:** 35/35 (100%)
+**Last Updated:** 2026-09-01
+**Completed:** 43/43 (100%)
 **Status:** Complete
 
 Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are `<epic>.<seq>`.
@@ -17,7 +17,8 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 5 | S3 and Azure storage adapters | 5/5 | Complete |
 | 6 | Reconciliation and observability | 5/5 | Complete |
 | 7 | Local dashboard and multi-instance monitoring | 5/5 | Complete |
-| **Total** | | **35/35** | **Complete** |
+| 8 | Embedded dashboard starter | 8/8 | Complete |
+| **Total** | | **43/43** | **Complete** |
 
 ## Source Map
 
@@ -30,6 +31,7 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 | 5 | [ADR-004](adrs/ADR-004-pluggable-storage-and-spring-boot-starter.md) | [PLAN-005](implementation-plans/PLAN-005-s3-azure-storage-adapters.md) | [epic-005-s3-azure-storage-adapters](epics/epic-005-s3-azure-storage-adapters/README.md) |
 | 6 | [ADR-003](adrs/ADR-003-release-delete-and-reconciliation.md) | [PLAN-006](implementation-plans/PLAN-006-reconciliation-observability.md) | [epic-006-reconciliation-observability](epics/epic-006-reconciliation-observability/README.md) |
 | 7 | [ADR-005](adrs/ADR-005-local-dashboard-pull-monitoring.md) | [PLAN-007](implementation-plans/PLAN-007-local-dashboard-monitoring.md) | [epic-007-local-dashboard-monitoring](epics/epic-007-local-dashboard-monitoring/README.md) |
+| 8 | [ADR-006](adrs/ADR-006-embedded-dashboard-starter.md) | [PLAN-008](implementation-plans/PLAN-008-embedded-dashboard-starter.md) | — |
 
 ## Verification Commands
 
@@ -101,10 +103,22 @@ Checkbox states: `[x]` done · `[~]` in progress · `[ ]` pending. Task IDs are 
 - [x] 7.4 [Add dashboard API and light/dark static UI](epics/epic-007-local-dashboard-monitoring/tasks/task-004-add-dashboard-api-and-static-ui.md)
 - [x] 7.5 [Add multi-instance end-to-end verification](epics/epic-007-local-dashboard-monitoring/tasks/task-005-add-multi-instance-end-to-end-verification.md)
 
+## Epic 8 — Embedded Dashboard Starter
+
+- [x] 8.1 Record the embedded-dashboard architecture decision
+- [x] 8.2 Add the dashboard starter module and properties
+- [x] 8.3 Add the current-instance metrics snapshot
+- [x] 8.4 Add the embedded dashboard API and auto-configuration
+- [x] 8.5 Serve the embedded static UI
+- [x] 8.6 Verify standalone dashboard compatibility
+- [x] 8.7 Add consumer documentation and Maven artifact policy
+- [x] 8.8 Run full verification and prepare the release boundary
+
 ## Notes
 
 | Date | Note |
 |---|---|
+| 2026-09-01 | Completed Epic 8 with the optional embedded dashboard starter, current-process read-only API, default-on MVC auto-configuration, relative-path static UI, custom base-path support, standalone compatibility verification, and full reactor verification. Project scope is now 43/43 tasks complete. |
 | 2026-08-31 | Completed task 7.5 with two-instance in-process management polling, independent failure/status verification, dashboard contract coverage, and credential-free seven-day retention verification. Epic 7 and the project are complete (35/35). |
 | 2026-08-31 | Completed task 7.4 with read-only overview/history/failure APIs, responsive vanilla dashboard UI, explicit operational states, and persisted light/dark theme choice. Project scope is now 34/35 tasks complete. |
 | 2026-08-31 | Completed task 7.3 with SQLite-backed registrations, interval metric snapshots, independent scheduled polling, reset-safe deltas, persisted instance status, and seven-day failure cleanup. Project scope is now 33/35 tasks complete. |

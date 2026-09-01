@@ -30,7 +30,8 @@ multiple object storage providers.
 - Handle concurrent uploads of the same file safely.
 - Support transparent upload, download, and delete workflows.
 - Provide reconciliation tools for reference count drift.
-- Provide a lightweight local dashboard for monitoring multiple Blob Helper
+- Provide a lightweight local dashboard for inspecting the current application;
+  optionally provide a separate dashboard for monitoring multiple Blob Helper
   instances and measuring deduplication savings over time.
 
 ## 3. Non-Goals
@@ -180,7 +181,7 @@ Responsibilities:
 
 ### blob-helper-dashboard
 
-Standalone local administration dashboard.
+Standalone local fleet administration dashboard.
 
 Responsibilities:
 
@@ -189,6 +190,18 @@ Responsibilities:
 - retain aggregate traffic and deduplication history in SQLite
 - retain detailed failures for seven days
 - present a read-only light/dark web dashboard
+
+### blob-helper-spring-boot-dashboard
+
+Optional embedded dashboard starter for a single consuming Spring Boot
+application.
+
+Responsibilities:
+
+- serve the read-only UI at `/blob-helper/dashboard` by default
+- expose current-process overview, status, history, and failure views
+- remain disabled only when `blob-helper.dashboard.enabled=false`
+- avoid SQLite persistence, instance registration, and blob mutation
 
 ## 6. Storage Abstraction
 
@@ -579,6 +592,8 @@ external services or containers/emulators.
 - cumulative counter delta and process-reset handling
 - SQLite metric persistence and seven-day failure retention
 - read-only dashboard API and static UI smoke coverage
+- embedded dashboard auto-configuration, current-process snapshots, and
+  custom-base-path resource coverage
 
 ## 18. Implementation Phases
 

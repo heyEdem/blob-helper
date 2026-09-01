@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-09-01 — Add embedded dashboard starter
+
+- Added the optional `blob-helper-spring-boot-dashboard` module with default-on, read-only current-process API and packaged responsive UI at `/blob-helper/dashboard`.
+- Preserved the standalone `blob-helper-dashboard` application for multi-instance SQLite-backed fleet monitoring.
+- Modules affected: root reactor, `blob-helper-spring-boot-dashboard`, and project documentation.
+
 ## 2026-08-31 — Verify local multi-instance monitoring
 
 - Added management response contract coverage and a two-instance in-process end-to-end test for registration, polling, aggregate savings, failure isolation, and seven-day retention cleanup.

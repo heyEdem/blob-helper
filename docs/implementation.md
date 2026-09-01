@@ -71,6 +71,13 @@
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementAutoConfiguration.java`: conditionally registers the management controller only when `blob-helper.management.enabled=true`.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/DashboardRegistrationProperties.java`: binds opt-in dashboard URL, instance identity, advertised management URL, and optional explicit stable ID.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/InstanceRegistrationClient.java`: asynchronously self-registers after application readiness, derives a stable name-based UUID when needed, and isolates dashboard outages from application startup.
+- `blob-helper-spring-boot-dashboard/pom.xml`: optional embedded dashboard starter with Spring Boot auto-configuration, MVC APIs, and packaged static resources.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/autoconfigure/BlobHelperDashboardProperties.java`: binds enabled state, normalized base path, and failure lookback under `blob-helper.dashboard`.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/autoconfigure/BlobHelperDashboardAutoConfiguration.java`: conditionally registers the embedded dashboard in servlet web applications when enabled.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardSnapshotService.java`: creates zero-safe current-process metric snapshots from optional Micrometer/JPA collaborators.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardController.java`: exposes GET-only overview, status, empty history, and failure routes and maps the packaged UI for custom base paths.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardView.java`: dashboard-shaped immutable JSON view records matching the standalone console’s field meanings.
+- `blob-helper-spring-boot-dashboard/src/main/resources/static/blob-helper/dashboard`: embedded light/dark responsive UI with relative API requests.
 - `blob-helper-dashboard/pom.xml`: standalone executable dashboard with Spring Web, Spring JDBC, SQLite JDBC, and Spring Boot repackaging.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`: standalone dashboard entry point with loopback/9090 defaults.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistration.java`: validated provider-neutral registration record.

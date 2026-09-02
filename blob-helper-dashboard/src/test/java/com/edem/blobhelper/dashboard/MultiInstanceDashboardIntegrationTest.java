@@ -86,10 +86,10 @@ class MultiInstanceDashboardIntegrationTest {
         var overview = dashboard.overview();
         assertThat(overview.instanceCount()).isEqualTo(2);
         assertThat(overview.healthyInstanceCount()).isEqualTo(2);
-        assertThat(overview.uploads()).isEqualTo(5);
-        assertThat(overview.logicalBytes()).isEqualTo(500);
-        assertThat(overview.physicalBytes()).isEqualTo(300);
-        assertThat(overview.avoidedBytes()).isEqualTo(200);
+        assertThat(overview.uploads()).isEqualTo(20);
+        assertThat(overview.logicalBytes()).isEqualTo(2_000);
+        assertThat(overview.physicalBytes()).isEqualTo(1_300);
+        assertThat(overview.avoidedBytes()).isEqualTo(700);
         assertThat(dashboard.history(ordersId).points()).hasSize(2);
         assertThat(dashboard.history(billingId).points()).hasSize(2);
     }

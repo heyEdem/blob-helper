@@ -71,6 +71,13 @@
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/BlobHelperManagementAutoConfiguration.java`: conditionally registers the management controller only when `blob-helper.management.enabled=true`.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/DashboardRegistrationProperties.java`: binds opt-in dashboard URL, instance identity, advertised management URL, and optional explicit stable ID.
 - `blob-helper-spring-boot-management/src/main/java/com/edem/blobhelper/management/InstanceRegistrationClient.java`: asynchronously self-registers after application readiness, derives a stable name-based UUID when needed, and isolates dashboard outages from application startup.
+- `blob-helper-spring-boot-dashboard/pom.xml`: optional embedded dashboard starter with Spring Boot auto-configuration, MVC APIs, and packaged static resources.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/autoconfigure/BlobHelperDashboardProperties.java`: binds enabled state, normalized base path, and failure lookback under `blob-helper.dashboard`.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/autoconfigure/BlobHelperDashboardAutoConfiguration.java`: conditionally registers the embedded dashboard in servlet web applications when enabled.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardSnapshotService.java`: creates zero-safe current-process metric snapshots from optional Micrometer/JPA collaborators.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardController.java`: exposes GET-only overview, status, empty history, and failure routes and maps the packaged UI for custom base paths.
+- `blob-helper-spring-boot-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/EmbeddedDashboardView.java`: dashboard-shaped immutable JSON view records matching the standalone console’s field meanings.
+- `blob-helper-spring-boot-dashboard/src/main/resources/static/blob-helper/dashboard`: embedded light/dark responsive UI with relative API requests.
 - `blob-helper-dashboard/pom.xml`: standalone executable dashboard with Spring Web, Spring JDBC, SQLite JDBC, and Spring Boot repackaging.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`: standalone dashboard entry point with loopback/9090 defaults.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/registration/InstanceRegistration.java`: validated provider-neutral registration record.
@@ -79,13 +86,14 @@
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/InstanceRepository.java`: parameterized registration/status repository with last-seen and failure state.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/MetricSnapshotRepository.java`: stores ordered per-instance interval metric snapshots.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/persistence/FailureEventRepository.java`: stores failure details and deletes only events older than the configured retention window.
-- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/MetricDeltaCalculator.java`: converts cumulative management counters into non-negative interval deltas and handles process resets.
+- `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/MetricDeltaCalculator.java`: converts cumulative management counters into non-negative interval deltas, uses the current cumulative values for an instance's first snapshot, and handles process resets.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/polling/InstancePollingService.java`: independently polls registered instances, persists snapshots/status, records failures, and runs retention cleanup.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/DashboardController.java`: exposes read-only overview, instance status, per-instance history, and seven-day failure resources.
 - `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/api/DashboardView.java`: provider-neutral JSON view records for dashboard summaries, trends, instances, and failures.
-- `blob-helper-dashboard/src/main/resources/static/index.html`: responsive read-only operations console with overview, fleet, and failure views.
-- `blob-helper-dashboard/src/main/resources/static/css/dashboard.css`: CSS-variable light/dark theme, responsive layout, status states, and accessible visual hierarchy.
-- `blob-helper-dashboard/src/main/resources/static/js/dashboard.js`: fetches dashboard resources, renders metrics/instances/failures, draws the trend chart, and persists theme choice locally.
+- `blob-helper-dashboard/src/main/resources/static/index.html`: responsive read-only operations console with overview, fleet, and failure views; the overview keeps avoided bytes as the single hero signal, and the latest-event label uses the dashboard blue accent.
+- `blob-helper-dashboard/src/main/resources/static/css/dashboard.css`: CSS-variable light/dark theme, responsive layout, status states, accessible visual hierarchy, a balanced overview split, aligned nine-column fleet table sizing, and consistent settings-cell insets.
+- `blob-helper-dashboard/src/main/resources/static/css/states.css`: dashboard state and configuration overrides, including the four-column desktop settings row and responsive two-column fallback.
+- `blob-helper-dashboard/src/main/resources/static/js/dashboard.js`: fetches dashboard resources, renders metrics/instances/failures, draws the trend chart, persists theme choice locally, and tolerates optional/mismatched presentation selectors during refresh.
 - `blob-helper-dashboard/src/main/resources/application.yaml`: dashboard defaults for loopback binding, port 9090, database path, polling interval, and failure retention.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
@@ -152,7 +160,7 @@
 ### blob-helper-dashboard
 
 - **Entry point:** `blob-helper-dashboard/src/main/java/com/edem/blobhelper/dashboard/BlobHelperDashboardApplication.java`
-- **Key classes/functions:** `BlobHelperDashboardApplication`, persistence/polling services, `DashboardController`, and `DashboardView` provide persistent collection and read-only JSON views; the static UI renders overview, instances, trend, and failure states with a manual light/dark theme toggle.
+- **Key classes/functions:** `BlobHelperDashboardApplication`, persistence/polling services, `DashboardController`, and `DashboardView` provide persistent collection and read-only JSON views; the static UI renders overview, instances, trend, and failure states with the demo console's slate/amber/blue visual language and a manual light/dark theme toggle. The failures endpoint names its optional `since` request parameter explicitly for Spring MVC binding.
 - **Initialization:** Standalone Spring Boot application defaults to `127.0.0.1:9090`; it stores its own registry and history in a configurable SQLite file.
 - **Non-obvious logic:** Poll failures are isolated per instance; counter resets after an instance restart never produce negative deltas; detailed failures expire after seven days while aggregate snapshots remain. `MultiInstanceDashboardIntegrationTest` validates the complete local flow with two in-process management endpoints and temporary SQLite storage.
 

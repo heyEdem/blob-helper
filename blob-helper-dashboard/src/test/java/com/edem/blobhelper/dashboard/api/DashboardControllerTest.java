@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.web.bind.annotation.RequestParam;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class DashboardControllerTest {
@@ -40,6 +41,8 @@ class DashboardControllerTest {
         assertThat(overview.uploads()).isEqualTo(15);
         assertThat(overview.logicalBytes()).isEqualTo(1_500);
         assertThat(overview.avoidedBytes()).isEqualTo(600);
+        assertThat(overview.newUploads()).isEqualTo(9);
+        assertThat(overview.contentCount()).isEqualTo(1);
         assertThat(overview.duplicateRate()).isEqualTo(6d / 15d);
     }
 
@@ -47,6 +50,26 @@ class DashboardControllerTest {
     void failuresEndpointReturnsSevenDayWindow() {
         assertThat(controller.failures(now.minusSeconds(7 * 24 * 3600))).hasSize(1);
         assertThat(controller.failures(now.minusSeconds(7 * 24 * 3600).plusMillis(1))).isEmpty();
+    }
+
+    @Test
+    void failuresEndpointNamesOptionalSinceParameterForSpringMvc() throws Exception {
+        var method = DashboardController.class.getDeclaredMethod("failures", Instant.class);
+        var parameter = method.getParameters()[0].getAnnotation(RequestParam.class);
+
+        assertThat(parameter.name()).isEqualTo("since");
+    }
+
+    @Test
+    void instanceStatusIncludesAggregatedObservabilityMetrics() {
+        var view = controller.instanceStatus().getFirst();
+
+        assertThat(view.uploads()).isEqualTo(15);
+        assertThat(view.newUploads()).isEqualTo(9);
+        assertThat(view.duplicates()).isEqualTo(6);
+        assertThat(view.contentCount()).isEqualTo(1);
+        assertThat(view.physicalBytes()).isEqualTo(900);
+        assertThat(view.avoidedBytes()).isEqualTo(600);
     }
 
     @Test

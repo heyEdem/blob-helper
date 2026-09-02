@@ -37,6 +37,7 @@ blob-helper-spring-boot-starter
 blob-helper-storage-s3
 blob-helper-storage-azure
 blob-helper-spring-boot-management  (optional local management API)
+blob-helper-spring-boot-dashboard   (optional embedded read-only dashboard)
 blob-helper-dashboard                (standalone local monitoring console)
 blob-helper-storage-local
 ```
@@ -48,6 +49,19 @@ The optional management module exposes local read-only operational data and
 self-registers instances with the standalone dashboard. The dashboard polls
 multiple local instances and stores aggregate history in
 SQLite; it does not manage blob bytes or provider credentials.
+
+For a single Spring Boot application, add `blob-helper-spring-boot-dashboard`
+alongside the main starter and open `http://localhost:8080/blob-helper/dashboard`.
+Embedded mode is enabled by default and can be disabled with:
+
+```yaml
+blob-helper:
+  dashboard:
+    enabled: false
+```
+
+Use the standalone dashboard when you need multi-instance registration and
+SQLite history.
 
 ## High-Level Flow
 

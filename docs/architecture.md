@@ -49,6 +49,7 @@ multi-instance end-to-end verification, as defined by
 │   ├── SPECIFICATION.md
 │   └── taskindex.md
 ├── .github/
+│   ├── dependabot.yml
 │   └── workflows/
 ├── src/
 │   ├── main/
@@ -70,9 +71,11 @@ multi-instance end-to-end verification, as defined by
 | `blob-helper-spring-boot-management` | Optional instance-side management module. Owns local read-only information, health, metrics, and failure endpoints plus management properties; it does not own application assets, blob bytes, or provider credentials. |
 | `blob-helper-spring-boot-dashboard` | Optional embedded single-instance dashboard starter. Owns dashboard properties, current-process snapshots, read-only API routes, and packaged static UI; it does not own SQLite history or instance registration. |
 | `blob-helper-dashboard` | Standalone local monitoring application. Owns multi-instance registration, pull polling, SQLite aggregate history, seven-day failure retention, read-only REST views, and the static light/dark UI. |
-| root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler plugin, and Surefire plugin management. |
+| root `pom.xml` | Maven reactor parent with Java 21, JUnit and Spring Boot BOMs, compiler/Surefire plugin management, and Enforcer dependency-convergence validation for shared SDK infrastructure. |
 | root `src/main/java/com/edem/blobhelper` | Legacy Spring Boot shell application class from project creation. Not currently part of a reactor child module. |
 | `.github/workflows/ci.yml` | GitHub Actions CI workflow for Java 21 Maven verification. |
+| `.github/dependabot.yml` | Weekly update proposals for Maven and GitHub Actions dependencies. |
+| `.github/workflows/dependency-review.yml` | Pull-request gate that rejects newly introduced high/critical vulnerable dependencies. |
 | `docs/adrs` | Architecture decisions for content identity, upload/ref-counting, release/reconciliation, and pluggable storage. |
 | `docs/implementation-plans` | Phase-level implementation plans for core, JPA, starter, local storage, S3/Azure, and operations. |
 | `docs/epics` | Task breakdown by implementation epic. |
@@ -127,9 +130,9 @@ Blob Helper instance starts
 | Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` auto-configuration, properties binding, and configuration metadata generation. |
 | Micrometer Core | Optional starter-module metrics registry API for upload, deduplication, latency, cleanup-failure, and repair instrumentation. |
 | spring-boot-test / AssertJ | Test-scope only in the starter module: `ApplicationContextRunner` context tests and fluent failure assertions. |
-| `blob-helper-storage-local` | Test-scope starter dependency used by the end-to-end local storage service integration test; it is not a starter runtime dependency. |
+| `blob-helper-storage-local`, `blob-helper-storage-s3`, `blob-helper-storage-azure` | Compile dependencies of the standard starter. Each adapter owns its provider SDK coordinates and BOM; the starter aggregates adapter modules without declaring SDKs directly. |
 | SLF4J API | Starter logging facade for provider-neutral operational events; application logging backends remain consumer-configured. |
-| AWS SDK for Java 2.x 2.54.4 | Isolated to `blob-helper-storage-s3` through its module-local BOM and `software.amazon.awssdk:s3` dependency; not present in core or starter. |
-| Azure SDK for Java 1.3.8 BOM / Blob SDK 12.35.0 | Isolated to `blob-helper-storage-azure` through its module-local BOM and `com.azure:azure-storage-blob` dependency; not present in core or starter. |
+| AWS SDK for Java 2.x 2.54.4 | Declared and versioned only by `blob-helper-storage-s3` through its module-local BOM and `software.amazon.awssdk:s3` dependency; available transitively from the standard starter but never declared there or in core. |
+| Azure SDK for Java 1.3.8 BOM / Blob SDK 12.35.0 | Declared and versioned only by `blob-helper-storage-azure` through its module-local BOM and `com.azure:azure-storage-blob` dependency; available transitively from the standard starter but never declared there or in core. |
 | SQLite JDBC / Spring JDBC | Dashboard-only persistence for local instance registrations, interval metric snapshots, and seven-day failure details. |
 | Spring MVC | Embedded dashboard’s conditional read-only controller and resource handler; supplied by a consuming web application. |

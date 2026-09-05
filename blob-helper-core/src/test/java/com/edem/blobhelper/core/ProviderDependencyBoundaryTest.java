@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,20 +26,21 @@ class ProviderDependencyBoundaryTest {
             "com.azure", "blob-helper-storage-azure"
     );
 
-    private static final Set<String> PROVIDER_NEUTRAL_MODULES = Set.of(
-            "blob-helper-core",
-            "blob-helper-spring-boot-starter"
+    private static final Set<String> STARTER_PROVIDER_ADAPTERS = Set.of(
+            "com.edem:blob-helper-storage-local",
+            "com.edem:blob-helper-storage-s3",
+            "com.edem:blob-helper-storage-azure"
     );
 
     @Test
-    void providerSdksStayOutOfCoreAndStarter() throws Exception {
+    void providerSdksStayInProviderModules() throws Exception {
         Path rootPom = reactorRootPom();
         List<ModulePom> modulePoms = reactorPoms(rootPom);
         List<String> violations = new ArrayList<>();
         Set<String> observedProviderGroups = new HashSet<>();
 
         for (ModulePom modulePom : modulePoms) {
-            for (Dependency dependency : dependencies(modulePom.path())) {
+            for (Dependency dependency : declaredDependencies(modulePom.path())) {
                 String expectedOwner = PROVIDER_OWNERS.get(dependency.groupId());
                 if (expectedOwner == null) {
                     continue;
@@ -48,12 +50,20 @@ class ProviderDependencyBoundaryTest {
                     violations.add(dependency.coordinate() + " declared by " + modulePom.name()
                             + ", expected only in " + expectedOwner);
                 }
-                if (PROVIDER_NEUTRAL_MODULES.contains(modulePom.name())) {
-                    violations.add(dependency.coordinate() + " leaked into provider-neutral module "
-                            + modulePom.name());
-                }
             }
         }
+
+        ModulePom starter = modulePoms.stream()
+                .filter(modulePom -> modulePom.name().equals("blob-helper-spring-boot-starter"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Starter POM is not part of the Maven reactor"));
+        Set<String> starterDependencies = declaredDependencies(starter.path()).stream()
+                .map(Dependency::coordinate)
+                .collect(Collectors.toSet());
+        STARTER_PROVIDER_ADAPTERS.stream()
+                .filter(adapter -> !starterDependencies.contains(adapter))
+                .map(adapter -> "Starter does not depend on provider adapter " + adapter)
+                .forEach(violations::add);
 
         PROVIDER_OWNERS.keySet().stream()
                 .filter(groupId -> !observedProviderGroups.contains(groupId))
@@ -95,7 +105,7 @@ class ProviderDependencyBoundaryTest {
         return poms;
     }
 
-    private static List<Dependency> dependencies(Path pom) throws Exception {
+    private static List<Dependency> declaredDependencies(Path pom) throws Exception {
         Document document = parse(pom);
         NodeList dependencyNodes = document.getElementsByTagName("dependency");
         List<Dependency> dependencies = new ArrayList<>();
@@ -103,7 +113,7 @@ class ProviderDependencyBoundaryTest {
             Node dependency = dependencyNodes.item(index);
             String groupId = childText(dependency, "groupId");
             String artifactId = childText(dependency, "artifactId");
-            if (groupId != null && artifactId != null && PROVIDER_OWNERS.containsKey(groupId)) {
+            if (groupId != null && artifactId != null) {
                 dependencies.add(new Dependency(groupId, artifactId));
             }
         }

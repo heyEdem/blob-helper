@@ -25,6 +25,7 @@
         <java.version>21</java.version>
         <junit.version>5.13.4</junit.version>
         <spring-boot.version>3.5.10</spring-boot.version>
+        <maven-enforcer.version>3.6.3</maven-enforcer.version>
         <maven.compiler.release>${java.version}</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -78,6 +79,36 @@
                 </plugin>
             </plugins>
         </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>${maven-enforcer.version}</version>
+                <executions>
+                    <execution>
+                        <id>provider-dependency-convergence</id>
+                        <phase>validate</phase>
+                        <goals><goal>enforce</goal></goals>
+                        <configuration>
+                            <rules>
+                                <dependencyConvergence>
+                                    <includes>
+                                        <include>io.netty:*</include>
+                                        <include>com.fasterxml.jackson.core:*</include>
+                                        <include>com.fasterxml.jackson.datatype:*</include>
+                                        <include>io.projectreactor:*</include>
+                                        <include>io.projectreactor.netty:*</include>
+                                        <include>org.apache.httpcomponents.client5:*</include>
+                                        <include>org.apache.httpcomponents.core5:*</include>
+                                        <include>org.slf4j:*</include>
+                                    </includes>
+                                </dependencyConvergence>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
 </project>

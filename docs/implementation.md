@@ -13,7 +13,7 @@
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentRepositoryTest.java`: verifies complete identity lookups, pessimistic write lock acquisition, missing-row behavior, constructor validation, and duplicate identity rejection.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentMutationServiceTest.java`: verifies new-row creation, ordinary duplicate retention, and a coordinated concurrent insert race that reloads the winner and increments its count once.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/ConcurrentUploadIntegrationTest.java`: verifies two parallel create-or-retain workers converge on one identity row and the final reference count equals the worker count.
-- `blob-helper-spring-boot-starter/pom.xml`: starter module build file with Spring Boot auto-configuration, Micrometer Core, and configuration-processor dependencies, plus a test-scoped dependency on `blob-helper-storage-local` for end-to-end provider coverage.
+- `blob-helper-spring-boot-starter/pom.xml`: standard starter build file. It depends at compile scope on the local, S3, and Azure adapter modules so one consumer dependency supplies every supported provider; provider SDK coordinates remain owned by those adapter POMs. It also carries Spring Boot auto-configuration, Micrometer Core, and configuration-processor dependencies.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperProperties.java`: binds storage, deduplication, and cleanup settings under the `blob-helper` prefix, including upload-size parsing and reconciliation defaults.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfiguration.java`: enables `BlobHelperProperties` and installs a final startup validator requiring a supported explicit provider and exactly one `BlobStorage`, independent of bean names or `@Primary`.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/storage/`: local, S3, and Azure auto-configurations translate nested starter settings into adapter properties and conditionally create the selected provider's client/storage beans. Application storage suppresses the entire default graph; application provider clients take precedence over default clients.
@@ -26,11 +26,14 @@
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/reconcile/ReconciliationReport.java`: immutable validated aggregate of checked content count and mismatches; report creation is separate from repair commands.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/reconcile/ReconciliationService.java`: reconciliation service that compares every stored `AssetContent.ref_count` with application-provided counts, treats omitted content IDs as zero expected references, and exposes a separately invoked repair operation that is disabled by default, adjusts counts only through `ReferenceCountService`, and records each applied repair.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperPropertiesTest.java`: verifies relaxed Spring Boot binding for configured values and the disabled-by-default reconciliation setting.
-- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfigurationTest.java`: uses the Spring `ApplicationContextRunner` to verify provider selection with `provider=local`, acceptance of a single unselected provider, and clear startup failures for unsupported, missing, selected-with-no-matching-bean, and ambiguous provider wiring.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfigurationTest.java`: verifies explicit selection, one active provider with all adapters present, custom storage independent of bean names, and actionable missing/unsupported/ambiguous wiring failures.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/storage/`: context coverage for provider activation, property translation, client reuse/default construction, full custom-storage back-off, and S3 client lifecycle without external cloud calls.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/ProviderAutoConfigurationDiscoveryTest.java`: verifies provider isolation with every adapter on the classpath and a minimal consumer using Spring Boot's automatic imports discovery.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/BlobDeduplicationServiceContractTest.java`: verifies the service method signatures, provider-neutral return types, and missing-content exception behavior.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/BlobDeduplicationServiceTest.java`: verifies new and duplicate upload orchestration against Hibernate/H2 with a recording storage fake: one physical write, one metadata row, reference retention, and duplicate decision reporting.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/observability/BlobHelperLoggingTest.java`: captures the real SLF4J/Logback output and verifies new/duplicate upload context, explicit short hash prefixes, and failed-delete reconciliation context.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/observability/BlobHelperMetricsTest.java`: verifies upload/duplicate counters, accepted and avoided byte totals, hashing/storage timers, delete-failure and repair counters, and the no-op behavior without a registry.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/GenericStarterDependencyTest.java`: proves the starter test classpath contains local, S3, and Azure adapter classes while management, embedded-dashboard, and standalone-dashboard classes remain absent.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/LocalStorageDeduplicationIntegrationTest.java`: verifies the complete service path with a real temporary-directory local provider: readback, one physical file for duplicate uploads, and final-reference deletion.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/reconcile/ReconciliationContractsTest.java`: verifies callback usage, expected/actual mismatch values, immutable report collections, and validation of invalid counts and IDs.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/reconcile/ReconciliationServiceTest.java`: Hibernate/H2 integration coverage for mismatch reporting, omitted IDs, checked-row totals, disabled no-mutation behavior, and enabled retain/release repair including final-reference storage deletion.
@@ -97,6 +100,8 @@
 - `blob-helper-dashboard/src/main/resources/static/js/dashboard.js`: fetches dashboard resources, renders metrics/instances/failures, draws the trend chart, persists theme choice locally, and tolerates optional/mismatched presentation selectors during refresh.
 - `blob-helper-dashboard/src/main/resources/application.yaml`: dashboard defaults for loopback binding, port 9090, database path, polling interval, and failure retention.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
+- `.github/dependabot.yml`: weekly Maven and GitHub Actions dependency update proposals.
+- `.github/workflows/dependency-review.yml`: pull-request vulnerability gate configured to fail on high severity or above.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 - `docs/provider-testing.md`: documents credential-free provider contract coverage and the opt-in path for future external provider tests.
 
@@ -105,7 +110,7 @@
 ### Root Reactor
 
 - **Entry point:** `pom.xml`
-- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Spring Boot 3.5.10 BOM, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
+- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Spring Boot 3.5.10 BOM, Maven Enforcer 3.6.3 dependency convergence, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
 - **Initialization:** Maven builds modules listed under `<modules>`.
 - **Non-obvious logic:** Root no longer inherits `spring-boot-starter-parent`; it is a plain Maven parent POM.
 
@@ -177,12 +182,13 @@
 - **Initialization:** Manual planning docs drive future implementation tasks.
 - **Non-obvious logic:** `docs/taskindex.md` is the status board. Epic 1 is complete and Tasks 2.1 and 2.2 are the completed Epic 2 tasks.
 
-### CI
+### CI and supply-chain governance
 
 - **Entry point:** `.github/workflows/ci.yml`
 - **Key behavior:** Checks out code, sets up Java 21 Temurin, enables Maven dependency caching, runs `./mvnw --batch-mode --no-transfer-progress verify`, and uploads Surefire reports.
 - **Initialization:** Triggered on pushes and pull requests targeting `main`, `staging`, or `dev`, and by manual `workflow_dispatch`.
 - **Non-obvious logic:** The workflow runs `chmod +x ./mvnw` so CI is not blocked if executable bits are lost.
+- **Dependency safeguards:** The root Enforcer plugin checks convergence for Netty, Jackson, Reactor, HTTP Components, and SLF4J. Dependabot proposes weekly Maven/Actions updates, while `dependency-review.yml` fails pull requests that introduce high- or critical-severity vulnerabilities.
 
 ## Configuration
 
@@ -192,6 +198,7 @@
 | `java.version` | `21` | Maven compiler release target. |
 | `junit.version` | `5.13.4` | JUnit BOM version. |
 | `spring-boot.version` | `3.5.10` | Spring Boot BOM version used by the starter module. |
+| `maven-enforcer.version` | `3.6.3` | Maven Enforcer version used for reactor dependency-convergence validation. |
 
 Implemented starter properties:
 

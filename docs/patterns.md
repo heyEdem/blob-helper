@@ -22,7 +22,8 @@
 
 - Error handling: not enough implemented code to determine project-specific error handling.
 - Async: not present in current implementation.
-- Dependency injection: Spring Boot annotation exists in legacy root shell, but no active service wiring exists yet.
+- Provider dependency injection: starter-owned auto-configurations activate on `blob-helper.storage.provider`, bind settings independently, and back off their entire default graph for an application `BlobStorage`. Individual provider properties and clients also use missing-bean conditions. Final validation counts storage beans by type rather than bean name.
+- S3 lifecycle: Spring owns client-bean cleanup; the auto-configured storage adapter disables inferred destruction to avoid closing the same client twice.
 - Validation: constructors reject null or blank required text and invalid negative sizes before state crosses a module boundary.
 - Testing: current tests are JUnit Jupiter tests with package-private test classes.
 - Dependency boundaries: reusable modules pair classpath-level package scanning with Maven Enforcer rules so both loaded classes and direct/transitive artifact coordinates are guarded.

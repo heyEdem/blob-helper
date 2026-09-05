@@ -7,6 +7,8 @@ import org.springframework.boot.context.properties.source.MapConfigurationProper
 import org.springframework.util.unit.DataSize;
 
 import java.util.Map;
+import java.net.URI;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -44,5 +46,36 @@ class BlobHelperPropertiesTest {
         BlobHelperProperties properties = new BlobHelperProperties();
 
         assertFalse(properties.getCleanup().isReconciliationEnabled());
+    }
+
+    @Test
+    void bindsAllProviderPropertiesUnderStorage() {
+        MapConfigurationPropertySource source = new MapConfigurationPropertySource(Map.of(
+                "blob-helper.storage.provider", "s3",
+                "blob-helper.storage.local.root-directory", "build/blobs",
+                "blob-helper.storage.s3.bucket", "media",
+                "blob-helper.storage.s3.region", "eu-west-1",
+                "blob-helper.storage.s3.endpoint", "http://localhost:9000",
+                "blob-helper.storage.s3.path-style", "true",
+                "blob-helper.storage.azure.container", "media",
+                "blob-helper.storage.azure.connection-string", "UseDevelopmentStorage=true",
+                "blob-helper.storage.azure.endpoint", "http://127.0.0.1:10000/devstoreaccount1",
+                "blob-helper.storage.azure.account-name", "devstoreaccount1"
+        ));
+
+        BlobHelperProperties properties = new Binder(source)
+                .bind("blob-helper", Bindable.of(BlobHelperProperties.class))
+                .orElseThrow(AssertionError::new);
+
+        assertEquals("s3", properties.getStorage().getProvider());
+        assertEquals(Path.of("build/blobs"), properties.getStorage().getLocal().getRootDirectory());
+        assertEquals("media", properties.getStorage().getS3().getBucket());
+        assertEquals("eu-west-1", properties.getStorage().getS3().getRegion());
+        assertEquals(URI.create("http://localhost:9000"), properties.getStorage().getS3().getEndpoint());
+        assertTrue(properties.getStorage().getS3().isPathStyle());
+        assertEquals("media", properties.getStorage().getAzure().getContainer());
+        assertEquals("UseDevelopmentStorage=true", properties.getStorage().getAzure().getConnectionString());
+        assertEquals(URI.create("http://127.0.0.1:10000/devstoreaccount1"), properties.getStorage().getAzure().getEndpoint());
+        assertEquals("devstoreaccount1", properties.getStorage().getAzure().getAccountName());
     }
 }

@@ -13,10 +13,11 @@
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentRepositoryTest.java`: verifies complete identity lookups, pessimistic write lock acquisition, missing-row behavior, constructor validation, and duplicate identity rejection.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/AssetContentMutationServiceTest.java`: verifies new-row creation, ordinary duplicate retention, and a coordinated concurrent insert race that reloads the winner and increments its count once.
 - `blob-helper-jpa/src/test/java/com/edem/blobhelper/jpa/ConcurrentUploadIntegrationTest.java`: verifies two parallel create-or-retain workers converge on one identity row and the final reference count equals the worker count.
-- `blob-helper-spring-boot-starter/pom.xml`: starter module build file with Spring Boot auto-configuration, Micrometer Core, and configuration-processor dependencies, plus a test-scoped dependency on `blob-helper-storage-local` for end-to-end provider coverage.
+- `blob-helper-spring-boot-starter/pom.xml`: standard starter build file. It depends at compile scope on the local, S3, and Azure adapter modules so one consumer dependency supplies every supported provider; provider SDK coordinates remain owned by those adapter POMs. It also carries Spring Boot auto-configuration, Micrometer Core, and configuration-processor dependencies.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperProperties.java`: binds storage, deduplication, and cleanup settings under the `blob-helper` prefix, including upload-size parsing and reconciliation defaults.
-- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfiguration.java`: auto-configuration (registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`) that enables `BlobHelperProperties` and installs a startup validator enforcing exactly one configured `BlobStorage` provider.
-- `blob-helper-spring-boot-starter/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`: Spring Boot 3 auto-configuration registration for `BlobHelperAutoConfiguration`.
+- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfiguration.java`: enables `BlobHelperProperties` and installs a final startup validator requiring a supported explicit provider and exactly one `BlobStorage`, independent of bean names or `@Primary`.
+- `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/autoconfigure/storage/`: local, S3, and Azure auto-configurations translate nested starter settings into adapter properties and conditionally create the selected provider's client/storage beans. Application storage suppresses the entire default graph; application provider clients take precedence over default clients.
+- `blob-helper-spring-boot-starter/src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`: Spring Boot 3 registration for the three provider configurations and the final `BlobHelperAutoConfiguration`; explicit ordering places provider definitions before validation.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/service/BlobDeduplicationService.java`: provider-neutral application-facing contract for store, retain, release, and get operations.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/service/DefaultBlobDeduplicationService.java`: default facade that delegates reference mutation and content retrieval to JPA/storage collaborators and orchestrates uploads by buffering bytes, timing hashing with `ContentHasher`, looking up complete content identity, recording upload/duplicate/byte-savings metrics, retaining duplicates without physical writes, generating deterministic keys for new content, timing physical writes through `BlobStorage`, and creating metadata through `AssetContentMutationService`; provider delete failures are counted before being rethrown and logged with reconciliation context.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/observability/BlobHelperMetrics.java`: optional Micrometer facade with counters for uploads, duplicate outcomes, accepted/avoided bytes, delete failures, and repairs, plus timers for hashing and physical storage writes; a null registry provides a no-op path.
@@ -25,11 +26,14 @@
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/reconcile/ReconciliationReport.java`: immutable validated aggregate of checked content count and mismatches; report creation is separate from repair commands.
 - `blob-helper-spring-boot-starter/src/main/java/com/edem/blobhelper/reconcile/ReconciliationService.java`: reconciliation service that compares every stored `AssetContent.ref_count` with application-provided counts, treats omitted content IDs as zero expected references, and exposes a separately invoked repair operation that is disabled by default, adjusts counts only through `ReferenceCountService`, and records each applied repair.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperPropertiesTest.java`: verifies relaxed Spring Boot binding for configured values and the disabled-by-default reconciliation setting.
-- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfigurationTest.java`: uses the Spring `ApplicationContextRunner` to verify provider selection with `provider=local`, acceptance of a single unselected provider, and clear startup failures for unsupported, missing, selected-with-no-matching-bean, and ambiguous provider wiring.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/BlobHelperAutoConfigurationTest.java`: verifies explicit selection, one active provider with all adapters present, custom storage independent of bean names, and actionable missing/unsupported/ambiguous wiring failures.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/storage/`: context coverage for provider activation, property translation, client reuse/default construction, full custom-storage back-off, and S3 client lifecycle without external cloud calls.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/ProviderAutoConfigurationDiscoveryTest.java`: verifies provider isolation with every adapter on the classpath and a minimal consumer using Spring Boot's automatic imports discovery.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/BlobDeduplicationServiceContractTest.java`: verifies the service method signatures, provider-neutral return types, and missing-content exception behavior.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/BlobDeduplicationServiceTest.java`: verifies new and duplicate upload orchestration against Hibernate/H2 with a recording storage fake: one physical write, one metadata row, reference retention, and duplicate decision reporting.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/observability/BlobHelperLoggingTest.java`: captures the real SLF4J/Logback output and verifies new/duplicate upload context, explicit short hash prefixes, and failed-delete reconciliation context.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/observability/BlobHelperMetricsTest.java`: verifies upload/duplicate counters, accepted and avoided byte totals, hashing/storage timers, delete-failure and repair counters, and the no-op behavior without a registry.
+- `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/autoconfigure/GenericStarterDependencyTest.java`: proves the starter test classpath contains local, S3, and Azure adapter classes while management, embedded-dashboard, and standalone-dashboard classes remain absent.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/service/LocalStorageDeduplicationIntegrationTest.java`: verifies the complete service path with a real temporary-directory local provider: readback, one physical file for duplicate uploads, and final-reference deletion.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/reconcile/ReconciliationContractsTest.java`: verifies callback usage, expected/actual mismatch values, immutable report collections, and validation of invalid counts and IDs.
 - `blob-helper-spring-boot-starter/src/test/java/com/edem/blobhelper/reconcile/ReconciliationServiceTest.java`: Hibernate/H2 integration coverage for mismatch reporting, omitted IDs, checked-row totals, disabled no-mutation behavior, and enabled retain/release repair including final-reference storage deletion.
@@ -96,6 +100,8 @@
 - `blob-helper-dashboard/src/main/resources/static/js/dashboard.js`: fetches dashboard resources, renders metrics/instances/failures, draws the trend chart, persists theme choice locally, and tolerates optional/mismatched presentation selectors during refresh.
 - `blob-helper-dashboard/src/main/resources/application.yaml`: dashboard defaults for loopback binding, port 9090, database path, polling interval, and failure retention.
 - `.github/workflows/ci.yml`: GitHub Actions workflow that runs Maven verify on pushes, pull requests, and manual dispatch.
+- `.github/dependabot.yml`: weekly Maven and GitHub Actions dependency update proposals.
+- `.github/workflows/dependency-review.yml`: pull-request vulnerability gate configured to fail on high severity or above.
 - `src/main/java/com/edem/blobhelper/BlobHelperApplication.java`: original Spring Boot application class. Current root packaging means this is not part of a normal Spring Boot app module.
 - `docs/provider-testing.md`: documents credential-free provider contract coverage and the opt-in path for future external provider tests.
 
@@ -104,7 +110,7 @@
 ### Root Reactor
 
 - **Entry point:** `pom.xml`
-- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Spring Boot 3.5.10 BOM, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
+- **Key configuration:** Java 21, JUnit 5.13.4 BOM, Spring Boot 3.5.10 BOM, Maven Enforcer 3.6.3 dependency convergence, Maven Compiler Plugin 3.14.1, Maven Surefire Plugin 3.5.4.
 - **Initialization:** Maven builds modules listed under `<modules>`.
 - **Non-obvious logic:** Root no longer inherits `spring-boot-starter-parent`; it is a plain Maven parent POM.
 
@@ -125,9 +131,9 @@
 ### blob-helper-spring-boot-starter
 
 - **Entry point:** `blob-helper-spring-boot-starter/pom.xml`
-- **Key classes/functions:** `BlobHelperAutoConfiguration` registers `BlobHelperProperties` and a `BlobStorageProviderValidator` (`SmartInitializingSingleton`) that fails startup for unsupported provider names, missing provider beans, selected providers without a matching bean (bean-name convention `<provider>BlobStorage`), and ambiguous multi-provider contexts. `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, deduplication hash and upload validation settings, and cleanup deletion/reconciliation settings. `BlobDeduplicationService` exposes storage-neutral `store`, `retain`, `release`, and `get` operations using core models. `DefaultBlobDeduplicationService` buffers upload bytes, hashes them with `ContentHasher`, checks the complete identity tuple, retains existing rows through the lock-aware `ReferenceCountService`, and for new content generates a deterministic key through `ObjectKeyStrategy`, writes through `BlobStorage`, and persists `AssetContent` through `AssetContentMutationService`. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
-- **Initialization:** Built as a Maven child of root `blob-helper`; production code depends on the provider-neutral core and JPA metadata modules, while tests additionally depend on `blob-helper-storage-local`. The auto-configuration is registered through `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`; provider modules contribute their own conditional `BlobStorage` beans in later epics.
-- **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, service callers retain transaction ownership, and the starter has no REST controllers or provider SDK runtime dependencies. Provider validation runs after all singletons instantiate so failures name every conflicting or missing bean; supported provider names are `local`, `s3`, and `azure`, while a single unselected custom provider is accepted. Upload streams are buffered once so hashing and storage can consume equivalent byte sequences; duplicate matches reuse the persisted object key and content ID. `LocalStorageDeduplicationIntegrationTest` wires the real local adapter only in test scope and verifies those behaviors end to end.
+- **Key classes/functions:** `BlobHelperAutoConfiguration` registers `BlobHelperProperties` and a `BlobStorageProviderValidator` (`SmartInitializingSingleton`) that requires an explicit supported provider and exactly one storage bean by type. `LocalBlobStorageAutoConfiguration`, `S3BlobStorageAutoConfiguration`, and `AzureBlobStorageAutoConfiguration` bind provider settings and create the selected adapter, reusing application clients before constructing defaults. `BlobHelperProperties` binds `blob-helper.storage.provider`, `storage.key-prefix`, nested local/S3/Azure settings, deduplication hash and upload validation settings, and cleanup settings. `BlobDeduplicationService` exposes storage-neutral `store`, `retain`, `release`, and `get` operations using core models. `DefaultBlobDeduplicationService` buffers upload bytes, hashes them with `ContentHasher`, checks the complete identity tuple, retains existing rows through the lock-aware `ReferenceCountService`, and for new content generates a deterministic key through `ObjectKeyStrategy`, writes through `BlobStorage`, and persists `AssetContent` through `AssetContentMutationService`. `deduplication.max-upload-size` uses Spring Boot `DataSize` binding, so values such as `25MB` are accepted.
+- **Initialization:** Built as a Maven child of root `blob-helper`; production code depends on the provider-neutral core/JPA modules and transitively aggregates the local, S3, and Azure adapter modules. Starter-owned provider configurations are registered through `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`, enable property binding independently, and run before the final validator. They construct clients without performing storage IO.
+- **Non-obvious logic:** Reconciliation is disabled by default, physical deletion on zero references is enabled by default, service callers retain transaction ownership, and the starter has no REST controllers or direct provider SDK declarations. Provider validation runs after singleton creation; supported selections are `local`, `s3`, and `azure`, including when supplying custom storage. A custom `BlobStorage` suppresses all default provider beans, so unused clients do not demand cloud settings. Spring manages S3 client shutdown and disables inferred destruction on its storage wrapper. Upload streams are buffered once so hashing and storage can consume equivalent byte sequences; duplicate matches reuse the persisted object key and content ID. `GenericStarterDependencyTest` proves all adapter classes are available from the starter test classpath while management/dashboard classes remain absent, and `ProviderDependencyBoundaryTest` proves SDK declarations stay in adapter POMs.
 
 ### blob-helper-storage-local
 
@@ -146,7 +152,7 @@
 ### blob-helper-storage-azure
 
 - **Entry point:** `blob-helper-storage-azure/pom.xml`
-- **Key classes/functions:** `AzureBlobStorageProperties` carries the Azure container, connection string, optional endpoint, and account name. `AzureBlobStorage` implements the core `BlobStorage` SPI using an injected or builder-created `BlobContainerClient`; `put` streams content with Azure HTTP headers and metadata, `get` reads blob properties before returning an owner-managed stream, `delete` uses `deleteIfExists`, and `exists` delegates to the provider.
+- **Key classes/functions:** `AzureBlobStorageProperties` carries the Azure container, connection string, optional endpoint, and account name. `AzureBlobStorage` implements the core `BlobStorage` SPI using an injected or builder-created `BlobContainerClient`; its public static `createClient` factory shares client construction with starter auto-configuration. `put` streams content with Azure HTTP headers and metadata, `get` reads blob properties before returning an owner-managed stream, `delete` uses `deleteIfExists`, and `exists` delegates to the provider.
 - **Initialization:** Built as a Maven child of root `blob-helper`; it depends on `blob-helper-core`, imports the Azure SDK BOM version `1.3.8` locally, and declares `azure-storage-blob` without a version so Azure dependencies remain isolated to this provider module.
 - **Non-obvious logic:** Azure 404 responses map to core `ContentNotFoundException` for reads and `false` for existence checks; other Azure provider failures become core `BlobStorageException`. The contract test uses the real Azure SDK against an in-process JDK HTTP server, so normal verification needs no Azure credentials or external service.
 
@@ -176,12 +182,13 @@
 - **Initialization:** Manual planning docs drive future implementation tasks.
 - **Non-obvious logic:** `docs/taskindex.md` is the status board. Epic 1 is complete and Tasks 2.1 and 2.2 are the completed Epic 2 tasks.
 
-### CI
+### CI and supply-chain governance
 
 - **Entry point:** `.github/workflows/ci.yml`
 - **Key behavior:** Checks out code, sets up Java 21 Temurin, enables Maven dependency caching, runs `./mvnw --batch-mode --no-transfer-progress verify`, and uploads Surefire reports.
 - **Initialization:** Triggered on pushes and pull requests targeting `main`, `staging`, or `dev`, and by manual `workflow_dispatch`.
 - **Non-obvious logic:** The workflow runs `chmod +x ./mvnw` so CI is not blocked if executable bits are lost.
+- **Dependency safeguards:** The root Enforcer plugin checks convergence for Netty, Jackson, Reactor, HTTP Components, and SLF4J. Dependabot proposes weekly Maven/Actions updates, while `dependency-review.yml` fails pull requests that introduce high- or critical-severity vulnerabilities.
 
 ## Configuration
 
@@ -191,13 +198,23 @@
 | `java.version` | `21` | Maven compiler release target. |
 | `junit.version` | `5.13.4` | JUnit BOM version. |
 | `spring-boot.version` | `3.5.10` | Spring Boot BOM version used by the starter module. |
+| `maven-enforcer.version` | `3.6.3` | Maven Enforcer version used for reactor dependency-convergence validation. |
 
 Implemented starter properties:
 
 | Property | Default | Purpose |
 |---|---|---|
-| `blob-helper.storage.provider` | None | Selects `s3`, `azure`, `local`, or custom provider. |
+| `blob-helper.storage.provider` | None (required) | Selects `s3`, `azure`, or `local`; required even for application-provided storage. |
 | `blob-helper.storage.key-prefix` | Empty | Prefix for generated object keys. |
+| `blob-helper.storage.local.root-directory` | `blob-helper-storage` | Filesystem root for auto-configured local storage. |
+| `blob-helper.storage.s3.bucket` | None | Required for default S3 storage. |
+| `blob-helper.storage.s3.region` | AWS region chain | Optional explicit AWS region. |
+| `blob-helper.storage.s3.endpoint` | SDK default | Optional S3-compatible endpoint URI. |
+| `blob-helper.storage.s3.path-style` | `false` | Forces path-style S3 addressing. |
+| `blob-helper.storage.azure.container` | None | Required for default Azure storage. |
+| `blob-helper.storage.azure.connection-string` | None | Azure client connection string; alternatively supply an endpoint or application client. |
+| `blob-helper.storage.azure.endpoint` | None | Azure service endpoint URI, also usable as a connection-string endpoint override. |
+| `blob-helper.storage.azure.account-name` | None | Passed to adapter properties; the existing client factory does not use it for authentication. |
 | `blob-helper.deduplication.hash-algorithm` | `SHA-256` | Content identity hash algorithm. |
 | `blob-helper.deduplication.max-upload-size` | `25MB` | Maximum upload size. |
 | `blob-helper.deduplication.strict-content-type-validation` | `false` | Rejects unsupported content types when enabled. |

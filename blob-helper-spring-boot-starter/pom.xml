@@ -29,7 +29,16 @@
             <groupId>com.edem</groupId>
             <artifactId>blob-helper-storage-local</artifactId>
             <version>${project.version}</version>
-            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.edem</groupId>
+            <artifactId>blob-helper-storage-s3</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.edem</groupId>
+            <artifactId>blob-helper-storage-azure</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

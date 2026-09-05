@@ -28,7 +28,7 @@ Blob Helper solves this by separating:
 
 Many logical assets can point to one physical content record.
 
-## Planned Modules
+## Modules
 
 ```text
 blob-helper-core
@@ -43,7 +43,49 @@ blob-helper-storage-local
 ```
 
 `blob-helper-core` contains hashing, deduplication contracts, and storage-neutral
-interfaces. Storage providers live in separate adapter modules.
+interfaces. Storage providers live in separate adapter modules, which are
+included transitively by the standard Spring Boot starter.
+
+For a consumer application, add the single starter dependency:
+
+```xml
+<dependency>
+  <groupId>com.edem</groupId>
+  <artifactId>blob-helper-spring-boot-starter</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+</dependency>
+```
+
+The starter supplies the local, S3, and Azure adapters. Their provider SDKs
+remain declared and versioned only in the corresponding adapter modules. The
+management API, embedded dashboard, and standalone dashboard are separate
+optional artifacts and are not part of the generic upload starter.
+
+Select the storage provider in application configuration. For local storage:
+
+```yaml
+blob-helper:
+  storage:
+    provider: local
+    local:
+      root-directory: ./blobs
+```
+
+For S3, set `blob-helper.storage.provider=s3` and
+`blob-helper.storage.s3.bucket`. AWS's standard region and credential chains
+apply; `storage.s3.region`, `storage.s3.endpoint`, and
+`storage.s3.path-style` are optional overrides for AWS or S3-compatible stores.
+For Azure, set `storage.provider=azure`, `storage.azure.container`, and
+`storage.azure.connection-string` or `storage.azure.endpoint` under
+`blob-helper`.
+
+The starter reuses an application `S3Client` or `BlobContainerClient` bean
+before creating a default client. An application `BlobStorage` bean replaces
+the provider defaults entirely. A supported provider selection is required
+even with custom storage, and multiple storage beans fail startup. Startup
+constructs clients without contacting storage; successful startup does not
+verify cloud access. These settings configure storage only; automatic JPA
+and upload-service wiring is covered separately by PLAN-011.
 
 The optional management module exposes local read-only operational data and
 self-registers instances with the standalone dashboard. The dashboard polls
@@ -92,5 +134,6 @@ Delete logical asset
 
 Phases 1–5 are complete: the core library, JPA metadata and reference counting,
 Spring Boot starter, local storage, S3, and Azure adapters are implemented and
-verified. The local dashboard and multi-instance monitoring implementation is
-complete; see [Epic 7](docs/epics/epic-007-local-dashboard-monitoring/README.md).
+verified. Generic starter packaging and dependency-governance safeguards are
+also in place. The local dashboard and multi-instance monitoring implementation
+is complete; see [Epic 7](docs/epics/epic-007-local-dashboard-monitoring/README.md).

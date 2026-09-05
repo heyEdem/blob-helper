@@ -1,10 +1,12 @@
 # ADR-004: Pluggable Storage and Spring Boot Starter
 
 **Date:** 2026-07-04  
-**Status:** Proposed  
+**Status:** Superseded by ADR-007 and ADR-009  
 **Deciders:** Project maintainers
 
 ## Context
+
+> The provider-neutral boundaries remain valid, but ADR-007 supersedes the two-dependency consumer packaging decision and ADR-009 supersedes the low-level service as the primary Spring developer API.
 
 Blob Helper should support S3, Azure Blob Storage, local filesystem storage, and future providers while exposing one storage-neutral service API to applications.
 

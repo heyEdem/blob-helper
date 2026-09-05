@@ -1,5 +1,12 @@
 # Changelog
 
+## 2026-09-05 — Auto-configure selected storage providers
+
+- Implemented PLAN-010 with nested local/S3/Azure settings, selected-provider client and storage defaults, application-client reuse, and complete back-off for application storage.
+- Required explicit provider selection and exactly one storage bean by type; Spring owns S3 client shutdown, and Azure exposes its existing client factory for shared construction.
+- Added provider context, client lifecycle, and automatic-discovery coverage. Full reactor verification passed: 137 tests, zero failures, errors, or skips.
+- Modules affected: `blob-helper-spring-boot-starter`, `blob-helper-storage-azure`, and consumer/project documentation.
+
 ## 2026-09-01 — Fix embedded dashboard root asset paths
 
 - Redirected the no-trailing-slash dashboard URL to its slash form so relative CSS and JavaScript assets resolve correctly.
@@ -271,3 +278,9 @@
 
 - Restored the left padding on the first “Polling interval” settings cell so it aligns with the other configuration entries.
 - Modules affected: `blob-helper-dashboard` static CSS.
+
+## 2026-09-03 — Aggregate provider adapters in the standard starter
+
+- Made the Spring Boot starter the single consumer dependency for local, S3, and Azure storage adapters while preserving provider-local SDK ownership.
+- Added Maven dependency-convergence enforcement, Dependabot updates, and a pull-request dependency-review gate; documented the packaging contract and classpath/boundary tests, and repaired the task-index/ADR documentation references found during final review.
+- Modules affected: root Maven build, `blob-helper-spring-boot-starter`, `blob-helper-core` boundary tests, `.github` automation, and project documentation.

@@ -153,7 +153,7 @@ public class AzureBlobStorage implements BlobStorage {
         }
     }
 
-    private static BlobContainerClient createClient(AzureBlobStorageProperties properties) {
+    public static BlobContainerClient createClient(AzureBlobStorageProperties properties) {
         if (properties == null) {
             throw new BlobValidationException("properties must not be null");
         }

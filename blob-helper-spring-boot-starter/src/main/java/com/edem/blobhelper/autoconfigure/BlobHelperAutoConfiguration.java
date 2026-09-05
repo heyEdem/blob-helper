@@ -7,16 +7,15 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
-import java.util.Arrays;
-import java.util.Locale;
 import java.util.Set;
+import java.util.Locale;
 
 /**
  * Auto-configuration that validates the Blob Helper storage wiring.
  *
- * <p>The starter never contains provider SDK code. Provider modules
- * contribute their own {@link BlobStorage} beans; this configuration only
- * guarantees that exactly one provider is selected at startup.</p>
+ * <p>Provider-specific starter auto-configurations create the selected
+ * {@link BlobStorage}; this configuration validates that exactly one provider
+ * is selected at startup.</p>
  */
 @AutoConfiguration
 @EnableConfigurationProperties(BlobHelperProperties.class)
@@ -42,14 +41,15 @@ public class BlobHelperAutoConfiguration {
                 BlobHelperProperties properties
         ) {
             this.beanFactory = beanFactory;
-            this.provider = normalize(properties.getStorage().getProvider());
+            String configured = properties.getStorage().getProvider();
+            this.provider = configured == null ? null : configured.toLowerCase(Locale.ROOT);
         }
 
         @Override
         public void afterSingletonsInstantiated() {
-            if (provider != null && !SUPPORTED_PROVIDERS.contains(provider)) {
+            if (provider == null || provider.isBlank() || !SUPPORTED_PROVIDERS.contains(provider)) {
                 throw new IllegalStateException(
-                        "Unsupported blob-helper storage provider '" + provider
+                        "Invalid or missing 'blob-helper.storage.provider' value '" + provider
                                 + "'. Supported providers: " + String.join(", ", SUPPORTED_PROVIDERS) + "."
                 );
             }
@@ -57,30 +57,11 @@ public class BlobHelperAutoConfiguration {
             String[] candidateNames = beanFactory.getBeanNamesForType(BlobStorage.class);
             if (candidateNames.length == 0) {
                 throw new IllegalStateException(
-                        "No BlobStorage provider is configured. Add a provider module such as "
-                                + "blob-helper-storage-local to the classpath and set "
-                                + "'blob-helper.storage.provider'."
+                        "No BlobStorage provider is configured for 'blob-helper.storage.provider'."
                 );
             }
-            if (provider == null) {
-                if (candidateNames.length > 1) {
-                    throw ambiguous(candidateNames);
-                }
-                return;
-            }
-
-            String[] matching = Arrays.stream(candidateNames)
-                    .filter(name -> name.toLowerCase(Locale.ROOT).contains(provider))
-                    .toArray(String[]::new);
-            if (matching.length == 0) {
-                throw new IllegalStateException(
-                        "No BlobStorage bean matching provider '" + provider
-                                + "' was found. Expected a bean named like '"
-                                + provider + "BlobStorage'."
-                );
-            }
-            if (matching.length > 1) {
-                throw ambiguous(matching);
+            if (candidateNames.length > 1) {
+                throw ambiguous(candidateNames);
             }
         }
 
@@ -88,15 +69,9 @@ public class BlobHelperAutoConfiguration {
             return new IllegalStateException(
                     "Ambiguous BlobStorage configuration: multiple providers found ("
                             + String.join(", ", names)
-                            + "). Set 'blob-helper.storage.provider' to select exactly one."
+                            + "). Remove extra BlobStorage definitions; 'blob-helper.storage.provider' cannot resolve ambiguity."
             );
         }
 
-        private static String normalize(String value) {
-            if (value == null || value.isBlank()) {
-                return null;
-            }
-            return value.trim().toLowerCase(Locale.ROOT);
-        }
     }
 }

@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -29,12 +30,9 @@ class BlobHelperAutoConfigurationTest {
     }
 
     @Test
-    void acceptsSingleUnselectedProvider() {
+    void failsWhenProviderIsMissing() {
         runner.withUserConfiguration(LocalStorageConfig.class)
-                .run(context -> {
-                    assertTrue(context.isActive());
-                    assertNotNull(context.getBean("localBlobStorage", BlobStorage.class));
-                });
+                .run(context -> assertFailureContains(context.getStartupFailure(), "'blob-helper.storage.provider'"));
     }
 
     @Test
@@ -43,7 +41,7 @@ class BlobHelperAutoConfigurationTest {
                 .withPropertyValues("blob-helper.storage.provider=grid")
                 .run(context -> assertFailureContains(
                         context.getStartupFailure(),
-                        "Unsupported blob-helper storage provider 'grid'"
+                        "Invalid or missing 'blob-helper.storage.provider' value 'grid'"
                 ));
     }
 
@@ -57,18 +55,16 @@ class BlobHelperAutoConfigurationTest {
     }
 
     @Test
-    void failsWhenSelectedProviderHasNoMatchingBean() {
+    void acceptsApplicationStorageIndependentOfBeanName() {
         runner.withUserConfiguration(LocalStorageConfig.class)
                 .withPropertyValues("blob-helper.storage.provider=s3")
-                .run(context -> assertFailureContains(
-                        context.getStartupFailure(),
-                        "No BlobStorage bean matching provider 's3'"
-                ));
+                .run(context -> assertTrue(context.isActive()));
     }
 
     @Test
     void failsForAmbiguousUnselectedProviders() {
         runner.withUserConfiguration(LocalStorageConfig.class, SecondStorageConfig.class)
+                .withPropertyValues("blob-helper.storage.provider=local")
                 .run(context -> assertFailureContains(
                         context.getStartupFailure(),
                         "Ambiguous BlobStorage configuration"
@@ -103,6 +99,7 @@ class BlobHelperAutoConfigurationTest {
     static class LocalStorageConfig {
 
         @Bean
+        @Primary
         BlobStorage localBlobStorage() {
             return new NoopBlobStorage();
         }

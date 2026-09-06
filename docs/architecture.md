@@ -127,7 +127,8 @@ Blob Helper instance starts
 | Jakarta Persistence 3.2 | Portable entity mapping API used by `blob-helper-jpa`. |
 | Hibernate ORM 7.4 | Test-scope JPA provider used to verify entity mappings. |
 | H2 2.4 | Test-scope in-memory database for JPA mapping tests. |
-| Spring Boot 3.5.10 | `blob-helper-spring-boot-starter` auto-configuration, properties binding, and configuration metadata generation. |
+| Spring Boot 4.1.1 | `blob-helper-spring-boot-starter` auto-configuration, properties binding, and configuration metadata generation. |
+| Jackson 3 | Embedded and standalone dashboard JSON handling through the Boot 4 Jackson starter; standalone polling uses the Jackson 3 mapper API. |
 | Micrometer Core | Optional starter-module metrics registry API for upload, deduplication, latency, cleanup-failure, and repair instrumentation. |
 | spring-boot-test / AssertJ | Test-scope only in the starter module: `ApplicationContextRunner` context tests and fluent failure assertions. |
 | `blob-helper-storage-local`, `blob-helper-storage-s3`, `blob-helper-storage-azure` | Compile dependencies of the standard starter. Each adapter owns its provider SDK coordinates and BOM; the starter aggregates adapter modules without declaring SDKs directly. |

@@ -279,6 +279,12 @@
 - Restored the left padding on the first “Polling interval” settings cell so it aligns with the other configuration entries.
 - Modules affected: `blob-helper-dashboard` static CSS.
 
+## 2026-09-06 — Upgrade to Spring Boot 4.1.1
+
+- Upgraded the root Spring Boot BOM from 3.5.10 to 4.1.1 and removed obsolete Boot 3 database auto-configuration exclusions from provider discovery coverage.
+- Migrated the standalone dashboard to Boot 4 MVC/Jackson starters and Jackson 3's `tools.jackson` API while preserving metrics polling behavior.
+- Modules affected: root Maven reactor, `blob-helper-spring-boot-starter`, `blob-helper-dashboard`, and project architecture/implementation/decision documentation.
+
 ## 2026-09-03 — Aggregate provider adapters in the standard starter
 
 - Made the Spring Boot starter the single consumer dependency for local, S3, and Azure storage adapters while preserving provider-local SDK ownership.

@@ -43,3 +43,12 @@
 **Why:** Developers and operators need one lightweight read-only view across multiple local Blob Helper instances, including historical traffic contribution and deduplication savings.
 **Tradeoffs:** The dashboard only observes instances while their local management endpoints are reachable, and the MVP is not suitable for remote deployment.
 **Alternatives considered:** An embedded dashboard, push-only telemetry, and direct database/object-store access were rejected for the initial version because they increase deployment coupling, delivery complexity, or provider/schema coupling.
+
+## Adopt Spring Boot 4.1 and Jackson 3
+
+**Date:** 2026-09-06
+
+**Why:** The project is still early enough to absorb Spring Boot 4's module and package changes before more consumers depend on the Boot 3 surface. The standalone dashboard therefore uses the Boot 4 MVC and Jackson starters and Jackson 3 APIs.
+
+**Tradeoffs:** Boot 4 is a major upgrade; consumers and future integrations must use the Boot 4-compatible auto-configuration and JSON module layout.
+**Alternatives considered:** Remaining on Spring Boot 3.5 was rejected because it would defer migration cost and leave the project on the older framework line while the public API is still forming.
